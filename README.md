@@ -2,9 +2,12 @@
 
 Proyecto CAPSTONE 005D
 
-Integrantes: 
+Integrantes:
+
 Carla Correa, Vicente Oyarzún, Benjamín Arevalo, Vicente Valenzuela.
+
 Asignatura: Capstone
+
 Docente: Cindy Contador.
 
 Aplicación web que permite centralizar y administrar las solicitudes de emisión de facturas recibidas desde distintos canales de comunicación.
