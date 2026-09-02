@@ -2,9 +2,7 @@
 
 Proyecto CAPSTONE 005D
 
-Integrantes:
-
-Carla Correa, Vicente Oyarzún, Benjamín Arevalo, Vicente Valenzuela.
+Integrantes: Carla Correa, Vicente Oyarzún, Benjamín Arevalo, Vicente Valenzuela.
 
 Asignatura: Capstone
 
