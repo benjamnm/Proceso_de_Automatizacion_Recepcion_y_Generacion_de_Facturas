@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Iniciar sesión | Facturaciones SpA
+{% endblock %}
+
+{% block styles %}
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/login.css') }}"
+>
+{% endblock %}
+
+{% block content %}
+<main class="login-page">
+    <section class="login-brand-panel">
+        <div class="brand-header">
+            <div class="brand-mark" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <span class="brand-name">
+                FACTURACIONES SPA
+            </span>
+        </div>
+
+        <div class="brand-content">
+            <p class="eyebrow">
+                SISTEMA DE GESTIÓN
+            </p>
+
+            <h1>
+                Recepción y<br>
+                Generación de<br>
+                Facturas
+            </h1>
+        </div>
+
+        <div class="brand-footer">
+            <i class="bi bi-star"></i>
+            <span>Conforme SII · Chile · 2026</span>
+        </div>
+    </section>
+
+    <section class="login-form-panel">
+        <div class="login-card">
+            <header class="login-heading">
+                <h2>Iniciar sesión</h2>
+                <p>Indique su correo de usuario</p>
+            </header>
+
+            <form
+                method="POST"
+                action="{{ url_for('auth.login') }}"
+                class="needs-validation"
+                novalidate
+            >
+                <div class="mb-4">
+                    <label
+                        for="email"
+                        class="form-label"
+                    >
+                        Correo electrónico
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        class="form-control login-input"
+                        placeholder="usuario@empresa.cl"
+                        autocomplete="email"
+                        required
+                    >
+
+                    <div class="invalid-feedback">
+                        Ingrese un correo electrónico válido.
+                    </div>
+                </div>
+
+                <div class="password-heading">
+                    <label
+                        for="password"
+                        class="form-label"
+                    >
+                        Contraseña
+                    </label>
+
+                    <a href="#" class="forgot-link">
+                        ¿Olvidó su contraseña?
+                    </a>
+                </div>
+
+                <div class="input-group mb-4">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        class="form-control login-input password-input"
+                        placeholder="••••••••••••"
+                        minlength="8"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        id="togglePassword"
+                        class="btn password-toggle"
+                        aria-label="Mostrar contraseña"
+                    >
+                        <i
+                            class="bi bi-eye"
+                            id="passwordIcon">
+                        </i>
+                    </button>
+
+                    <div class="invalid-feedback">
+                        Ingrese su contraseña.
+                    </div>
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-login w-100"
+                >
+                    Iniciar sesión
+                </button>
+            </form>
+
+            <div class="security-note">
+                <i class="bi bi-lock"></i>
+                <span>
+                    Conexión cifrada TLS 1.3 · Sus datos están protegidos
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <button
+        type="button"
+        class="help-button"
+        aria-label="Ayuda"
+        title="Ayuda"
+    >
+        ?
+    </button>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script
+    src="{{ url_for('static', filename='js/login.js') }}">
+</script>
+{% endblock %}

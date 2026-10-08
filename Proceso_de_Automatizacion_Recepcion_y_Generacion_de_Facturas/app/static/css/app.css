@@ -1,0 +1,29 @@
+:root {
+    --navy: #192f58;
+    --dark: #171812;
+    --input: #1a1b1b;
+    --border: #3a3d40;
+    --text: #eee9e4;
+    --muted: #a39f9a;
+    --mint: #8fd0bb;
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    background: var(--dark);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.flash-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1050;
+    width: min(420px, calc(100% - 2rem));
+}
