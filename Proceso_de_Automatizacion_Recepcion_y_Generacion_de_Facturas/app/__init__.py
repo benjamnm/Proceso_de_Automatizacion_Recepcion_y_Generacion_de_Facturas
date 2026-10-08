@@ -2,14 +2,13 @@ from flask import Flask, redirect, render_template, url_for
 from flask_login import login_required
 
 from config import Config
-from .extensions import csrf, db, login_manager
+from .extensions import csrf, login_manager
 
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    db.init_app(app)
     login_manager.init_app(app)
     csrf.init_app(app)
 
@@ -26,3 +25,9 @@ def create_app(config_class=Config):
         return render_template("dashboard.html")
 
     return app
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    from .models import User
+    return User.get_by_id(int(user_id))

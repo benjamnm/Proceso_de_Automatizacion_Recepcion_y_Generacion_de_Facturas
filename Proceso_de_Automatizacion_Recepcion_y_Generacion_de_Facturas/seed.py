@@ -1,45 +1,53 @@
-from app import create_app
-from app.extensions import db
-from app.models import Role, User
+import pymysql
+from werkzeug.security import generate_password_hash
 
-app = create_app()
+# Crear usuario administrador
+conn = pymysql.connect(
+    host="127.0.0.1",
+    user="root",
+    password="",
+    database="facturaciones_spa_mvp",
+    charset="utf8mb4"
+)
 
-with app.app_context():
-    db.create_all()
+try:
+    with conn.cursor() as cursor:
+        # Verificar si existe el rol Administrador
+        cursor.execute("SELECT id FROM roles WHERE nombre = 'Administrador'")
+        role = cursor.fetchone()
 
-    admin_role = db.session.scalar(
-        db.select(Role).where(
-            Role.nombre == "Administrador"
+        if role is None:
+            cursor.execute(
+                "INSERT INTO roles (nombre, descripcion) VALUES ('Administrador', 'Acceso completo')"
+            )
+            conn.commit()
+            cursor.execute("SELECT id FROM roles WHERE nombre = 'Administrador'")
+            role = cursor.fetchone()
+
+        # Verificar si existe el usuario
+        cursor.execute(
+            "SELECT id FROM usuarios WHERE email = 'admin@facturaciones.cl'"
         )
-    )
+        user = cursor.fetchone()
 
-    if admin_role is None:
-        admin_role = Role(
-            nombre="Administrador",
-            descripcion="Acceso completo al sistema"
-        )
-        db.session.add(admin_role)
-        db.session.flush()
+        if user is None:
+            password_hash = generate_password_hash("Admin12345")
+            cursor.execute("""
+                INSERT INTO usuarios (
+                    rol_id, rut, nombre, email, password_hash, activo
+                ) VALUES (%s, %s, %s, %s, %s, %s)
+            """, (
+                role['id'],
+                "11111111-1",
+                "Administrador de Prueba",
+                "admin@facturaciones.cl",
+                password_hash,
+                True
+            ))
+            conn.commit()
 
-    admin = db.session.scalar(
-        db.select(User).where(
-            User.email == "admin@facturaciones.cl"
-        )
-    )
+        print("Usuario creado: admin@facturaciones.cl")
+        print("Contraseña: Admin12345")
 
-    if admin is None:
-        admin = User(
-            rol_id=admin_role.id,
-            rut="11111111-1",
-            nombre="Administrador de Prueba",
-            email="admin@facturaciones.cl",
-            activo=True
-        )
-
-        admin.set_password("Admin12345")
-        db.session.add(admin)
-
-    db.session.commit()
-
-    print("Usuario: admin@facturaciones.cl")
-    print("Contraseña temporal: Admin12345")
+finally:
+    conn.close()

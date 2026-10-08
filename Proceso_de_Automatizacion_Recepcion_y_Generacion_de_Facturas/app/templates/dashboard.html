@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Panel principal | Facturaciones SpA
+{% endblock %}
+
+{% block content %}
+<nav class="navbar navbar-dark" style="background: #192f58;">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">
+            Facturaciones SpA
+        </span>
+
+        <div class="d-flex align-items-center gap-3">
+            <div class="text-white">
+                <small class="d-block opacity-75">Usuario</small>
+                <strong>{{ current_user.nombre }}</strong>
+                <span class="badge bg-secondary ms-2">
+                    {{ current_user.role_name }}
+                </span>
+            </div>
+
+            <form method="GET" action="{{ url_for('auth.logout') }}">
+                <button type="submit" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-box-arrow-right"></i>
+                    Cerrar sesión
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<main class="dashboard-content">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-3">Panel principal</h1>
+                <p class="text-secondary mb-4">
+                    Bienvenido al sistema de gestión de facturación.
+                </p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            {% if current_user.role_name in ['Administrador', 'Emisor'] %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bi bi-plus-circle"></i>
+                            Nueva solicitud
+                        </h5>
+                        <p class="card-text text-secondary">
+                            Crea una nueva solicitud de facturación.
+                        </p>
+                        <a href="#" class="btn btn-primary">
+                            Crear solicitud
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bi bi-list-ul"></i>
+                            Ver solicitudes
+                        </h5>
+                        <p class="card-text text-secondary">
+                            Consulta y filtra tus solicitudes de facturación.
+                        </p>
+                        <a href="#" class="btn btn-outline-primary">
+                            Ver listado
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {% if current_user.role_name == 'Administrador' %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bi bi-people"></i>
+                            Usuarios
+                        </h5>
+                        <p class="card-text text-secondary">
+                            Gestiona usuarios y permisos del sistema.
+                        </p>
+                        <a href="#" class="btn btn-outline-primary">
+                            Administrar
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bi bi-building"></i>
+                            Clientes
+                        </h5>
+                        <p class="card-text text-secondary">
+                            Mantén el registro de clientes y contactos.
+                        </p>
+                        <a href="#" class="btn btn-outline-primary">
+                            Gestionar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Próximos módulos:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>Formulario de solicitud de facturación</li>
+                        <li>Listado y filtros de solicitudes</li>
+                        <li>Gestión de usuarios y clientes</li>
+                        <li>Carga y envío de XML por SMTP</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
