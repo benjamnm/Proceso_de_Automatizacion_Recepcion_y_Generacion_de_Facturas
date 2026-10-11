@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}
+Editar usuario | Facturaciones SpA
+{% endblock %}
+
+{% block content %}
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <section class="col-12 col-lg-7">
+            <div class="card">
+                <div class="card-body p-4">
+                    <h1 class="h3 mb-2">Editar usuario</h1>
+
+                    <p class="text-body-secondary">
+                        Cuenta #{{ usuario.id }}.
+                        Esta pantalla no cambia la contraseña.
+                    </p>
+
+                    {% if error %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                    {% endif %}
+
+                    {% if usuario.id == current_user.id|int %}
+                    <div class="alert alert-info">
+                        Puede editar sus datos, pero no cambiar
+                        su propio rol.
+                    </div>
+                    {% endif %}
+
+                    <form
+                        method="post"
+                        action="{{ url_for(
+                            'admin.usuario_editar',
+                            usuario_id=usuario.id
+                        ) }}"
+                    >
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ csrf_token() }}"
+                        >
+
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">
+                                Nombre completo
+                            </label>
+                            <input
+                                id="nombre"
+                                name="nombre"
+                                class="form-control"
+                                value="{{ values.nombre }}"
+                                minlength="2"
+                                maxlength="120"
+                                required
+                            >
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                Correo electrónico
+                            </label>
+                            <input
+                                id="email"
+                                name="email"
+                                type="email"
+                                class="form-control"
+                                value="{{ values.email }}"
+                                maxlength="150"
+                                required
+                            >
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="rol_id" class="form-label">
+                                Rol
+                            </label>
+
+                            <select
+                                id="rol_id"
+                                name="rol_id"
+                                class="form-select"
+                                required
+                            >
+                                {% for rol in roles %}
+                                <option
+                                    value="{{ rol.id }}"
+                                    {% if values.rol_id == rol.id|string %}
+                                    selected
+                                    {% endif %}
+                                >
+                                    {{ rol.nombre }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                            >
+                                Guardar cambios
+                            </button>
+
+                            <a
+                                href="{{ url_for('admin.usuarios') }}"
+                                class="btn btn-outline-secondary"
+                            >
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock %}

@@ -18,6 +18,13 @@ Usuarios | Facturaciones SpA
         </div>
 
         <a
+            href="{{ url_for('admin.auditoria') }}"
+            class="btn btn-outline-primary"
+        >
+            Ver auditoría
+        </a>
+
+        <a
             href="{{ url_for('dashboard') }}"
             class="btn btn-outline-secondary"
         >
@@ -174,6 +181,7 @@ Usuarios | Facturaciones SpA
                                     <th scope="col">Correo</th>
                                     <th scope="col">Rol</th>
                                     <th scope="col">Estado</th>
+                                    <th scope="col">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -193,10 +201,58 @@ Usuarios | Facturaciones SpA
                                         </span>
                                         {% endif %}
                                     </td>
+                                    <td>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <a
+                                                href="{{ url_for(
+                                                    'admin.usuario_editar',
+                                                    usuario_id=usuario.id
+                                                ) }}"
+                                                class="btn btn-outline-primary btn-sm"
+                                            >
+                                                Editar
+                                            </a>
+
+                                            {% if usuario.id != current_user.id|int %}
+                                            <form
+                                                method="post"
+                                                action="{{ url_for(
+                                                    'admin.usuario_estado',
+                                                    usuario_id=usuario.id
+                                                ) }}"
+                                                onsubmit="return confirm(
+                                                    '¿Confirma el cambio de estado de esta cuenta?'
+                                                );"
+                                            >
+                                                <input
+                                                    type="hidden"
+                                                    name="csrf_token"
+                                                    value="{{ csrf_token() }}"
+                                                >
+
+                                                <input
+                                                    type="hidden"
+                                                    name="activo"
+                                                    value="{{ 0 if usuario.activo else 1 }}"
+                                                >
+
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-sm
+                                                        {{ 'btn-outline-danger'
+                                                        if usuario.activo
+                                                        else 'btn-outline-success' }}"
+                                                >
+                                                    {{ 'Desactivar' if usuario.activo else 'Reactivar' }}
+                                                </button>
+                                            </form>
+                                            {% endif %}
+                                        </div>
+                                    </td>
                                 </tr>
                                 {% else %}
                                 <tr>
-                                    <td colspan="4">
+                                    <td colspan="5">
                                         No hay usuarios registrados.
                                     </td>
                                 </tr>

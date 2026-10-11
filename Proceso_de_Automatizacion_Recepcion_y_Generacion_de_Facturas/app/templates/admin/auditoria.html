@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}
+Auditoría de usuarios | Facturaciones SpA
+{% endblock %}
+
+{% block content %}
+<main class="container py-5">
+    <header
+        class="d-flex flex-wrap justify-content-between
+               align-items-center gap-3 mb-4"
+    >
+        <div>
+            <h1 class="h3 mb-1">Auditoría de usuarios</h1>
+            <p class="text-body-secondary mb-0">
+                Últimos 100 eventos registrados.
+            </p>
+        </div>
+
+        <a
+            href="{{ url_for('admin.usuarios') }}"
+            class="btn btn-outline-secondary"
+        >
+            Volver a usuarios
+        </a>
+    </header>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Responsable</th>
+                            <th scope="col">Acción</th>
+                            <th scope="col">Cuenta afectada</th>
+                            <th scope="col">Detalle</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for evento in eventos %}
+                        <tr>
+                            <td>{{ evento.creado_en }}</td>
+                            <td>
+                                {{ evento.actor_nombre
+                                   or 'Usuario no disponible' }}
+                            </td>
+                            <td>{{ evento.accion }}</td>
+                            <td>
+                                #{{ evento.detalle.get(
+                                    'usuario_afectado_id', ''
+                                ) }}
+                            </td>
+                            <td>
+                                <details>
+                                    <summary>Ver detalle</summary>
+                                    <pre class="small mt-2 mb-0">{{ evento.detalle | tojson(indent=2) }}</pre>
+                                </details>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5">
+                                Todavía no hay eventos.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
