@@ -68,7 +68,7 @@ def login():
     return render_template("auth/login.html")
 
 
-@auth_bp.get("/logout")
+@auth_bp.post("/logout")
 @login_required
 def logout():
     logout_user()

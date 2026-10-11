@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}
+Usuarios | Facturaciones SpA
+{% endblock %}
+
+{% block content %}
+<main class="container py-4 py-lg-5">
+    <header
+        class="d-flex flex-wrap justify-content-between
+               align-items-center gap-3 mb-4"
+    >
+        <div>
+            <h1 class="h2 mb-1">Gestión de usuarios</h1>
+            <p class="text-body-secondary mb-0">
+                Crea cuentas y consulta sus perfiles de acceso.
+            </p>
+        </div>
+
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="btn btn-outline-secondary"
+        >
+            Volver al panel
+        </a>
+    </header>
+
+    <div class="row g-4">
+        <section class="col-12 col-xl-4">
+            <div class="card">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Crear usuario</h2>
+
+                    {% if errors %}
+                    <div class="alert alert-danger" role="alert">
+                        <ul class="mb-0">
+                            {% for error in errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <form
+                        method="post"
+                        action="{{ url_for('admin.usuarios') }}"
+                    >
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ csrf_token() }}"
+                        >
+
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">
+                                Nombre completo
+                            </label>
+                            <input
+                                id="nombre"
+                                name="nombre"
+                                class="form-control"
+                                value="{{ values.nombre }}"
+                                minlength="2"
+                                maxlength="120"
+                                autocomplete="off"
+                                required
+                            >
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                Correo electrónico
+                            </label>
+                            <input
+                                id="email"
+                                name="email"
+                                type="email"
+                                class="form-control"
+                                value="{{ values.email }}"
+                                maxlength="150"
+                                autocomplete="off"
+                                required
+                            >
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="rol_id" class="form-label">
+                                Rol
+                            </label>
+                            <select
+                                id="rol_id"
+                                name="rol_id"
+                                class="form-select"
+                                required
+                            >
+                                <option value="">Seleccione un rol</option>
+
+                                {% for rol in roles %}
+                                <option
+                                    value="{{ rol.id }}"
+                                    {% if values.rol_id == rol.id|string %}
+                                    selected
+                                    {% endif %}
+                                >
+                                    {{ rol.nombre }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                Contraseña inicial
+                            </label>
+                            <input
+                                id="password"
+                                name="password"
+                                type="password"
+                                class="form-control"
+                                minlength="12"
+                                maxlength="128"
+                                autocomplete="new-password"
+                                aria-describedby="password-help"
+                                required
+                            >
+                            <div id="password-help" class="form-text">
+                                Entre 12 y 128 caracteres.
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label
+                                for="password_confirm"
+                                class="form-label"
+                            >
+                                Confirmar contraseña
+                            </label>
+                            <input
+                                id="password_confirm"
+                                name="password_confirm"
+                                type="password"
+                                class="form-control"
+                                minlength="12"
+                                maxlength="128"
+                                autocomplete="new-password"
+                                required
+                            >
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100"
+                        >
+                            Crear usuario
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section class="col-12 col-xl-8">
+            <div class="card">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Usuarios registrados</h2>
+
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <caption>
+                                Cuentas registradas en el sistema.
+                            </caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Correo</th>
+                                    <th scope="col">Rol</th>
+                                    <th scope="col">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for usuario in usuarios %}
+                                <tr>
+                                    <td>{{ usuario.nombre }}</td>
+                                    <td>{{ usuario.email }}</td>
+                                    <td>{{ usuario.rol_nombre }}</td>
+                                    <td>
+                                        {% if usuario.activo %}
+                                        <span class="badge text-bg-success">
+                                            Activo
+                                        </span>
+                                        {% else %}
+                                        <span class="badge text-bg-secondary">
+                                            Inactivo
+                                        </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="4">
+                                        No hay usuarios registrados.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock %}

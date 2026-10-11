@@ -20,7 +20,8 @@
                 </span>
             </div>
 
-            <form method="GET" action="{{ url_for('auth.logout') }}">
+            <form method="POST" action="{{ url_for('auth.logout') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit" class="btn btn-outline-light btn-sm">
                     <i class="bi bi-box-arrow-right"></i>
                     Cerrar sesión
@@ -89,8 +90,10 @@
                         <p class="card-text text-secondary">
                             Gestiona usuarios y permisos del sistema.
                         </p>
-                        <a href="#" class="btn btn-outline-primary">
-                            Administrar
+                        <a href="{{ url_for('admin.usuarios') }}"
+                            class="btn btn-outline-primary"
+                        >
+                            Administrar usuarios
                         </a>
                     </div>
                 </div>
