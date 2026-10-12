@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ 'Editar cliente' if editando else 'Nuevo cliente' }}
+| Facturaciones SpA
+{% endblock %}
+
+{% block content %}
+<main class="container py-4 py-lg-5">
+    <div class="row justify-content-center">
+        <section class="col-12 col-lg-9 col-xl-8">
+            <div class="card">
+                <div class="card-body p-4">
+                    <h1 class="h3 mb-2">
+                        {{ 'Editar cliente' if editando else 'Nuevo cliente' }}
+                    </h1>
+
+                    <p class="text-body-secondary mb-4">
+                        Complete los datos del receptor de la factura.
+                        Todos los campos son obligatorios.
+                    </p>
+
+                    {% if errores %}
+                    <div class="alert alert-danger" role="alert">
+                        <p class="mb-1">
+                            Revise los siguientes datos:
+                        </p>
+                        <ul class="mb-0">
+                            {% for mensaje in errores.values() %}
+                            <li>{{ mensaje }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <form
+                        method="post"
+                        action="{{ url_for(
+                            'clientes.editar',
+                            cliente_id=cliente.id
+                        ) if editando else url_for('clientes.nuevo') }}"
+                    >
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ csrf_token() }}"
+                        >
+
+                        <div class="row g-3">
+                            <div class="col-md-5">
+                                <label for="rut" class="form-label">
+                                    RUT
+                                </label>
+                                <input
+                                    id="rut"
+                                    name="rut"
+                                    class="form-control
+                                        {{ 'is-invalid' if errores.get('rut') else '' }}"
+                                    value="{{ values.rut }}"
+                                    placeholder="12.345.678-5"
+                                    maxlength="12"
+                                    aria-describedby="rut-help"
+                                    {% if editando %}readonly{% endif %}
+                                    required
+                                >
+                                <div id="rut-help" class="form-text">
+                                    {% if editando %}
+                                    El RUT no se modifica desde esta pantalla.
+                                    {% else %}
+                                    Incluya el dígito verificador.
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-md-7">
+                                <label
+                                    for="razon_social"
+                                    class="form-label"
+                                >
+                                    Razón social
+                                </label>
+                                <input
+                                    id="razon_social"
+                                    name="razon_social"
+                                    class="form-control
+                                        {{ 'is-invalid' if errores.get('razon_social') else '' }}"
+                                    value="{{ values.razon_social }}"
+                                    maxlength="150"
+                                    required
+                                >
+                            </div>
+
+                            <div class="col-12">
+                                <label for="giro" class="form-label">
+                                    Giro
+                                </label>
+                                <input
+                                    id="giro"
+                                    name="giro"
+                                    class="form-control
+                                        {{ 'is-invalid' if errores.get('giro') else '' }}"
+                                    value="{{ values.giro }}"
+                                    maxlength="150"
+                                    required
+                                >
+                            </div>
+
+                            <div class="col-12">
+                                <label for="direccion" class="form-label">
+                                    Dirección
+                                </label>
+                                <input
+                                    id="direccion"
+                                    name="direccion"
+                                    class="form-control
+                                        {{ 'is-invalid' if errores.get('direccion') else '' }}"
+                                    value="{{ values.direccion }}"
+                                    maxlength="200"
+                                    autocomplete="street-address"
+                                    required
+                                >
+                            </div>
+
+                            <div class="col-12">
+                                <label
+                                    for="email_contacto"
+                                    class="form-label"
+                                >
+                                    Correo de contacto
+                                </label>
+                                <input
+                                    id="email_contacto"
+                                    name="email_contacto"
+                                    type="email"
+                                    class="form-control
+                                        {{ 'is-invalid' if errores.get('email_contacto') else '' }}"
+                                    value="{{ values.email_contacto }}"
+                                    maxlength="150"
+                                    autocomplete="email"
+                                    aria-describedby="email-help"
+                                    required
+                                >
+                                <div id="email-help" class="form-text">
+                                    Se utilizará posteriormente para enviar
+                                    documentos por SMTP.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 mt-4">
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                            >
+                                {{ 'Guardar cambios' if editando else 'Crear cliente' }}
+                            </button>
+
+                            <a
+                                href="{{ url_for('clientes.listado') }}"
+                                class="btn btn-outline-secondary"
+                            >
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock %}
