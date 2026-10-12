@@ -17,6 +17,9 @@ def create_app(config_class=Config):
     
     from .admin import admin_bp
     app.register_blueprint(admin_bp)
+    
+    from .clientes import clientes_bp
+    app.register_blueprint(clientes_bp)
 
     @app.get("/")
     def index():

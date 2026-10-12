@@ -34,7 +34,7 @@ Auditoría de usuarios | Facturaciones SpA
                             <th scope="col">Fecha</th>
                             <th scope="col">Responsable</th>
                             <th scope="col">Acción</th>
-                            <th scope="col">Cuenta afectada</th>
+                            <th scope="col">Registro afectado</th>
                             <th scope="col">Detalle</th>
                         </tr>
                     </thead>
@@ -49,9 +49,11 @@ Auditoría de usuarios | Facturaciones SpA
                             </td>
                             <td>{{ evento.accion }}</td>
                             <td>
-                                #{{ evento.detalle.get(
-                                    'usuario_afectado_id', ''
-                                ) }}
+                                {% if evento.detalle.get('cliente_afectado_id') %}
+                                    Cliente #{{ evento.detalle['cliente_afectado_id'] }}
+                                {% else %}
+                                     Usuario #{{ evento.detalle.get('usuario_afectado_id', '') }}
+                                {% endif %}
                             </td>
                             <td>
                                 <details>

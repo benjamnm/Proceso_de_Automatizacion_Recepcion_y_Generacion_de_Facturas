@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}
+Clientes | Facturaciones SpA
+{% endblock %}
+
+{% block content %}
+<main class="container py-4 py-lg-5">
+    <header
+        class="d-flex flex-wrap justify-content-between
+               align-items-center gap-3 mb-4"
+    >
+        <div>
+            <h1 class="h2 mb-1">Clientes</h1>
+            <p class="text-body-secondary mb-0">
+                Últimos 100 clientes registrados.
+            </p>
+        </div>
+
+        <div class="d-flex gap-2">
+            <a
+                href="{{ url_for('dashboard') }}"
+                class="btn btn-outline-secondary"
+            >
+                Volver al panel
+            </a>
+
+            <a
+                href="{{ url_for('clientes.nuevo') }}"
+                class="btn btn-primary"
+            >
+                Nuevo cliente
+            </a>
+        </div>
+    </header>
+
+    <div class="card">
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <caption>
+                        Clientes disponibles en el sistema.
+                    </caption>
+
+                    <thead>
+                        <tr>
+                            <th scope="col">RUT</th>
+                            <th scope="col">Razón social</th>
+                            <th scope="col">Correo de contacto</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for cliente in clientes %}
+                        <tr>
+                            <td class="text-nowrap">
+                                {{ cliente.rut }}
+                            </td>
+                            <td>{{ cliente.razon_social }}</td>
+                            <td>{{ cliente.email_contacto }}</td>
+                            <td>
+                                {% if cliente.activo %}
+                                <span class="badge text-bg-success">
+                                    Activo
+                                </span>
+                                {% else %}
+                                <span class="badge text-bg-secondary">
+                                    Inactivo
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a
+                                    href="{{ url_for(
+                                        'clientes.editar',
+                                        cliente_id=cliente.id
+                                    ) }}"
+                                    class="btn btn-outline-primary btn-sm"
+                                >
+                                    Editar
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5">
+                                No hay clientes registrados.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
