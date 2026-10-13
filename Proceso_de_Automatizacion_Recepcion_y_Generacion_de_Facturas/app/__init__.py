@@ -1,5 +1,7 @@
-from flask import Flask, redirect, render_template, url_for
+from flask import Flask, app, redirect, render_template, url_for
 from flask_login import login_required
+from .solicitudes import solicitudes_bp
+
 
 from config import Config
 from .extensions import csrf, login_manager
@@ -20,6 +22,9 @@ def create_app(config_class=Config):
     
     from .clientes import clientes_bp
     app.register_blueprint(clientes_bp)
+    
+    from .solicitudes import solicitudes_bp
+    app.register_blueprint(solicitudes_bp)
 
     @app.get("/")
     def index():

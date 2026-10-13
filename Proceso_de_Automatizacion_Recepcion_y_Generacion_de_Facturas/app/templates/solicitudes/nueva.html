@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+
+{% block title %}
+Nueva solicitud | Facturaciones SpA
+{% endblock %}
+
+{% block content %}
+<main class="container py-4 py-lg-5">
+    <header class="mb-4">
+        <h1 class="h2">Nueva solicitud de facturación</h1>
+        <p class="text-body-secondary">
+            Seleccione el receptor y complete los datos.
+            La solicitud se registrará como Pendiente.
+        </p>
+    </header>
+
+    {% if errores %}
+    <div class="alert alert-danger" role="alert">
+        <ul class="mb-0">
+            {% for mensaje in errores.values() %}
+            <li>{{ mensaje }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if not clientes %}
+    <div class="alert alert-warning">
+        No hay clientes activos disponibles.
+        Un Administrador debe registrar un cliente antes de continuar.
+    </div>
+    {% endif %}
+
+    <form
+        method="post"
+        action="{{ url_for('solicitudes.nueva') }}"
+    >
+        <input
+            type="hidden"
+            name="csrf_token"
+            value="{{ csrf_token() }}"
+        >
+
+        <div class="row g-4">
+            <section class="col-12 col-lg-5">
+                <div class="card h-100">
+                    <div class="card-body p-4">
+                        <h2 class="h5 mb-3">Cliente receptor</h2>
+
+                        <label for="cliente_id" class="form-label">
+                            Cliente
+                        </label>
+
+                        <select
+                            id="cliente_id"
+                            name="cliente_id"
+                            class="form-select mb-4"
+                            required
+                        >
+                            <option value="">Seleccione un cliente</option>
+
+                            {% for cliente in clientes %}
+                            <option
+                                value="{{ cliente.id }}"
+                                data-rut="{{ cliente.rut }}"
+                                data-razon="{{ cliente.razon_social }}"
+                                data-giro="{{ cliente.giro }}"
+                                data-direccion="{{ cliente.direccion }}"
+                                data-correo="{{ cliente.email_contacto }}"
+                                {% if values.cliente_id == cliente.id|string %}
+                                selected
+                                {% endif %}
+                            >
+                                {{ cliente.rut }} — {{ cliente.razon_social }}
+                            </option>
+                            {% endfor %}
+                        </select>
+
+                        <dl class="mb-0">
+                            <dt>RUT</dt>
+                            <dd id="preview-rut">—</dd>
+
+                            <dt>Razón social</dt>
+                            <dd id="preview-razon">—</dd>
+
+                            <dt>Giro</dt>
+                            <dd id="preview-giro">—</dd>
+
+                            <dt>Dirección</dt>
+                            <dd id="preview-direccion">—</dd>
+
+                            <dt>Correo de contacto</dt>
+                            <dd id="preview-correo">—</dd>
+                        </dl>
+
+                        <p class="small text-body-secondary mt-3 mb-0">
+                            Se guardará una copia de la ficha vigente
+                            al confirmar la solicitud.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="col-12 col-lg-7">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <h2 class="h5 mb-3">Datos de la solicitud</h2>
+
+                        <div class="mb-3">
+                            <label for="concepto" class="form-label">
+                                Concepto
+                            </label>
+                            <textarea
+                                id="concepto"
+                                name="concepto"
+                                class="form-control"
+                                rows="4"
+                                maxlength="500"
+                                required
+                            >{{ values.concepto }}</textarea>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label
+                                    for="monto_bruto"
+                                    class="form-label"
+                                >
+                                    Monto bruto (CLP)
+                                </label>
+                                <input
+                                    id="monto_bruto"
+                                    name="monto_bruto"
+                                    type="text"
+                                    inputmode="numeric"
+                                    pattern="[0-9]{1,14}"
+                                    maxlength="14"
+                                    class="form-control"
+                                    value="{{ values.monto_bruto }}"
+                                    aria-describedby="monto-help"
+                                    required
+                                >
+                                <div id="monto-help" class="form-text">
+                                    Entero mayor que cero, sin separadores.
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label
+                                    for="fecha_emision"
+                                    class="form-label"
+                                >
+                                    Fecha de emisión solicitada
+                                </label>
+                                <input
+                                    id="fecha_emision"
+                                    name="fecha_emision"
+                                    type="date"
+                                    min="1000-01-01"
+                                    max="9999-12-31"
+                                    class="form-control"
+                                    value="{{ values.fecha_emision }}"
+                                    required
+                                >
+                            </div>
+
+                            <div class="col-md-6">
+                                <label
+                                    for="tipo_afectacion"
+                                    class="form-label"
+                                >
+                                    Afectación tributaria
+                                </label>
+                                <select
+                                    id="tipo_afectacion"
+                                    name="tipo_afectacion"
+                                    class="form-select"
+                                    required
+                                >
+                                    <option value="">Seleccione</option>
+                                    <option
+                                        value="AFECTA"
+                                        {% if values.tipo_afectacion == 'AFECTA' %}
+                                        selected
+                                        {% endif %}
+                                    >
+                                        Afecta
+                                    </option>
+                                    <option
+                                        value="EXENTA"
+                                        {% if values.tipo_afectacion == 'EXENTA' %}
+                                        selected
+                                        {% endif %}
+                                    >
+                                        Exenta
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label
+                                    for="nro_orden_compra"
+                                    class="form-label"
+                                >
+                                    Orden de compra — opcional
+                                </label>
+                                <input
+                                    id="nro_orden_compra"
+                                    name="nro_orden_compra"
+                                    class="form-control"
+                                    maxlength="40"
+                                    value="{{ values.nro_orden_compra }}"
+                                >
+                            </div>
+                        </div>
+
+                        <p class="small text-body-secondary mt-4">
+                            Responsable: {{ current_user.nombre }}.
+                            Estado inicial: Pendiente. Origen: Web.
+                        </p>
+
+                        <div class="d-flex flex-wrap gap-2">
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                                {% if not clientes %}disabled{% endif %}
+                            >
+                                Registrar solicitud
+                            </button>
+
+                            <a
+                                href="{{ url_for('dashboard') }}"
+                                class="btn btn-outline-secondary"
+                            >
+                                Cancelar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </form>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script
+    src="{{ url_for('static', filename='js/solicitud.js') }}">
+</script>
+{% endblock %}

@@ -56,6 +56,15 @@ Auditoría de usuarios | Facturaciones SpA
                                 {% endif %}
                             </td>
                             <td>
+                                {% if evento.detalle.get('solicitud_afectada_id') %}
+                                    Solicitud #{{ evento.detalle['solicitud_afectada_id'] }}
+                                {% elif evento.detalle.get('cliente_afectado_id') %}
+                                     Cliente #{{ evento.detalle['cliente_afectado_id'] }}
+                                {% else %}
+                                    Usuario #{{ evento.detalle.get('usuario_afectado_id', '') }}
+                                {% endif %}
+                            </td>
+                            <td>
                                 <details>
                                     <summary>Ver detalle</summary>
                                     <pre class="small mt-2 mb-0">{{ evento.detalle | tojson(indent=2) }}</pre>

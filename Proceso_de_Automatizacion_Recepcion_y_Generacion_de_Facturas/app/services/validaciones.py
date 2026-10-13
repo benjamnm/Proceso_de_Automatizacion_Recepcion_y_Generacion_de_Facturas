@@ -1,5 +1,6 @@
 import re
-
+from datetime import date
+from decimal import Decimal
 from email_validator import EmailNotValidError, validate_email
 
 
@@ -111,5 +112,81 @@ def validar_cliente(datos):
         )
     except ErrorValidacion as exc:
         errores["email_contacto"] = str(exc)
+
+    return limpio, errores
+
+def validar_solicitud(datos):
+    limpio = {}
+    errores = {}
+
+    try:
+        cliente_id = int(datos.get("cliente_id", ""))
+
+        if cliente_id <= 0:
+            raise ValueError
+
+        limpio["cliente_id"] = cliente_id
+
+    except (TypeError, ValueError):
+        errores["cliente_id"] = "Seleccione un cliente válido."
+
+    concepto = datos.get("concepto", "").strip()
+
+    if not concepto:
+        errores["concepto"] = "El concepto es obligatorio."
+    elif len(concepto) > 500:
+        errores["concepto"] = (
+            "El concepto no puede superar 500 caracteres."
+        )
+    else:
+        limpio["concepto"] = concepto
+
+    orden = datos.get("nro_orden_compra", "").strip()
+
+    if len(orden) > 40:
+        errores["nro_orden_compra"] = (
+            "La orden de compra no puede superar 40 caracteres."
+        )
+    else:
+        limpio["nro_orden_compra"] = orden or None
+
+    monto = datos.get("monto_bruto", "").strip()
+
+    if not re.fullmatch(r"[0-9]{1,14}", monto):
+        errores["monto_bruto"] = (
+            "Ingrese un monto entero, sin puntos ni comas, "
+            "de hasta 14 dígitos."
+        )
+    elif Decimal(monto) <= 0:
+        errores["monto_bruto"] = "El monto debe ser mayor que cero."
+    else:
+        limpio["monto_bruto"] = Decimal(monto)
+
+    fecha = datos.get("fecha_emision", "")
+
+    try:
+        if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", fecha):
+            raise ValueError
+
+        fecha_validada = date.fromisoformat(fecha)
+
+        if fecha_validada.year < 1000:
+            raise ValueError
+
+        limpio["fecha_emision"] = fecha_validada
+
+    except (TypeError, ValueError):
+        errores["fecha_emision"] = (
+            "Ingrese una fecha válida entre los años 1000 y 9999."
+        )
+
+    afectacion = datos.get("tipo_afectacion", "")
+
+    if afectacion not in {"AFECTA", "EXENTA"}:
+        errores["tipo_afectacion"] = (
+            "Seleccione una afectación válida."
+        )
+    else:
+        limpio["tipo_afectacion"] = afectacion
 
     return limpio, errores

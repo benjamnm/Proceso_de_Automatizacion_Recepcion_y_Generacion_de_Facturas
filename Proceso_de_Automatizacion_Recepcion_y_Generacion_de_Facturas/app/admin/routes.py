@@ -341,7 +341,8 @@ def auditoria():
                     'USUARIO_DESACTIVADO',
                     'USUARIO_REACTIVADO',
                     'CLIENTE_CREADO',
-                    'CLIENTE_EDITADO'
+                    'CLIENTE_EDITADO',
+                    'SOLICITUD_CREADA'
                 )
                 ORDER BY a.id DESC
                 LIMIT 100
