@@ -60,7 +60,6 @@
                     </div>
                 </div>
             </div>
-            {% endif %}
 
             <div class="col-md-6 col-lg-4">
                 <div class="card h-100">
@@ -72,13 +71,14 @@
                         <p class="card-text text-secondary">
                             Consulta y filtra tus solicitudes de facturación.
                         </p>
-                        <a href="#" class="btn btn-outline-primary">
-                            Ver listado
+                        <a href="{{ url_for('solicitudes.listado') }}" class="btn btn-outline-primary">
+                            Ver listado de solicitudes
                         </a>
                     </div>
                 </div>
             </div>
-
+            {% endif %}
+            
             {% if current_user.role_name == 'Administrador' %}
             <div class="col-md-6 col-lg-4">
                 <div class="card h-100">

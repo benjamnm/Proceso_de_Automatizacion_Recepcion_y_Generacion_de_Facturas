@@ -12,9 +12,27 @@ Solicitud | Facturaciones SpA
         <p class="text-body-secondary text-break">
             Identificador: {{ solicitud.public_id }}
         </p>
+        <p>Versión: {{ solicitud.version }}</p>
 
         <span class="badge text-bg-secondary">
-            {{ solicitud.estado_nombre }}
+            {% if solicitud.estado_nombre == 'Pendiente' %}
+            <a
+                href="{{ url_for(
+                    'solicitudes.editar',
+                    public_id=solicitud.public_id
+                ) }}"
+                class="btn btn-primary"
+            >
+                Editar solicitud
+            </a>
+            {% endif %}
+
+            <a
+                href="{{ url_for('solicitudes.listado') }}"
+                class="btn btn-outline-secondary"
+            >
+                Volver al listado
+            </a>
         </span>
     </header>
 
