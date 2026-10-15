@@ -344,6 +344,7 @@ def auditoria():
                     'CLIENTE_EDITADO',
                     'SOLICITUD_CREADA',
                     'SOLICITUD_EDITADA',
+                    'SOLICITUD_ESTADO_CAMBIADO',
                 )
                 ORDER BY a.id DESC
                 LIMIT 100

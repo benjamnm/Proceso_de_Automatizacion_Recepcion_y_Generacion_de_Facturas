@@ -26,6 +26,8 @@ from ..services.envios_solicitud import (
 )
 from ..services.solicitudes import (
     ErrorGestionSolicitud,
+    TRANSICIONES_ESTADO,
+    cambiar_estado_solicitud,
     crear_solicitud,
     editar_solicitud,
     validar_solicitud,
@@ -423,9 +425,19 @@ def listado():
 def detalle(public_id):
     solicitud = obtener_solicitud_autorizada(public_id)
 
+    estados_permitidos = (
+        TRANSICIONES_ESTADO.get(
+            solicitud["estado_nombre"],
+            (),
+        )
+        if current_user.role_name == "Administrador"
+        else ()
+    )
+
     return render_template(
         "solicitudes/detalle.html",
         solicitud=solicitud,
+        estados_permitidos=estados_permitidos,
     )
 
 
@@ -537,3 +549,52 @@ def editar(public_id):
         errores=errores,
         version=version,
     )
+    
+@solicitudes_bp.post("/<string:public_id>/estado")
+@solicitud_required
+def cambiar_estado(public_id):
+    if current_user.role_name != "Administrador":
+        abort(403)
+
+    try:
+        cambiar_estado_solicitud(
+            actor_id=int(current_user.id),
+            public_id=public_id,
+            estado_destino=request.form.get(
+                "estado_destino",
+                "",
+            ),
+            version_esperada=request.form.get(
+                "version",
+                "",
+            ),
+            motivo_rechazo=request.form.get(
+                "motivo_rechazo",
+                "",
+            ),
+            ip=request.remote_addr,
+        )
+
+    except ErrorGestionSolicitud as exc:
+        flash(str(exc), "danger")
+
+    except pymysql.MySQLError:
+        current_app.logger.exception(
+            "Error al cambiar el estado de la solicitud %s",
+            public_id,
+        )
+        flash(
+            "No se pudo cambiar el estado. Intente nuevamente.",
+            "danger",
+        )
+
+    else:
+        flash(
+            "Estado actualizado correctamente.",
+            "success",
+        )
+
+    return redirect(url_for(
+        "solicitudes.detalle",
+        public_id=public_id,
+    ))

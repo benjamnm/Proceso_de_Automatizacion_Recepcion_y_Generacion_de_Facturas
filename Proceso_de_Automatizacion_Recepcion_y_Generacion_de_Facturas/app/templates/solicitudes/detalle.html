@@ -103,6 +103,103 @@ Solicitud | Facturaciones SpA
         </section>
     </div>
 
+    {% if current_user.role_name == 'Administrador' %}
+<section class="card mt-4">
+    <div class="card-body p-4">
+        <h2 class="h5 mb-3">Gestión del estado</h2>
+
+        <p>
+            Estado actual:
+            <span class="badge text-bg-secondary">
+                {{ solicitud.estado_nombre }}
+            </span>
+        </p>
+
+        {% if estados_permitidos %}
+        <form
+            method="post"
+            action="{{ url_for(
+                'solicitudes.cambiar_estado',
+                public_id=solicitud.public_id
+            ) }}"
+            onsubmit="return confirm(
+                '¿Confirma el cambio de estado de esta solicitud?'
+            );"
+        >
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <input
+                type="hidden"
+                name="version"
+                value="{{ solicitud.version }}"
+            >
+
+            <div class="mb-3">
+                <label for="estado_destino" class="form-label">
+                    Nuevo estado
+                </label>
+
+                <select
+                    id="estado_destino"
+                    name="estado_destino"
+                    class="form-select"
+                    required
+                >
+                    <option value="">Seleccione un estado</option>
+
+                    {% for estado in estados_permitidos %}
+                    <option value="{{ estado }}">
+                        {{ estado }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="motivo_rechazo" class="form-label">
+                    Motivo de rechazo
+                </label>
+
+                <textarea
+                    id="motivo_rechazo"
+                    name="motivo_rechazo"
+                    class="form-control"
+                    rows="3"
+                    maxlength="300"
+                    aria-describedby="motivo-help"
+                ></textarea>
+
+                <div id="motivo-help" class="form-text">
+                    Obligatorio si selecciona Rechazada.
+                    Para otros estados no se guardará.
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Actualizar estado
+            </button>
+        </form>
+        {% else %}
+        <p class="text-body-secondary mb-0">
+            No hay transiciones habilitadas para este estado.
+        </p>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+
+{% if solicitud.estado_nombre == 'Rechazada'
+      and solicitud.motivo_rechazo %}
+<section class="alert alert-warning mt-4">
+    <h2 class="h6">Motivo del rechazo</h2>
+    <p class="mb-0" style="white-space: pre-wrap;">{{ solicitud.motivo_rechazo }}</p>
+</section>
+{% endif %}
+
     <div class="alert alert-info mt-4">
         Este registro es una solicitud de facturación,
         no una factura tributaria emitida.

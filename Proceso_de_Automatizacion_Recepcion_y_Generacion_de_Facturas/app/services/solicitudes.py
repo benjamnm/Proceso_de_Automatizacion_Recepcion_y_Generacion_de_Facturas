@@ -11,6 +11,18 @@ from .usuarios import registrar_evento
 from .validaciones import validar_cliente
 
 
+TRANSICIONES_ESTADO = {
+    "Pendiente": (
+        "En revisión",
+        "Rechazada",
+    ),
+    "En revisión": (
+        "Pendiente",
+        "Rechazada",
+    ),
+    "Rechazada": (),
+}
+
 class ErrorGestionSolicitud(Exception):
     pass
 
@@ -547,6 +559,178 @@ def editar_solicitud(
                 "version_anterior": version_esperada,
                 "version_nueva": version_esperada + 1,
                 "cambios": cambios,
+            },
+            ip,
+        )
+
+        connection.commit()
+        return True
+
+    except Exception:
+        connection.rollback()
+        raise
+
+    finally:
+        connection.close()
+
+def cambiar_estado_solicitud(
+    actor_id,
+    public_id,
+    estado_destino,
+    version_esperada,
+    motivo_rechazo="",
+    ip=None,
+):
+    estado_destino = str(estado_destino or "").strip()
+    motivo_rechazo = str(motivo_rechazo or "").strip()
+
+    try:
+        version_esperada = int(version_esperada)
+
+        if version_esperada <= 0:
+            raise ValueError
+
+    except (TypeError, ValueError):
+        raise ErrorGestionSolicitud(
+            "La versión del formulario no es válida."
+        )
+
+    if len(motivo_rechazo) > 300:
+        raise ErrorGestionSolicitud(
+            "El motivo no puede superar 300 caracteres."
+        )
+
+    if estado_destino == "Rechazada" and not motivo_rechazo:
+        raise ErrorGestionSolicitud(
+            "Debe indicar el motivo del rechazo."
+        )
+
+    connection = get_db_connection()
+
+    try:
+        connection.begin()
+
+        with connection.cursor() as cursor:
+            actor = comprobar_actor(cursor, actor_id)
+
+            if actor["rol_nombre"] != "Administrador":
+                raise ErrorGestionSolicitud(
+                    "Solo un Administrador puede cambiar estados."
+                )
+
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    estado_id,
+                    version,
+                    motivo_rechazo
+                FROM solicitudes
+                WHERE public_id = %s
+                FOR UPDATE
+                """,
+                (public_id,),
+            )
+            solicitud = cursor.fetchone()
+
+            if solicitud is None:
+                raise ErrorGestionSolicitud(
+                    "La solicitud no está disponible."
+                )
+
+            if solicitud["version"] != version_esperada:
+                raise ErrorGestionSolicitud(
+                    "La solicitud cambió desde que abrió la pantalla. "
+                    "Recargue el detalle antes de continuar."
+                )
+
+            cursor.execute(
+                """
+                SELECT id, nombre
+                FROM estados_solicitud
+                WHERE id = %s
+                FOR UPDATE
+                """,
+                (solicitud["estado_id"],),
+            )
+            estado_actual = cursor.fetchone()
+
+            if estado_actual is None:
+                raise ErrorGestionSolicitud(
+                    "El estado actual no está disponible."
+                )
+                
+            permitidos = TRANSICIONES_ESTADO.get(
+                estado_actual["nombre"],
+                (),
+            )
+
+            if estado_destino not in permitidos:
+                raise ErrorGestionSolicitud(
+                    "El cambio de estado solicitado no está permitido."
+                )
+
+            cursor.execute(
+                """
+                SELECT id, nombre
+                FROM estados_solicitud
+                WHERE nombre = %s
+                """,
+                (estado_destino,),
+            )
+            destino = cursor.fetchone()
+
+            if destino is None:
+                raise ErrorGestionSolicitud(
+                    "El estado de destino no está configurado."
+                )
+
+            nuevo_motivo = (
+                motivo_rechazo
+                if estado_destino == "Rechazada"
+                else None
+            )
+
+            cursor.execute(
+                """
+                UPDATE solicitudes
+                SET estado_id = %s,
+                    motivo_rechazo = %s,
+                    version = version + 1
+                WHERE id = %s
+                  AND version = %s
+                  AND estado_id = %s
+                """,
+                (
+                    destino["id"],
+                    nuevo_motivo,
+                    solicitud["id"],
+                    version_esperada,
+                    solicitud["estado_id"],
+                ),
+            )
+
+            if cursor.rowcount != 1:
+                raise ErrorGestionSolicitud(
+                    "No se pudo aplicar el cambio. "
+                    "Recargue el detalle."
+                )
+
+        registrar_evento(
+            connection,
+            actor["id"],
+            "SOLICITUD_ESTADO_CAMBIADO",
+            {
+                "solicitud_afectada_id": solicitud["id"],
+                "public_id": public_id,
+                "estado_anterior": estado_actual["nombre"],
+                "estado_nuevo": destino["nombre"],
+                "motivo_rechazo_anterior": (
+                    solicitud["motivo_rechazo"]
+                ),
+                "motivo_rechazo_nuevo": nuevo_motivo,
+                "version_anterior": version_esperada,
+                "version_nueva": version_esperada + 1,
             },
             ip,
         )
