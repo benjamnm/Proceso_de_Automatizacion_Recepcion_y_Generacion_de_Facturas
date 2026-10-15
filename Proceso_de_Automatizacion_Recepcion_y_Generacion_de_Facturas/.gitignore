@@ -9,5 +9,6 @@ venv/
 *.pyc
 .env
 node_modules/
+storage/
 uploads/
-instance/
+*.xml
