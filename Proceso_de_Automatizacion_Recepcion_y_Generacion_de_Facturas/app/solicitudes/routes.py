@@ -1,5 +1,4 @@
 import re
-import os
 import pymysql
 
 from datetime import date
@@ -13,7 +12,6 @@ from flask import (
     render_template,
     request,
     url_for,
-    send_file,
 )
 from flask_login import current_user
 
@@ -26,7 +24,6 @@ from ..services.envios_solicitud import (
     generar_token_envio,
     verificar_token_envio,
 )
-from ..services.usuarios import registrar_evento
 from ..services.solicitudes import (
     ErrorGestionSolicitud,
     TRANSICIONES_ESTADO,
@@ -38,11 +35,6 @@ from ..services.solicitudes import (
 from ..services.validaciones import (
     ErrorValidacion,
     normalizar_rut,
-)
-from ..services.registros_xml import (
-    ErrorArchivoXML,
-    guardar_xml,
-    obtener_xml_autorizado,
 )
 
 
@@ -442,36 +434,11 @@ def detalle(public_id):
         else ()
     )
 
-    connection = get_db_connection()
-
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute(
-                """
-                SELECT
-                    id,
-                    nombre_original,
-                    nombre_almacenado,
-                    tamano_bytes,
-                    sha256,
-                    subido_en
-                FROM archivos_xml
-                WHERE solicitud_id = %s
-                """,
-                (solicitud["id"],),
-            )
-            registro_xml = cursor.fetchone()
-
-    finally:
-        connection.close()
-
     return render_template(
         "solicitudes/detalle.html",
         solicitud=solicitud,
-        registro_xml=registro_xml,
         estados_permitidos=estados_permitidos,
     )
-    
 
 
 @solicitudes_bp.route(
@@ -631,133 +598,3 @@ def cambiar_estado(public_id):
         "solicitudes.detalle",
         public_id=public_id,
     ))
-    
-@solicitudes_bp.post("/<string:public_id>/xml")
-@solicitud_required
-def cargar_xml(public_id):
-    archivo = request.files.get("registro_xml")
-
-    if archivo is None:
-        flash("Seleccione un archivo XML.", "danger")
-        return redirect(url_for(
-            "solicitudes.detalle",
-            public_id=public_id,
-        ))
-
-    try:
-        guardar_xml(
-            actor_id=int(current_user.id),
-            public_id=public_id,
-            archivo=archivo,
-            ip=request.remote_addr,
-        )
-
-    except ErrorArchivoXML as exc:
-        flash(str(exc), "danger")
-
-    except pymysql.MySQLError:
-        current_app.logger.exception(
-            "Error de base de datos al cargar XML."
-        )
-        flash(
-            "No se pudo registrar el XML.",
-            "danger",
-        )
-
-    except OSError:
-        current_app.logger.exception(
-            "Error de almacenamiento al guardar XML."
-        )
-        flash(
-            "No se pudo guardar el archivo en el almacenamiento.",
-            "danger",
-        )
-
-    else:
-        flash(
-            "XML cargado correctamente.",
-            "success",
-        )
-
-    return redirect(url_for(
-        "solicitudes.detalle",
-        public_id=public_id,
-    ))
-
-
-@solicitudes_bp.get(
-    "/<string:public_id>/xml/descargar"
-)
-@solicitud_required
-def descargar_xml(public_id):
-    try:
-        actor, solicitud, registro_xml, ruta = (
-            obtener_xml_autorizado(
-                actor_id=int(current_user.id),
-                public_id=public_id,
-            )
-        )
-
-    except ErrorArchivoXML as exc:
-        flash(str(exc), "danger")
-        return redirect(url_for(
-            "solicitudes.detalle",
-            public_id=public_id,
-        ))
-
-    if not os.path.isfile(ruta):
-        current_app.logger.error(
-            "XML registrado pero ausente: %s",
-            ruta,
-        )
-        flash(
-            "El archivo no está disponible en el almacenamiento.",
-            "danger",
-        )
-        return redirect(url_for(
-            "solicitudes.detalle",
-            public_id=public_id,
-        ))
-
-    connection = get_db_connection()
-
-    try:
-        registrar_evento(
-            connection,
-            actor["id"],
-            "XML_DESCARGADO",
-            {
-                "solicitud_afectada_id": solicitud["id"],
-                "public_id": public_id,
-                "archivo_xml_id": registro_xml["id"],
-                "sha256": registro_xml["sha256"],
-            },
-            request.remote_addr,
-        )
-        connection.commit()
-
-    except pymysql.MySQLError:
-        connection.rollback()
-        current_app.logger.exception(
-            "No se pudo registrar la descarga del XML."
-        )
-        flash(
-            "No se pudo registrar la descarga. Intente nuevamente.",
-            "danger",
-        )
-        return redirect(url_for(
-            "solicitudes.detalle",
-            public_id=public_id,
-        ))
-
-    finally:
-        connection.close()
-
-    return send_file(
-        ruta,
-        mimetype="application/xml",
-        as_attachment=True,
-        download_name=registro_xml["nombre_original"],
-        conditional=True,
-        max_age=0,
-    )
