@@ -320,7 +320,7 @@ def usuario_estado(usuario_id):
 @admin_required
 def auditoria():
     connection = get_db_connection()
-    
+
     try:
         with connection.cursor() as cursor:
             cursor.execute(
@@ -345,22 +345,27 @@ def auditoria():
                     'SOLICITUD_CREADA',
                     'SOLICITUD_EDITADA',
                     'SOLICITUD_ESTADO_CAMBIADO',
+                    'XML_CARGADO',
+                    'XML_REEMPLAZADO',
+                    'XML_DESCARGADO'
                 )
                 ORDER BY a.id DESC
                 LIMIT 100
                 """
             )
             eventos = cursor.fetchall()
+
         for evento in eventos:
             detalle = evento["detalle"]
-            
+
             if isinstance(detalle, (str, bytes)):
                 detalle = json.loads(detalle)
-            
+
             evento["detalle"] = detalle
+
     finally:
         connection.close()
-        
+
     return render_template(
         "admin/auditoria.html",
         eventos=eventos,

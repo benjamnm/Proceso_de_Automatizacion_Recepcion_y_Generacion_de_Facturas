@@ -44,8 +44,7 @@ Auditoría de usuarios | Facturaciones SpA
                         <tr>
                             <td>{{ evento.creado_en }}</td>
                             <td>
-                                {{ evento.actor_nombre
-                                   or 'Usuario no disponible' }}
+                                {{ evento.usuario_nombre or 'Usuario no disponible' }}
                             </td>
                             <td>{{ evento.accion }}</td>
                             <td>
