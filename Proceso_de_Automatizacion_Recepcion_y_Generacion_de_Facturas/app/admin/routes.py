@@ -252,9 +252,6 @@ def usuario_editar(usuario_id):
         
         except ErrorGestionUsuario as exc:
             error = str(exc)
-            
-        except ErrorGestionUsuario as exc:
-            error = str(exc)
         
         except pymysql.err.IntegrityError:
             error = ( 
@@ -299,7 +296,7 @@ def usuario_estado(usuario_id):
         flash(str(exc), "danger")
         
     except pymysql.MySQLError:
-        current_app.logger.exeption(
+        current_app.logger.exception(
             "Error al cambiar el estado del usuario %s", usuario_id,
         )
         flash(

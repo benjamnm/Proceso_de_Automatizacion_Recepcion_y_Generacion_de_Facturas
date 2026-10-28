@@ -1,6 +1,3 @@
-from datetime import datetime
-
-import pymysql
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import (
     current_user,
@@ -10,13 +7,7 @@ from flask_login import (
 )
 
 from . import auth_bp
-from ..extensions import login_manager
 from ..models import User
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.get_by_id(int(user_id))
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
@@ -28,6 +19,8 @@ def login():
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
 
+        # get_by_email solo devuelve cuentas activas: el mensaje es
+        # el mismo para cuenta inexistente, inactiva o clave errónea.
         user = User.get_by_email(email)
 
         if user is None or not user.check_password(password):
@@ -37,31 +30,7 @@ def login():
             )
             return render_template("auth/login.html")
 
-        if not user.activo:
-            flash(
-                "El usuario se encuentra desactivado.",
-                "warning"
-            )
-            return render_template("auth/login.html")
-
-        # Actualizar último login
-        conn = pymysql.connect(
-            host="127.0.0.1",
-            user="root",
-            password="",
-            database="facturaciones_spa_mvp",
-            charset="utf8mb4"
-        )
-        try:
-            with conn.cursor() as cursor:
-                cursor.execute(
-                    "UPDATE usuarios SET ultimo_login = %s WHERE id = %s",
-                    (datetime.utcnow(), user.id)
-                )
-            conn.commit()
-        finally:
-            conn.close()
-
+        user.registrar_login()
         login_user(user, remember=False)
         return redirect(url_for("dashboard"))
 

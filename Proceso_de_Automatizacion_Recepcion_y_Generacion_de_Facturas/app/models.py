@@ -1,19 +1,21 @@
-from datetime import datetime
-
 import pymysql
+from flask import current_app
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
 def get_db_connection():
-    """Obtiene conexión directa a MySQL"""
+    """Abre una conexión MySQL con los datos de la configuración activa."""
+    config = current_app.config
+
     return pymysql.connect(
-        host="127.0.0.1",
-        user="root",
-        password="",
-        database="facturaciones_spa_mvp",
+        host=config["DB_HOST"],
+        port=int(config["DB_PORT"]),
+        user=config["DB_USER"],
+        password=config["DB_PASSWORD"],
+        database=config["DB_NAME"],
         charset="utf8mb4",
-        cursorclass=pymysql.cursors.DictCursor
+        cursorclass=pymysql.cursors.DictCursor,
     )
 
 
@@ -32,65 +34,62 @@ class User(UserMixin):
         self.creado_en = creado_en
         self.role = role
 
-    @staticmethod
-    def get_by_id(user_id):
+    @classmethod
+    def _desde_fila(cls, fila):
+        if fila is None:
+            return None
+
+        return cls(
+            id=fila["id"],
+            rol_id=fila["rol_id"],
+            rut=fila["rut"],
+            nombre=fila["nombre"],
+            email=fila["email"],
+            telefono=fila["telefono"],
+            password_hash=fila["password_hash"],
+            activo=fila["activo"],
+            ultimo_login=fila["ultimo_login"],
+            creado_en=fila["creado_en"],
+            role={"nombre": fila["role_nombre"]},
+        )
+
+    @classmethod
+    def _buscar(cls, columna, valor):
+        # "columna" solo recibe valores fijos desde este módulo.
         conn = get_db_connection()
         try:
             with conn.cursor() as cursor:
-                cursor.execute("""
-                    SELECT u.*, r.nombre as role_nombre
+                cursor.execute(
+                    f"""
+                    SELECT u.*, r.nombre AS role_nombre
                     FROM usuarios u
                     JOIN roles r ON u.rol_id = r.id
-                    WHERE u.id = %s AND u.activo = TRUE
-                """, (user_id,))
-                result = cursor.fetchone()
-
-                if result:
-                    return User(
-                        id=result['id'],
-                        rol_id=result['rol_id'],
-                        rut=result['rut'],
-                        nombre=result['nombre'],
-                        email=result['email'],
-                        telefono=result['telefono'],
-                        password_hash=result['password_hash'],
-                        activo=result['activo'],
-                        ultimo_login=result['ultimo_login'],
-                        creado_en=result['creado_en'],
-                        role={'nombre': result['role_nombre']}
-                    )
-                return None
+                    WHERE u.{columna} = %s AND u.activo = TRUE
+                    """,
+                    (valor,),
+                )
+                return cls._desde_fila(cursor.fetchone())
         finally:
             conn.close()
 
-    @staticmethod
-    def get_by_email(email):
+    @classmethod
+    def get_by_id(cls, user_id):
+        return cls._buscar("id", user_id)
+
+    @classmethod
+    def get_by_email(cls, email):
+        return cls._buscar("email", email.lower().strip())
+
+    def registrar_login(self):
         conn = get_db_connection()
         try:
             with conn.cursor() as cursor:
-                cursor.execute("""
-                    SELECT u.*, r.nombre as role_nombre
-                    FROM usuarios u
-                    JOIN roles r ON u.rol_id = r.id
-                    WHERE u.email = %s AND u.activo = TRUE
-                """, (email.lower().strip(),))
-                result = cursor.fetchone()
-
-                if result:
-                    return User(
-                        id=result['id'],
-                        rol_id=result['rol_id'],
-                        rut=result['rut'],
-                        nombre=result['nombre'],
-                        email=result['email'],
-                        telefono=result['telefono'],
-                        password_hash=result['password_hash'],
-                        activo=result['activo'],
-                        ultimo_login=result['ultimo_login'],
-                        creado_en=result['creado_en'],
-                        role={'nombre': result['role_nombre']}
-                    )
-                return None
+                cursor.execute(
+                    "UPDATE usuarios SET ultimo_login = UTC_TIMESTAMP() "
+                    "WHERE id = %s",
+                    (self.id,),
+                )
+            conn.commit()
         finally:
             conn.close()
 
@@ -102,8 +101,8 @@ class User(UserMixin):
 
     @property
     def is_active(self):
-        return self.activo
+        return bool(self.activo)
 
     @property
     def role_name(self):
-        return self.role['nombre'] if self.role else ""
+        return self.role["nombre"] if self.role else ""
