@@ -38,6 +38,9 @@ def create_app(config_class=Config):
 
     registrar_manejadores_error(app)
 
+    from .cli import registrar_comandos
+    registrar_comandos(app)
+
     @app.get("/")
     def index():
         return redirect(url_for("auth.login"))

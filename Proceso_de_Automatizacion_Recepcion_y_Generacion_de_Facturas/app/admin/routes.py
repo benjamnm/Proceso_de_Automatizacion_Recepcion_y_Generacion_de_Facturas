@@ -344,7 +344,9 @@ def auditoria():
                     'SOLICITUD_ESTADO_CAMBIADO',
                     'XML_CARGADO',
                     'XML_REEMPLAZADO',
-                    'XML_DESCARGADO'
+                    'XML_DESCARGADO',
+                    'CORREO_ENVIADO',
+                    'CORREO_FALLIDO'
                 )
                 ORDER BY a.id DESC
                 LIMIT 100

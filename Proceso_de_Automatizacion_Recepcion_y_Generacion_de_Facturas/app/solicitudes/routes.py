@@ -45,6 +45,12 @@ from ..services.registros_xml import (
     guardar_xml,
     obtener_xml_autorizado,
 )
+from ..services.correos_solicitud import (
+    ESTADOS_QUE_ADMITEN_ENVIO,
+    ErrorEnvioCorreo,
+    enviar_xml_solicitud,
+    listar_envios,
+)
 
 
 CAMPOS_FORMULARIO = (
@@ -462,7 +468,54 @@ def detalle(public_id):
         solicitud=solicitud,
         registro_xml=registro_xml,
         estados_permitidos=estados_permitidos,
+        envios=listar_envios(solicitud["id"]),
+        permite_envio=(
+            registro_xml is not None
+            and solicitud["estado_nombre"] in ESTADOS_QUE_ADMITEN_ENVIO
+            and bool(solicitud["email_contacto_receptor"])
+        ),
     )
+
+
+@solicitudes_bp.post("/<string:public_id>/correo")
+@solicitud_required
+def enviar_correo(public_id):
+    try:
+        resultado = enviar_xml_solicitud(
+            actor_id=int(current_user.id),
+            public_id=public_id,
+            ip=request.remote_addr,
+        )
+
+    except ErrorEnvioCorreo as exc:
+        flash(str(exc), "danger")
+
+    except pymysql.MySQLError:
+        current_app.logger.exception(
+            "Error de BD al preparar el envío de %s", public_id
+        )
+        flash("No se pudo preparar el envío. Intente nuevamente.", "danger")
+
+    else:
+        if resultado["estado"] == "ENVIADO":
+            flash(
+                f"XML enviado a {resultado['destinatario']}.",
+                "success",
+            )
+        else:
+            flash(
+                f"El envío falló: {resultado['mensaje']}",
+                "danger",
+            )
+
+        if not resultado["registrado"]:
+            flash(
+                "No se pudo registrar el resultado del envío. "
+                "Revise el historial antes de reintentar.",
+                "warning",
+            )
+
+    return redirect(url_for("solicitudes.detalle", public_id=public_id))
 
 @solicitudes_bp.post("/<string:public_id>/xml")
 @solicitud_required

@@ -1,0 +1,21 @@
+Estimado/a {{ solicitud.nombre }}:
+
+Junto con saludar, adjuntamos el documento XML asociado a la siguiente
+solicitud de facturación:
+
+  RUT receptor:       {{ solicitud.rut }}
+  Concepto:           {{ solicitud.concepto }}
+  Monto bruto:        {{ monto }} CLP ({{ solicitud.tipo_afectacion }})
+  Fecha de emisión:   {{ solicitud.fecha_emision }}
+{% if solicitud.nro_orden_compra %}  Orden de compra:    {{ solicitud.nro_orden_compra }}
+{% endif %}  Referencia:         {{ solicitud.public_id[:8] }}
+
+Para consultas, responda este correo y su mensaje llegará al
+responsable de la solicitud ({{ solicitud.email_emisor }}).
+
+Saludos cordiales,
+Facturaciones SpA
+
+--
+Mensaje generado automáticamente. Este correo y su adjunto son
+confidenciales y están dirigidos únicamente a su destinatario.

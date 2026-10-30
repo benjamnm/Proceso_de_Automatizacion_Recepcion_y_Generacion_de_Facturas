@@ -162,6 +162,87 @@ Solicitud | Facturaciones SpA
     </div>
 </section>    
 
+<section class="card mt-4">
+    <div class="card-body p-4">
+        <h2 class="h5 mb-3">Envío por correo</h2>
+
+        {% if permite_envio %}
+        <form
+            method="post"
+            action="{{ url_for('solicitudes.enviar_correo',
+                               public_id=solicitud.public_id) }}"
+            onsubmit="if (!confirm('¿Confirma el envío del XML al receptor?')) { return false; }
+                      this.querySelector('button').disabled = true;
+                      return true;"
+        >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <p class="mb-2">
+                Destinatario:
+                <strong>{{ solicitud.email_contacto_receptor }}</strong>
+            </p>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-envelope"></i>
+                {{ 'Reenviar XML' if envios else 'Enviar XML al receptor' }}
+            </button>
+        </form>
+        {% elif not registro_xml %}
+        <p class="text-body-secondary mb-0">
+            Cargue el XML para habilitar el envío.
+        </p>
+        {% elif not solicitud.email_contacto_receptor %}
+        <p class="text-body-secondary mb-0">
+            La solicitud no tiene correo de receptor registrado.
+        </p>
+        {% else %}
+        <p class="text-body-secondary mb-0">
+            El estado actual no permite enviar el XML.
+        </p>
+        {% endif %}
+
+        {% if envios %}
+        <div class="table-responsive mt-4">
+            <table class="table table-sm align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Destinatario</th>
+                        <th>Estado</th>
+                        <th>Enviado por</th>
+                        <th>Adjunto (SHA-256)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for envio in envios %}
+                    <tr>
+                        <td>{{ envio.creado_en }}</td>
+                        <td class="text-break">{{ envio.destinatario }}</td>
+                        <td>
+                            {% if envio.estado == 'ENVIADO' %}
+                            <span class="badge text-bg-success">Enviado</span>
+                            {% elif envio.estado == 'FALLIDO' %}
+                            <span class="badge text-bg-danger"
+                                  title="{{ envio.error_codigo }}">
+                                Fallido ({{ envio.error_codigo }})
+                            </span>
+                            {% else %}
+                            <span class="badge text-bg-warning">En proceso</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ envio.enviado_por_nombre or '—' }}</td>
+                        <td>
+                            <code title="{{ envio.adjunto_sha256 }}">
+                                {{ (envio.adjunto_sha256 or '')[:12] }}…
+                            </code>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
     {% if current_user.role_name == 'Administrador' %}
 <section class="card mt-4">
     <div class="card-body p-4">
