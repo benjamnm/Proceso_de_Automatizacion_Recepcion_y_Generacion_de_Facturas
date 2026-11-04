@@ -1,12 +1,14 @@
 from flask import (
     Flask,
+    current_app,
     flash,
     redirect,
     render_template,
     request,
     url_for,
 )
-from flask_login import login_required
+import pymysql
+from flask_login import current_user, login_required
 from werkzeug.exceptions import RequestEntityTooLarge
 
 from config import Config
@@ -48,9 +50,46 @@ def create_app(config_class=Config):
     @app.get("/dashboard")
     @login_required
     def dashboard():
-        return render_template("dashboard.html")
+        return render_template("dashboard.html", resumen=resumen_panel())
 
     return app
+
+
+def resumen_panel():
+    """Contadores del panel del Administrador. None si la BD no responde."""
+    if current_user.role_name != "Administrador":
+        return None
+
+    from .models import get_db_connection
+
+    try:
+        connection = get_db_connection()
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT e.id, e.nombre, COUNT(s.id) AS total
+                    FROM estados_solicitud AS e
+                    LEFT JOIN solicitudes AS s ON s.estado_id = e.id
+                    WHERE e.nombre IN ('En revisión', 'En corrección')
+                    GROUP BY e.id, e.nombre
+                    """
+                )
+                estados = {f["nombre"]: f for f in cursor.fetchall()}
+                cursor.execute(
+                    """
+                    SELECT COUNT(*) AS total FROM correos_entrantes
+                    WHERE estado IN ('REQUIERE_REVISION', 'ERROR')
+                    """
+                )
+                correos = cursor.fetchone()["total"]
+        finally:
+            connection.close()
+    except pymysql.MySQLError:
+        current_app.logger.warning("No se pudo calcular el resumen del panel.")
+        return None
+
+    return {"estados": estados, "correos_por_revisar": correos}
 
 
 def registrar_manejadores_error(app):

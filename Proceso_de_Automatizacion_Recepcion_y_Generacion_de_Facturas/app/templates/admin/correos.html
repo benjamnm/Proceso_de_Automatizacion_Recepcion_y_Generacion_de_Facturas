@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}
+Bandeja de correos | Facturaciones SpA
+{% endblock %}
+
+{% block content %}
+<main class="container py-4 py-lg-5">
+    <header class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <h1 class="h3 mb-1">Bandeja de correos de facturación</h1>
+            <p class="text-body-secondary mb-0">
+                Correos descargados por IMAP y su resultado. Últimos 100.
+            </p>
+        </div>
+
+        <div class="d-flex gap-2">
+            <form method="post" action="{{ url_for('admin.correos_revisar') }}"
+                  onsubmit="this.querySelector('button').disabled = true;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-arrow-repeat"></i> Revisar bandeja ahora
+                </button>
+            </form>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">Panel</a>
+        </div>
+    </header>
+
+    {% if not imap_configurado %}
+    <div class="alert alert-warning">
+        La bandeja IMAP no está configurada (IMAP_HOST en .env). Solo se
+        procesarán los correos ya descargados.
+    </div>
+    {% endif %}
+
+    <form method="get" class="d-flex gap-2 mb-3" style="max-width: 420px;">
+        <select name="estado" class="form-select" aria-label="Filtrar por estado">
+            <option value="">Todos los estados</option>
+            {% for e in estados %}
+            <option value="{{ e }}" {% if estado == e %}selected{% endif %}>{{ e }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-outline-primary">Filtrar</button>
+    </form>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Recibido</th>
+                            <th>Remitente / asunto</th>
+                            <th>Estado</th>
+                            <th>Resultado</th>
+                            <th class="text-end">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set colores = {'RECIBIDO': 'secondary', 'PROCESADO': 'success',
+                                          'REQUIERE_REVISION': 'warning', 'DESCARTADO': 'dark',
+                                          'ERROR': 'danger'} %}
+                        {% for c in correos %}
+                        <tr>
+                            <td class="small">{{ c.recibido_en }}</td>
+                            <td class="text-break">
+                                <div>{{ c.remitente }}</div>
+                                <div class="small text-body-secondary">{{ c.asunto }}</div>
+                            </td>
+                            <td>
+                                <span class="badge text-bg-{{ colores.get(c.estado, 'secondary') }}">
+                                    {{ c.estado }}
+                                </span>
+                            </td>
+                            <td class="small">
+                                {% if c.public_id %}
+                                <a href="{{ url_for('solicitudes.factura', public_id=c.public_id) }}">
+                                    Factura de {{ c.cliente_nombre or 'cliente' }}
+                                </a>
+                                {% endif %}
+                                {% for m in c.observaciones.get('motivos', []) %}
+                                <div class="text-warning">• {{ m }}</div>
+                                {% endfor %}
+                                {% for a in c.observaciones.get('alertas', []) %}
+                                <div class="text-body-secondary">• {{ a }}</div>
+                                {% endfor %}
+                                {% if c.datos_extraidos %}
+                                <details class="mt-1">
+                                    <summary>Datos extraídos</summary>
+                                    <pre class="small mb-0">{{ c.datos_extraidos | tojson(indent=2) }}</pre>
+                                </details>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                <div class="d-flex flex-column gap-1 align-items-end">
+                                    <a href="{{ url_for('admin.correo_eml', correo_id=c.id) }}"
+                                       class="btn btn-outline-secondary btn-sm">Descargar .eml</a>
+
+                                    {% if c.estado in ['REQUIERE_REVISION', 'ERROR'] %}
+                                    <form method="post"
+                                          action="{{ url_for('admin.correo_reprocesar', correo_id=c.id) }}">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-outline-primary btn-sm">
+                                            Reprocesar
+                                        </button>
+                                    </form>
+                                    {% endif %}
+
+                                    {% if c.estado in ['RECIBIDO', 'REQUIERE_REVISION', 'ERROR'] %}
+                                    <form method="post" class="d-flex gap-1"
+                                          action="{{ url_for('admin.correo_descartar', correo_id=c.id) }}">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <input name="motivo" class="form-control form-control-sm"
+                                               placeholder="Motivo" minlength="5" maxlength="300" required>
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                            Descartar
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="5">No hay correos registrados.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <p class="small text-body-secondary mt-3">
+        Para un cliente no identificado: regístrelo en Clientes con el correo del
+        remitente y use «Reprocesar».
+    </p>
+</main>
+{% endblock %}

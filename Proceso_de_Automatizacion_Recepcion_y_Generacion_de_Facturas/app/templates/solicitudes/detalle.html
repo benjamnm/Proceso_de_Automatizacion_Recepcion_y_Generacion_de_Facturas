@@ -15,7 +15,19 @@ Solicitud | Facturaciones SpA
         <p>Versión: {{ solicitud.version }}</p>
 
         <span class="badge text-bg-secondary">
-            {% if solicitud.estado_nombre == 'Pendiente' %}
+            <a
+                href="{{ url_for('solicitudes.factura', public_id=solicitud.public_id) }}"
+                class="btn btn-success"
+            >
+                <i class="bi bi-receipt"></i>
+                {% if factura_actual %}
+                    Factura v{{ factura_actual.version }} ({{ factura_actual.estado }})
+                {% else %}
+                    Generar factura
+                {% endif %}
+            </a>
+
+            {% if editable %}
             <a
                 href="{{ url_for(
                     'solicitudes.editar',
@@ -323,6 +335,10 @@ Solicitud | Facturaciones SpA
                 Actualizar estado
             </button>
         </form>
+        <p class="small text-body-secondary mt-3 mb-0">
+            Enviar a revisión, validar o devolver a corrección se realiza
+            en la pantalla de la factura.
+        </p>
         {% else %}
         <p class="text-body-secondary mb-0">
             No hay transiciones habilitadas para este estado.
@@ -341,8 +357,8 @@ Solicitud | Facturaciones SpA
 {% endif %}
 
     <div class="alert alert-info mt-4">
-        Este registro es una solicitud de facturación,
-        no una factura tributaria emitida.
+        Este registro es una solicitud de facturación. La factura y el
+        archivo para el SII se gestionan en la pantalla «Factura».
     </div>
 
     <div class="d-flex gap-2">

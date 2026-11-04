@@ -4,6 +4,7 @@ import json
 from email_validator import EmailNotValidError, validate_email
 from flask import (
     current_app,
+    send_file,
     flash,
     redirect,
     render_template,
@@ -20,6 +21,15 @@ from ..services.usuarios import (
 )
 
 from werkzeug.security import generate_password_hash
+
+from ..services.correo_entrante import (
+    ErrorCorreoEntrante,
+    descartar_correo,
+    listar_correos,
+    obtener_eml_autorizado,
+    reprocesar_correo,
+    revisar_bandeja,
+)
 
 from . import admin_bp
 from ..models import get_db_connection
@@ -346,7 +356,18 @@ def auditoria():
                     'XML_REEMPLAZADO',
                     'XML_DESCARGADO',
                     'CORREO_ENVIADO',
-                    'CORREO_FALLIDO'
+                    'CORREO_FALLIDO',
+                    'CORREO_RECIBIDO',
+                    'CORREO_REQUIERE_REVISION',
+                    'CORREO_REPROCESADO',
+                    'CORREO_DESCARTADO',
+                    'CORREO_ENTRANTE_DESCARGADO',
+                    'FACTURA_GENERADA',
+                    'FACTURA_OBSERVADA',
+                    'FACTURA_APROBADA',
+                    'ARCHIVO_SII_DESCARGADO',
+                    'NOTIFICACION_ENVIADA',
+                    'NOTIFICACION_FALLIDA'
                 )
                 ORDER BY a.id DESC
                 LIMIT 100
@@ -368,4 +389,140 @@ def auditoria():
     return render_template(
         "admin/auditoria.html",
         eventos=eventos,
+    )
+
+
+# --- Bandeja de correos entrantes ----------------------------------------
+
+ESTADOS_CORREO = (
+    "RECIBIDO", "PROCESADO", "REQUIERE_REVISION", "DESCARTADO", "ERROR",
+)
+
+
+@admin_bp.get("/correos")
+@admin_required
+def correos():
+    estado = request.args.get("estado", "")
+    if estado and estado not in ESTADOS_CORREO:
+        estado = ""
+
+    return render_template(
+        "admin/correos.html",
+        correos=listar_correos(estado or None),
+        estado=estado,
+        estados=ESTADOS_CORREO,
+        imap_configurado=bool(current_app.config.get("IMAP_HOST")),
+    )
+
+
+@admin_bp.post("/correos/revisar")
+@admin_required
+def correos_revisar():
+    try:
+        resultado = revisar_bandeja()
+    except ErrorCorreoEntrante as exc:
+        flash(str(exc), "warning")
+    except pymysql.MySQLError:
+        current_app.logger.exception("Error de BD al revisar la bandeja")
+        flash("No se pudo revisar la bandeja. Intente nuevamente.", "danger")
+    else:
+        if resultado["error_descarga"]:
+            flash(f"Bandeja IMAP: {resultado['error_descarga']}", "danger")
+        if resultado["descarga"]:
+            d = resultado["descarga"]
+            flash(
+                f"Correos revisados: {d['revisados']} · de facturación "
+                f"guardados: {d['guardados']} · ignorados: {d['ignorados']} · "
+                f"omitidos por tamaño: {d['omitidos_tamano']}.",
+                "info",
+            )
+        p = resultado["proceso"]
+        flash(
+            f"Facturas generadas: {p['procesados']} · requieren revisión: "
+            f"{p['requieren_revision']} · errores: {p['errores']} · avisos "
+            f"enviados: {p['avisos_enviados']}.",
+            "success" if not p["errores"] else "warning",
+        )
+
+    return redirect(url_for("admin.correos"))
+
+
+@admin_bp.post("/correos/<int:correo_id>/reprocesar")
+@admin_required
+def correo_reprocesar(correo_id):
+    try:
+        resultado = reprocesar_correo(
+            int(current_user.id), correo_id, request.remote_addr
+        )
+    except ErrorCorreoEntrante as exc:
+        flash(str(exc), "danger")
+    except pymysql.MySQLError:
+        current_app.logger.exception("Error al reprocesar el correo %s", correo_id)
+        flash("No se pudo reprocesar el correo.", "danger")
+    else:
+        if resultado["estado"] == "PROCESADO":
+            flash("Factura generada desde el correo.", "success")
+            return redirect(url_for(
+                "solicitudes.factura", public_id=resultado["public_id"]
+            ))
+        flash(
+            "El correo sigue requiriendo revisión: "
+            + " ".join(resultado["motivos"]),
+            "warning",
+        )
+
+    return redirect(url_for("admin.correos"))
+
+
+@admin_bp.post("/correos/<int:correo_id>/descartar")
+@admin_required
+def correo_descartar(correo_id):
+    try:
+        descartar_correo(
+            int(current_user.id), correo_id,
+            request.form.get("motivo", ""), request.remote_addr,
+        )
+    except ErrorCorreoEntrante as exc:
+        flash(str(exc), "danger")
+    except pymysql.MySQLError:
+        current_app.logger.exception("Error al descartar el correo %s", correo_id)
+        flash("No se pudo descartar el correo.", "danger")
+    else:
+        flash("Correo descartado.", "success")
+
+    return redirect(url_for("admin.correos"))
+
+
+@admin_bp.get("/correos/<int:correo_id>/eml")
+@admin_required
+def correo_eml(correo_id):
+    try:
+        actor, correo, ruta = obtener_eml_autorizado(int(current_user.id), correo_id)
+    except ErrorCorreoEntrante as exc:
+        flash(str(exc), "danger")
+        return redirect(url_for("admin.correos"))
+
+    connection = get_db_connection()
+    try:
+        registrar_evento(
+            connection, actor["id"], "CORREO_ENTRANTE_DESCARGADO",
+            {"correo_entrante_id": correo_id, "sha256": correo["sha256"]},
+            request.remote_addr,
+        )
+        connection.commit()
+    except pymysql.MySQLError:
+        connection.rollback()
+        current_app.logger.exception("No se pudo auditar la descarga del .eml.")
+        flash("No se pudo registrar la descarga.", "danger")
+        return redirect(url_for("admin.correos"))
+    finally:
+        connection.close()
+
+    # Se entrega como descarga (nunca se renderiza en el navegador).
+    return send_file(
+        ruta,
+        mimetype="message/rfc822",
+        as_attachment=True,
+        download_name=f"correo_{correo_id}.eml",
+        max_age=0,
     )

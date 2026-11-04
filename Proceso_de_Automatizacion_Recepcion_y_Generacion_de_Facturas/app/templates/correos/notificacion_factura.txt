@@ -1,0 +1,23 @@
+Estimado/a Administrador/a:
+
+Se generó la versión {{ factura.version }} de una factura y está lista
+para su revisión y validación.
+
+  Receptor:           {{ datos.receptor.razon_social }} ({{ datos.receptor.rut }})
+  Concepto:           {{ datos.detalle.concepto }}
+  Total:              {{ total }} CLP ({{ datos.tipo_afectacion }})
+  Fecha de emisión:   {{ datos.fecha_emision }}
+{% if datos.detalle.nro_orden_compra %}  Orden de compra:    {{ datos.detalle.nro_orden_compra }}
+{% endif %}  Referencia:         {{ solicitud.public_id[:8] }}
+{% if correo %}  Origen:             correo de {{ correo.remitente }}
+{% endif %}{% if factura.version > 1 %}
+Esta versión corrige la anterior. Revise los cambios en la plataforma.
+{% endif %}{% if alertas %}
+Puntos a verificar:
+{% for alerta in alertas %}  - {{ alerta }}
+{% endfor %}{% endif %}
+Revise y valide la factura en:
+{{ enlace }}
+
+--
+Mensaje generado automáticamente por Facturaciones SpA.

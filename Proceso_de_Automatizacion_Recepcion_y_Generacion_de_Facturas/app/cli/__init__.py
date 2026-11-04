@@ -6,6 +6,12 @@ from ..services.correo import (
     enviar,
     validar_configuracion,
 )
+from ..services.correo_entrante import (
+    ErrorCorreoEntrante,
+    conectar,
+    revisar_bandeja,
+    validar_configuracion_imap,
+)
 from ..services.validaciones import ErrorValidacion, normalizar_correo
 
 
@@ -39,3 +45,53 @@ def registrar_comandos(app):
             ) from exc
 
         click.echo(f"Correo enviado a {destinatario}. Message-ID: {message_id}")
+
+    @app.cli.command("imap-prueba")
+    def imap_prueba():
+        """Valida la conexión IMAP cifrada y cuenta los no leídos."""
+        try:
+            cfg = validar_configuracion_imap()
+            conexion = conectar(cfg)
+        except ErrorCorreoEntrante as exc:
+            raise click.ClickException(
+                f"[{exc.codigo}] {exc} | {exc.detalle}"
+            ) from exc
+
+        try:
+            _, datos = conexion.uid("SEARCH", None, "UNSEEN")
+            no_leidos = len((datos[0] or b"").split())
+        finally:
+            try:
+                conexion.logout()
+            except Exception:  # noqa: BLE001
+                pass
+
+        click.echo(
+            f"Conexión IMAP correcta: {cfg['host']}:{cfg['puerto']} "
+            f"({cfg['seguridad']}), carpeta {cfg['buzon']}. "
+            f"No leídos: {no_leidos}."
+        )
+
+    @app.cli.command("correo-revisar")
+    @click.option(
+        "--solo-procesar", is_flag=True,
+        help="No conecta a IMAP; solo procesa correos ya descargados.",
+    )
+    def correo_revisar(solo_procesar):
+        """Descarga correos de facturación y genera las facturas.
+
+        Pensado para el Programador de tareas de Windows (cada 5 minutos).
+        """
+        try:
+            resultado = revisar_bandeja(descargar=not solo_procesar)
+        except ErrorCorreoEntrante as exc:
+            raise click.ClickException(str(exc)) from exc
+
+        if resultado["descarga"]:
+            click.echo(f"Descarga: {resultado['descarga']}")
+        if resultado["error_descarga"]:
+            click.echo(f"Error IMAP: {resultado['error_descarga']}", err=True)
+        click.echo(f"Proceso: {resultado['proceso']}")
+
+        if resultado["error_descarga"]:
+            raise SystemExit(1)

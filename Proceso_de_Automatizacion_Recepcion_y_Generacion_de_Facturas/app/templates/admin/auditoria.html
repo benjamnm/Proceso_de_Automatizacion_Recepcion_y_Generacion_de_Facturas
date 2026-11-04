@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-Auditoría de usuarios | Facturaciones SpA
+Auditoría | Facturaciones SpA
 {% endblock %}
 
 {% block content %}
@@ -35,6 +35,7 @@ Auditoría de usuarios | Facturaciones SpA
                             <th scope="col">Responsable</th>
                             <th scope="col">Acción</th>
                             <th scope="col">Registro afectado</th>
+                            <th scope="col">Resumen</th>
                             <th scope="col">Detalle</th>
                         </tr>
                     </thead>
@@ -48,19 +49,27 @@ Auditoría de usuarios | Facturaciones SpA
                             </td>
                             <td>{{ evento.accion }}</td>
                             <td>
-                                {% if evento.detalle.get('cliente_afectado_id') %}
+                                {% if evento.detalle.get('solicitud_afectada_id') %}
+                                    Solicitud #{{ evento.detalle['solicitud_afectada_id'] }}
+                                    {% if evento.detalle.get('version_factura') %}
+                                    <span class="badge text-bg-primary">
+                                        Factura v{{ evento.detalle['version_factura'] }}
+                                    </span>
+                                    {% endif %}
+                                {% elif evento.detalle.get('correo_entrante_id') %}
+                                    Correo #{{ evento.detalle['correo_entrante_id'] }}
+                                {% elif evento.detalle.get('cliente_afectado_id') %}
                                     Cliente #{{ evento.detalle['cliente_afectado_id'] }}
                                 {% else %}
-                                     Usuario #{{ evento.detalle.get('usuario_afectado_id', '') }}
+                                    Usuario #{{ evento.detalle.get('usuario_afectado_id', '') }}
                                 {% endif %}
                             </td>
                             <td>
-                                {% if evento.detalle.get('solicitud_afectada_id') %}
-                                    Solicitud #{{ evento.detalle['solicitud_afectada_id'] }}
-                                {% elif evento.detalle.get('cliente_afectado_id') %}
-                                     Cliente #{{ evento.detalle['cliente_afectado_id'] }}
-                                {% else %}
-                                    Usuario #{{ evento.detalle.get('usuario_afectado_id', '') }}
+                                {% if evento.detalle.get('cambios') and evento.accion == 'FACTURA_GENERADA' %}
+                                    {{ evento.detalle['cambios'] | length }} cambio(s) respecto de
+                                    v{{ evento.detalle.get('version_factura_anterior') }}
+                                {% elif evento.detalle.get('motivo') or evento.detalle.get('observacion') %}
+                                    {{ evento.detalle.get('observacion') or evento.detalle.get('motivo') }}
                                 {% endif %}
                             </td>
                             <td>
@@ -72,7 +81,7 @@ Auditoría de usuarios | Facturaciones SpA
                         </tr>
                         {% else %}
                         <tr>
-                            <td colspan="5">
+                            <td colspan="6">
                                 Todavía no hay eventos.
                             </td>
                         </tr>

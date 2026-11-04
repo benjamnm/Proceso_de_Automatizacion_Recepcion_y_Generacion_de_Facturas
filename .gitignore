@@ -21,6 +21,10 @@ instance/
 # Archivos XML subidos por usuarios (datos de clientes)
 Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/xml/*
 !Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/xml/.gitkeep
+Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/correos/*
+!Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/correos/.gitkeep
+Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/sii/*
+!Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/sii/.gitkeep
 uploads/
 
 # Editores y sistema

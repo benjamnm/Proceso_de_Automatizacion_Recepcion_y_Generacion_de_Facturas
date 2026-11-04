@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+{% macro clp(valor) -%}
+{{ "{:,.0f}".format(valor | int).replace(",", ".") }}
+{%- endmacro %}
+
+{% block title %}
+Factura | Facturaciones SpA
+{% endblock %}
+
+{% block content %}
+<main class="container py-4 py-lg-5">
+    <header class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+        <div>
+            <h1 class="h2 mb-1">
+                Factura
+                {% if vigente %}<span class="badge text-bg-primary align-middle">v{{ vigente.version }}</span>{% endif %}
+            </h1>
+            <p class="text-body-secondary mb-1 text-break">
+                Solicitud {{ solicitud.public_id }} · origen {{ solicitud.origen_nombre }}
+            </p>
+            <span class="badge text-bg-secondary">{{ solicitud.estado_nombre }}</span>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+            {% if editable %}
+            <a href="{{ url_for('solicitudes.editar', public_id=solicitud.public_id) }}"
+               class="btn btn-outline-primary">Corregir datos</a>
+            {% endif %}
+            <a href="{{ url_for('solicitudes.detalle', public_id=solicitud.public_id) }}"
+               class="btn btn-outline-secondary">Ver solicitud</a>
+        </div>
+    </header>
+
+    {% if correo %}
+    <section class="alert alert-secondary">
+        <strong>Recibida por correo</strong> de {{ correo.remitente }}
+        · «{{ correo.asunto }}» · {{ correo.fecha_correo or '' }}
+        {% if correo.observaciones.get('alertas') %}
+        <ul class="mb-0 mt-2">
+            {% for alerta in correo.observaciones['alertas'] %}
+            <li>{{ alerta }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    {% if solicitud.estado_nombre == 'En corrección' and vigente and vigente.observacion %}
+    <section class="alert alert-warning">
+        <h2 class="h6">Observación del Administrador (v{{ vigente.version }})</h2>
+        <p class="mb-2" style="white-space: pre-wrap;">{{ vigente.observacion }}</p>
+        <p class="small mb-0">
+            Corrija los datos de la solicitud (o la ficha del cliente) y
+            reenvíe a revisión: se generará la versión {{ vigente.version + 1 }}.
+        </p>
+    </section>
+    {% endif %}
+
+    {% if vigente %}
+    {% set d = vigente.datos %}
+    <section class="card mb-4">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between flex-wrap gap-2 mb-3">
+                <h2 class="h5 mb-0">
+                    {{ 'Factura electrónica (33)' if vigente.tipo_dte == 33 else 'Factura exenta (34)' }}
+                </h2>
+                <span class="small text-body-secondary">
+                    Generada {{ vigente.generada_en }} por {{ vigente.generada_por_nombre or '—' }}
+                </span>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-12 col-md-6">
+                    <h3 class="h6 text-body-secondary">Receptor</h3>
+                    <dl class="mb-0">
+                        <dt>RUT</dt><dd>{{ d.receptor.rut }}</dd>
+                        <dt>Razón social</dt><dd>{{ d.receptor.razon_social }}</dd>
+                        <dt>Giro</dt><dd>{{ d.receptor.giro }}</dd>
+                        <dt>Dirección</dt><dd>{{ d.receptor.direccion }}</dd>
+                        <dt>Correo</dt><dd>{{ d.receptor.email or '—' }}</dd>
+                    </dl>
+                </div>
+                <div class="col-12 col-md-6">
+                    <h3 class="h6 text-body-secondary">Documento</h3>
+                    <dl class="mb-0">
+                        <dt>Fecha de emisión</dt><dd>{{ d.fecha_emision }}</dd>
+                        <dt>Concepto</dt><dd style="white-space: pre-wrap;">{{ d.detalle.concepto }}</dd>
+                        <dt>Orden de compra</dt><dd>{{ d.detalle.nro_orden_compra or 'Sin orden' }}</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <table class="table table-sm mt-4 mb-0" style="max-width: 420px;">
+                <tbody>
+                    {% if vigente.tipo_dte == 33 %}
+                    <tr><th>Neto</th><td class="text-end">$ {{ clp(d.totales.monto_neto) }}</td></tr>
+                    <tr><th>IVA ({{ d.totales.tasa_iva }}%)</th><td class="text-end">$ {{ clp(d.totales.iva) }}</td></tr>
+                    {% else %}
+                    <tr><th>Exento</th><td class="text-end">$ {{ clp(d.totales.monto_exento) }}</td></tr>
+                    {% endif %}
+                    <tr class="fw-bold"><th>Total</th><td class="text-end">$ {{ clp(d.totales.monto_total) }}</td></tr>
+                </tbody>
+            </table>
+
+            {% if advertencias %}
+            <div class="alert alert-warning mt-3 mb-0">
+                <ul class="mb-0">
+                    {% for aviso in advertencias %}<li>{{ aviso }}</li>{% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+    {% else %}
+    <section class="alert alert-info">
+        Aún no se ha generado una versión de factura para esta solicitud.
+    </section>
+    {% endif %}
+
+    {# --- Acciones ------------------------------------------------------ #}
+    {% if solicitud.estado_nombre in ['Pendiente', 'En corrección']
+          or (solicitud.estado_nombre == 'En revisión' and not vigente) %}
+    <section class="card mb-4">
+        <div class="card-body p-4">
+            <h2 class="h5">Enviar a revisión</h2>
+            <p class="text-body-secondary">
+                Se generará la versión {{ (vigente.version + 1) if vigente else 1 }}
+                con los datos actuales de la solicitud y del cliente.
+            </p>
+            <form method="post"
+                  action="{{ url_for('solicitudes.factura_revision', public_id=solicitud.public_id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="version" value="{{ solicitud.version }}">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-send"></i> Generar factura y enviar a revisión
+                </button>
+            </form>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if es_admin and solicitud.estado_nombre == 'En revisión' and vigente
+          and vigente.estado == 'EN_REVISION' %}
+    <section class="card mb-4 border-primary">
+        <div class="card-body p-4">
+            <h2 class="h5">Validación del Administrador</h2>
+            <p class="text-body-secondary">
+                Verifique que la versión {{ vigente.version }} concuerde con lo solicitado.
+            </p>
+
+            <div class="row g-4">
+                <div class="col-12 col-lg-5">
+                    <form method="post"
+                          action="{{ url_for('solicitudes.factura_aprobar', public_id=solicitud.public_id) }}"
+                          onsubmit="return confirm('¿Confirma que la factura v{{ vigente.version }} es correcta? Se generará el archivo para el SII.');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="version" value="{{ solicitud.version }}">
+                        <button type="submit" class="btn btn-success w-100"
+                                {% if not emisor_configurado %}disabled{% endif %}>
+                            <i class="bi bi-check2-circle"></i>
+                            Factura correcta: generar archivo SII
+                        </button>
+                        {% if not emisor_configurado %}
+                        <div class="form-text text-warning">
+                            Configure los datos EMPRESA_* en .env para generar el DTE.
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+
+                <div class="col-12 col-lg-7">
+                    <form method="post"
+                          action="{{ url_for('solicitudes.factura_observar', public_id=solicitud.public_id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="version" value="{{ solicitud.version }}">
+                        <label for="observacion" class="form-label">¿Qué debe corregirse?</label>
+                        <textarea id="observacion" name="observacion" class="form-control mb-2"
+                                  rows="3" minlength="5" maxlength="500" required></textarea>
+                        <button type="submit" class="btn btn-outline-warning">
+                            <i class="bi bi-pencil-square"></i> Devolver a corrección
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if es_admin and vigente and vigente.estado == 'APROBADA' %}
+    <section class="card mb-4 border-success">
+        <div class="card-body p-4">
+            <h2 class="h5">Archivo para el SII</h2>
+            <p class="mb-1">
+                Validada {{ vigente.revisada_en }} por {{ vigente.revisada_por_nombre or '—' }}.
+            </p>
+            <p class="mb-3">
+                SHA-256: <code class="text-break">{{ vigente.archivo_sii_sha256 }}</code>
+            </p>
+            <a href="{{ url_for('solicitudes.descargar_sii', public_id=solicitud.public_id) }}"
+               class="btn btn-success">
+                <i class="bi bi-download"></i> Descargar DTE (XML)
+            </a>
+            <p class="small text-body-secondary mt-3 mb-0">
+                El archivo no incluye firma electrónica ni timbre (TED) y su folio es
+                provisional: debe firmarse con el certificado digital y un folio CAF
+                antes de enviarse al SII.
+            </p>
+        </div>
+    </section>
+    {% endif %}
+
+    {# --- Historial de versiones ---------------------------------------- #}
+    {% if versiones %}
+    <section class="card">
+        <div class="card-body p-4">
+            <h2 class="h5 mb-3">Historial de versiones</h2>
+            {% for v in versiones %}
+            <article class="border rounded p-3 mb-3">
+                <div class="d-flex flex-wrap justify-content-between gap-2">
+                    <strong>Versión {{ v.version }}</strong>
+                    <span>
+                        {% set colores = {'EN_REVISION': 'primary', 'OBSERVADA': 'warning',
+                                          'APROBADA': 'success', 'RECHAZADA': 'danger'} %}
+                        <span class="badge text-bg-{{ colores.get(v.estado, 'secondary') }}">{{ v.estado }}</span>
+                        <span class="small text-body-secondary ms-2">
+                            {{ v.generada_en }} · {{ v.generada_por_nombre or '—' }}
+                        </span>
+                    </span>
+                </div>
+
+                {% if v.observacion %}
+                <p class="small mt-2 mb-0">
+                    <strong>Observación:</strong> {{ v.observacion }}
+                    ({{ v.revisada_por_nombre or '—' }}, {{ v.revisada_en }})
+                </p>
+                {% endif %}
+
+                {% if v.cambios %}
+                <div class="table-responsive mt-2">
+                    <table class="table table-sm mb-0">
+                        <thead>
+                            <tr><th>Campo</th><th>v{{ v.version - 1 }}</th><th>v{{ v.version }}</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for campo, cambio in v.cambios.items() %}
+                            <tr>
+                                <td><code>{{ campo }}</code></td>
+                                <td class="text-decoration-line-through text-body-secondary">{{ cambio.anterior }}</td>
+                                <td>{{ cambio.nuevo }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% elif v.version == 1 %}
+                <p class="small text-body-secondary mt-2 mb-0">Versión inicial.</p>
+                {% endif %}
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</main>
+{% endblock %}

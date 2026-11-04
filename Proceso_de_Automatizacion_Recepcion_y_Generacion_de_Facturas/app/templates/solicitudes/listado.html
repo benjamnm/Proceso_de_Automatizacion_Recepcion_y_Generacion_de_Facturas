@@ -218,7 +218,17 @@ Solicitudes | Facturaciones SpA
                                         Ver
                                     </a>
 
-                                    {% if solicitud.estado_nombre == 'Pendiente' %}
+                                    <a
+                                        href="{{ url_for(
+                                            'solicitudes.factura',
+                                            public_id=solicitud.public_id
+                                        ) }}"
+                                        class="btn btn-outline-success btn-sm"
+                                    >
+                                        Factura
+                                    </a>
+
+                                    {% if solicitud.estado_nombre in ['Pendiente', 'En corrección'] %}
                                     <a
                                         href="{{ url_for(
                                             'solicitudes.editar',
