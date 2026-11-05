@@ -1,5 +1,16 @@
 {% extends "base.html" %}
 
+{% macro error_campo(campo) %}
+    {% if errores.get(campo) %}
+    <div
+        id="{{ campo }}_error"
+        class="invalid-feedback d-block"
+    >
+        {{ errores[campo] }}
+    </div>
+    {% endif %}
+{% endmacro %}
+
 {% block title %}
 {{ 'Editar solicitud' if editando else 'Nueva solicitud' }}
 | Facturaciones SpA
@@ -27,21 +38,53 @@
                     </p>
 
                     {% if errores %}
-                    <div class="alert alert-danger" role="alert">
+                    <div
+                        id="resumen_errores"
+                        class="alert alert-danger"
+                        role="alert"
+                        tabindex="-1"
+                    >
+                        <p class="mb-2">
+                            No se pudo completar la operación.
+                            Revisa los siguientes errores:
+                        </p>
+
                         <ul class="mb-0">
-                            {% for error in errores.values() %}
-                            <li>{{ error }}</li>
+                            {% for campo, mensaje in errores.items() %}
+                            <li>
+                                {% if campo in [
+                                    'cliente_id',
+                                    'concepto',
+                                    'monto_bruto',
+                                    'fecha_emision',
+                                    'tipo_afectacion',
+                                    'nro_orden_compra'
+                                ] %}
+                                <a
+                                    href="#{{ campo }}"
+                                    class="alert-link"
+                                >
+                                    {{ mensaje }}
+                                </a>
+                                {% else %}
+                                {{ mensaje }}
+                                {% endif %}
+                            </li>
                             {% endfor %}
                         </ul>
                     </div>
                     {% endif %}
 
                     {% if not editando and not clientes %}
-                    <div class="alert alert-warning">
+                    <div class="alert alert-warning" role="status">
                         No hay clientes activos.
                         Un Administrador debe registrar un cliente.
                     </div>
                     {% endif %}
+
+                    <p class="small text-body-secondary">
+                        Los campos marcados con * son obligatorios.
+                    </p>
 
                     <form
                         method="post"
@@ -72,7 +115,7 @@
 
                         <div class="mb-3">
                             <label for="cliente_id" class="form-label">
-                                Cliente receptor
+                                Cliente receptor *
                             </label>
 
                             {% if editando %}
@@ -84,12 +127,17 @@
 
                             <input
                                 id="cliente_id"
-                                class="form-control"
+                                type="text"
+                                class="form-control{% if errores.get('cliente_id') %} is-invalid{% endif %}"
                                 value="{{ solicitud.nombre }} — {{ solicitud.rut }}"
                                 readonly
+                                aria-describedby="cliente_id_ayuda{% if errores.get('cliente_id') %} cliente_id_error{% endif %}"
+                                {% if errores.get('cliente_id') %}
+                                aria-invalid="true"
+                                {% endif %}
                             >
 
-                            <div class="form-text">
+                            <div id="cliente_id_ayuda" class="form-text">
                                 El cliente y sus datos históricos
                                 no se modifican desde esta pantalla.
                             </div>
@@ -97,8 +145,12 @@
                             <select
                                 id="cliente_id"
                                 name="cliente_id"
-                                class="form-select"
+                                class="form-select{% if errores.get('cliente_id') %} is-invalid{% endif %}"
                                 required
+                                {% if errores.get('cliente_id') %}
+                                aria-invalid="true"
+                                aria-describedby="cliente_id_error"
+                                {% endif %}
                             >
                                 <option value="">
                                     Seleccione un cliente
@@ -107,7 +159,7 @@
                                 {% for cliente in clientes %}
                                 <option
                                     value="{{ cliente.id }}"
-                                    {% if values.cliente_id == cliente.id|string %}
+                                    {% if (values.cliente_id|string) == (cliente.id|string) %}
                                     selected
                                     {% endif %}
                                 >
@@ -117,27 +169,42 @@
                                 {% endfor %}
                             </select>
                             {% endif %}
+
+                            {{ error_campo('cliente_id') }}
                         </div>
 
                         <div class="mb-3">
                             <label for="concepto" class="form-label">
-                                Concepto de facturación
+                                Concepto de facturación *
                             </label>
 
                             <textarea
                                 id="concepto"
                                 name="concepto"
-                                class="form-control"
+                                class="form-control{% if errores.get('concepto') %} is-invalid{% endif %}"
                                 rows="4"
                                 maxlength="500"
                                 required
+                                aria-describedby="concepto_ayuda{% if errores.get('concepto') %} concepto_error{% endif %}"
+                                {% if errores.get('concepto') %}
+                                aria-invalid="true"
+                                {% endif %}
                             >{{ values.concepto }}</textarea>
+
+                            <div id="concepto_ayuda" class="form-text">
+                                Máximo 500 caracteres.
+                            </div>
+
+                            {{ error_campo('concepto') }}
                         </div>
 
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="monto_bruto" class="form-label">
-                                    Monto bruto — CLP
+                                <label
+                                    for="monto_bruto"
+                                    class="form-label"
+                                >
+                                    Monto bruto — CLP *
                                 </label>
 
                                 <input
@@ -147,29 +214,49 @@
                                     inputmode="numeric"
                                     pattern="[0-9]{1,14}"
                                     maxlength="14"
-                                    class="form-control"
+                                    class="form-control{% if errores.get('monto_bruto') %} is-invalid{% endif %}"
                                     value="{{ values.monto_bruto }}"
                                     required
+                                    aria-describedby="monto_bruto_ayuda{% if errores.get('monto_bruto') %} monto_bruto_error{% endif %}"
+                                    {% if errores.get('monto_bruto') %}
+                                    aria-invalid="true"
+                                    {% endif %}
                                 >
 
-                                <div class="form-text">
-                                    Pesos enteros, sin puntos ni comas.
+                                <div
+                                    id="monto_bruto_ayuda"
+                                    class="form-text"
+                                >
+                                    Pesos enteros mayores que cero,
+                                    sin puntos ni comas.
+                                    Máximo 14 dígitos.
                                 </div>
+
+                                {{ error_campo('monto_bruto') }}
                             </div>
 
                             <div class="col-md-6">
-                                <label for="fecha_emision" class="form-label">
-                                    Fecha de emisión solicitada
+                                <label
+                                    for="fecha_emision"
+                                    class="form-label"
+                                >
+                                    Fecha de emisión solicitada *
                                 </label>
 
                                 <input
                                     id="fecha_emision"
                                     name="fecha_emision"
                                     type="date"
-                                    class="form-control"
+                                    class="form-control{% if errores.get('fecha_emision') %} is-invalid{% endif %}"
                                     value="{{ values.fecha_emision }}"
                                     required
+                                    {% if errores.get('fecha_emision') %}
+                                    aria-invalid="true"
+                                    aria-describedby="fecha_emision_error"
+                                    {% endif %}
                                 >
+
+                                {{ error_campo('fecha_emision') }}
                             </div>
 
                             <div class="col-md-6">
@@ -177,14 +264,18 @@
                                     for="tipo_afectacion"
                                     class="form-label"
                                 >
-                                    Afectación tributaria
+                                    Afectación tributaria *
                                 </label>
 
                                 <select
                                     id="tipo_afectacion"
                                     name="tipo_afectacion"
-                                    class="form-select"
+                                    class="form-select{% if errores.get('tipo_afectacion') %} is-invalid{% endif %}"
                                     required
+                                    {% if errores.get('tipo_afectacion') %}
+                                    aria-invalid="true"
+                                    aria-describedby="tipo_afectacion_error"
+                                    {% endif %}
                                 >
                                     <option value="">
                                         Seleccione una opción
@@ -208,6 +299,8 @@
                                         Exenta
                                     </option>
                                 </select>
+
+                                {{ error_campo('tipo_afectacion') }}
                             </div>
 
                             <div class="col-md-6">
@@ -221,10 +314,24 @@
                                 <input
                                     id="nro_orden_compra"
                                     name="nro_orden_compra"
-                                    class="form-control"
+                                    type="text"
+                                    class="form-control{% if errores.get('nro_orden_compra') %} is-invalid{% endif %}"
                                     maxlength="40"
                                     value="{{ values.nro_orden_compra }}"
+                                    aria-describedby="nro_orden_compra_ayuda{% if errores.get('nro_orden_compra') %} nro_orden_compra_error{% endif %}"
+                                    {% if errores.get('nro_orden_compra') %}
+                                    aria-invalid="true"
+                                    {% endif %}
                                 >
+
+                                <div
+                                    id="nro_orden_compra_ayuda"
+                                    class="form-text"
+                                >
+                                    Máximo 40 caracteres.
+                                </div>
+
+                                {{ error_campo('nro_orden_compra') }}
                             </div>
                         </div>
 
@@ -267,11 +374,14 @@
                             {% endif %}
                         </div>
 
-                        {% if editando %}
                         <p class="small text-body-secondary mt-3 mb-0">
+                            {% if editando %}
                             Recargar descarta los cambios no guardados.
+                            {% else %}
+                            Abrir un formulario nuevo descarta
+                            los datos que todavía no hayas registrado.
+                            {% endif %}
                         </p>
-                        {% endif %}
                     </form>
                 </div>
             </div>

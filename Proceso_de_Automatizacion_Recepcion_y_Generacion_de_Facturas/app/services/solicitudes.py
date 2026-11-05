@@ -26,21 +26,37 @@ TRANSICIONES_ESTADO = {
 class ErrorGestionSolicitud(Exception):
     pass
 
-
 def validar_solicitud(datos):
+    """Valida sin modificar los valores originales del formulario."""
     limpio = {}
     errores = {}
 
-    cliente_id = str(datos.get("cliente_id", "")).strip()
+    def texto(campo):
+        valor = datos.get(campo, "")
 
-    if not re.fullmatch(r"[0-9]{1,10}", cliente_id):
+        if valor is None:
+            return ""
+
+        if isinstance(valor, bool):
+            return ""
+
+        if not isinstance(valor, (str, int, Decimal, date)):
+            return ""
+
+        return str(valor).strip()
+
+    cliente_id = texto("cliente_id")
+
+    if not cliente_id:
+        errores["cliente_id"] = "Seleccione un cliente receptor."
+    elif not re.fullmatch(r"[0-9]{1,10}", cliente_id):
         errores["cliente_id"] = "Seleccione un cliente válido."
     elif not 1 <= int(cliente_id) <= 4294967295:
         errores["cliente_id"] = "Seleccione un cliente válido."
     else:
         limpio["cliente_id"] = int(cliente_id)
 
-    concepto = str(datos.get("concepto", "")).strip()
+    concepto = texto("concepto")
 
     if not concepto:
         errores["concepto"] = "Ingrese el concepto de facturación."
@@ -51,9 +67,11 @@ def validar_solicitud(datos):
     else:
         limpio["concepto"] = concepto
 
-    monto = str(datos.get("monto_bruto", "")).strip()
+    monto = texto("monto_bruto")
 
-    if not re.fullmatch(r"[0-9]{1,14}", monto):
+    if not monto:
+        errores["monto_bruto"] = "Ingrese el monto bruto."
+    elif not re.fullmatch(r"[0-9]{1,14}", monto):
         errores["monto_bruto"] = (
             "Ingrese un monto entero de hasta 14 dígitos, "
             "sin puntos ni comas."
@@ -75,43 +93,65 @@ def validar_solicitud(datos):
             "Se recibieron dos fechas de emisión diferentes."
         )
     else:
-        fecha = (
-            fecha_principal
+        campo_fecha = (
+            "fecha_emision"
             if fecha_principal is not None
-            else fecha_alternativa
+            else "fecha_emision_solicitada"
         )
+        fecha = texto(campo_fecha)
 
-        fecha = str(fecha or "").strip()
+        if not fecha:
+            errores["fecha_emision"] = (
+                "Ingrese la fecha de emisión solicitada."
+            )
+        else:
+            try:
+                if not re.fullmatch(
+                    r"[0-9]{4}-[0-9]{2}-[0-9]{2}", fecha
+                ):
+                    raise ValueError
 
-        try:
-            if not re.fullmatch(
-                r"[0-9]{4}-[0-9]{2}-[0-9]{2}",
-                fecha,
-            ):
-                raise ValueError
+                limpio["fecha_emision"] = date.fromisoformat(fecha)
 
-            limpio["fecha_emision"] = date.fromisoformat(fecha)
+            except ValueError:
+                errores["fecha_emision"] = (
+                    "Ingrese una fecha válida con formato AAAA-MM-DD."
+                )
 
-        except ValueError:
-            errores["fecha_emision"] = "Ingrese una fecha válida."
+    afectacion = texto("tipo_afectacion")
 
-    afectacion = datos.get("tipo_afectacion", "")
-
-    if afectacion not in {"AFECTA", "EXENTA"}:
+    if not afectacion:
+        errores["tipo_afectacion"] = (
+            "Seleccione la afectación tributaria."
+        )
+    elif afectacion not in {"AFECTA", "EXENTA"}:
         errores["tipo_afectacion"] = (
             "Seleccione una afectación tributaria válida."
         )
     else:
         limpio["tipo_afectacion"] = afectacion
 
-    orden = str(datos.get("nro_orden_compra") or "").strip()
+    orden_original = datos.get("nro_orden_compra")
 
-    if len(orden) > 40:
+    if (
+        isinstance(orden_original, bool)
+        or (
+            orden_original is not None
+            and not isinstance(orden_original, (str, int))
+        )
+    ):
         errores["nro_orden_compra"] = (
-            "La orden de compra no puede superar 40 caracteres."
+            "Ingrese una orden de compra válida."
         )
     else:
-        limpio["nro_orden_compra"] = orden or None
+        orden = texto("nro_orden_compra")
+
+        if len(orden) > 40:
+            errores["nro_orden_compra"] = (
+                "La orden de compra no puede superar 40 caracteres."
+            )
+        else:
+            limpio["nro_orden_compra"] = orden or None
 
     return limpio, errores
 
