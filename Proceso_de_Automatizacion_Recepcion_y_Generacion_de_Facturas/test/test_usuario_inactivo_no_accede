@@ -1,0 +1,39 @@
+@pytest.mark.parametrize(
+    "ruta",
+    [
+        "/_qa/administracion",
+        "/_qa/operacion_solicitud",
+    ],
+)
+def test_usuario_inactivo_no_accede(
+    rutas_de_prueba,
+    app,
+    client,
+    login_como,
+    ruta,
+):
+    usuario = login_como(rol="Administrador")
+    usuario.activo = 0
+
+    assert not usuario.is_active
+
+    respuesta = client.get(ruta, follow_redirects=False)
+
+    # El acceso se bloquea mediante redirección al inicio de sesión.
+    assert respuesta.status_code == 302
+
+    destino = respuesta.headers.get("Location")
+    assert destino, "La respuesta debe indicar el destino de redirección."
+
+    endpoint_login = app.login_manager.login_view
+    assert endpoint_login, "La aplicación debe tener un login configurado."
+
+    with app.test_request_context():
+        url_login = url_for(endpoint_login)
+
+    assert urlsplit(destino).path == urlsplit(url_login).path
+
+    # La respuesta no debe entregar el contenido protegido.
+    contenido = respuesta.get_data(as_text=True)
+    assert "Administración autorizada" not in contenido
+    assert "Operación autorizada" not in contenido

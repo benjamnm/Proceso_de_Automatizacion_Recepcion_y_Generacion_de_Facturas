@@ -1,0 +1,206 @@
+[1mdiff --git a/Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/test/test_hu07_edicion.py b/Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/test/test_hu07_edicion.py[m
+[1mnew file mode 100644[m
+[1mindex 0000000..d8756a2[m
+[1m--- /dev/null[m
+[1m+++ b/Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/test/test_hu07_edicion.py[m
+[36m@@ -0,0 +1,315 @@[m
+[32m+[m[32mfrom datetime import date[m
+[32m+[m[32mfrom decimal import Decimal[m
+[32m+[m[32mfrom unittest.mock import MagicMock, Mock[m
+[32m+[m
+[32m+[m[32mimport pytest[m
+[32m+[m[32mfrom flask import url_for[m
+[32m+[m
+[32m+[m[32mfrom app.services import solicitudes as servicio[m
+[32m+[m[32mfrom app.solicitudes import routes[m
+[32m+[m
+[32m+[m
+[32m+[m[32m@pytest.fixture[m
+[32m+[m[32mdef datos_edicion():[m
+[32m+[m[32m    return {[m
+[32m+[m[32m        "cliente_id": "15",[m
+[32m+[m[32m        "concepto": "Concepto corregido",[m
+[32m+[m[32m        "nro_orden_compra": "OC-100",[m
+[32m+[m[32m        "fecha_emision": "2026-11-05",[m
+[32m+[m[32m        "monto_bruto": "150000",[m
+[32m+[m[32m        "tipo_afectacion": "AFECTA",[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m
+[32m+[m[32m@pytest.fixture[m
+[32m+[m[32mdef entorno_edicion(monkeypatch):[m
+[32m+[m[32m    connection = MagicMock()[m
+[32m+[m[32m    cursor = MagicMock()[m
+[32m+[m
+[32m+[m[32m    connection.cursor.return_value.__enter__.return_value = cursor[m
+[32m+[m[32m    cursor.rowcount = 1[m
+[32m+[m
+[32m+[m[32m    actor = {[m
+[32m+[m[32m        "id": 7,[m
+[32m+[m[32m        "rol_nombre": "Emisor",[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    solicitud = {[m
+[32m+[m[32m        "id": 100,[m
+[32m+[m[32m        "public_id": "solicitud-hu07",[m
+[32m+[m[32m        "emisor_id": 7,[m
+[32m+[m[32m        "cliente_id": 15,[m
+[32m+[m[32m        "estado_id": 1,[m
+[32m+[m[32m        "version": 3,[m
+[32m+[m[32m        "concepto": "Concepto original",[m
+[32m+[m[32m        "nro_orden_compra": "OC-100",[m
+[32m+[m[32m        "fecha_emision": date(2026, 11, 5),[m
+[32m+[m[32m        "monto_bruto": Decimal("150000"),[m
+[32m+[m[32m        "tipo_afectacion": "AFECTA",[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    estado = {"nombre": "Pendiente"}[m
+[32m+[m
+[32m+[m[32m    cursor.fetchone.side_effect = [[m
+[32m+[m[32m        solicitud,[m
+[32m+[m[32m        estado,[m
+[32m+[m[32m    ][m
+[32m+[m
+[32m+[m[32m    auditoria = Mock()[m
+[32m+[m[32m    abrir_conexion = Mock(return_value=connection)[m
+[32m+[m
+[32m+[m[32m    monkeypatch.setattr([m
+[32m+[m[32m        servicio,[m
+[32m+[m[32m        "get_db_connection",[m
+[32m+[m[32m        abrir_conexion,[m
+[32m+[m[32m    )[m
+[32m+[m[32m    monkeypatch.setattr([m
+[32m+[m[32m        servicio,[m
+[32m+[m[32m        "comprobar_actor",[m
+[32m+[m[32m        Mock(return_value=actor),[m
+[32m+[m[32m    )[m
+[32m+[m[32m    monkeypatch.setattr([m
+[32m+[m[32m        servicio,[m
+[32m+[m[32m        "registrar_evento",[m
+[32m+[m[32m        auditoria,[m
+[32m+[m[32m    )[m
+[32m+[m
+[32m+[m[32m    return {[m
+[32m+[m[32m        "connection": connection,[m
+[32m+[m[32m        "cursor": cursor,[m
+[32m+[m[32m        "actor": actor,[m
+[32m+[m[32m        "solicitud": solicitud,[m
+[32m+[m[32m        "estado": estado,[m
+[32m+[m[32m        "auditoria": auditoria,[m
+[32m+[m[32m        "abrir_conexion": abrir_conexion,[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m
+[32m+[m[32mdef editar(datos, *, version=3):[m
+[32m+[m[32m    return servicio.editar_solicitud([m
+[32m+[m[32m        actor_id=7,[m
+[32m+[m[32m        public_id="solicitud-hu07",[m
+[32m+[m[32m        datos=datos,[m
+[32m+[m[32m        version_esperada=version,[m
+[32m+[m[32m        ip="127.0.0.1",[m
+[32m+[m[32m    )[m
+[32m+[m
+[32m+[m
+[32m+[m[32mdef test_emisor_edita_solicitud_propia_pendiente([m
+[32m+[m[32m    datos_edicion,[m
+[32m+[m[32m    entorno_edicion,[m
+[32m+[m[32m):[m
+[32m+[m[32m    resultado = editar(datos_edicion)[m
+[32m+[m
+[32m+[m[32m    assert resultado is True[m
+[32m+[m
+[32m+[m[32m    entorno_edicion["connection"].commit.assert_called_once()[m
+[32m+[m[32m    entorno_edicion["connection"].rollback.assert_not_called()[m
+[32m+[m[32m    entorno_edicion["connection"].close.assert_called_once()[m
+[32m+[m
+[32m+[m[32m    actualizaciones = [[m
+[32m+[m[32m        llamada[m
+[32m+[m[32m        for llamada in entorno_edicion["cursor"].execute.call_args_list[m
+[32m+[m[32m        if "UPDATE solicitudes" in llamada.args[0][m
+[32m+[m[32m    ][m
+[32m+[m
+[32m+[m[32m    assert len(actualizaciones) == 1[m
+[32m+[m
+[32m+[m[32m    sql, parametros = actualizaciones[0].args[m
+[32m+[m
+[32m+[m[32m    assert "version = version + 1" in sql[m
+[32m+[m[32m    assert parametros[0] == "Concepto corregido"[m
+[32m+[m[32m    assert parametros[-3:] == (100, 3, 1)[m
+[32m+[m
+[32m+[m
+[32m+[m[32mdef test_emisor_no_edita_solicitud_ajena([m
+[32m+[m[32m    datos_edicion,[m
+[32m+[m[32m    entorno_edicion,[m
+[32m+[m[32m):[m
+[32m+[m[32m    entorno_edicion["solicitud"]["emisor_id"] = 99[m
+[32m+[m
+[32m+[m[32m    with pytest.raises([m
+[32m+[m[32m        servicio.ErrorGestionSolicitud,[m
+[32m+[m[32m        match="no está disponible",[m
+[32m+[m[32m    ):[m
+[32m+[m[32m        editar(datos_edicion)[m
+[32m+[m
+[32m+[m[32m    entorno_edicion["connection"].commit.assert_not_called()[m
+[32m+[m[32m    entorno_edicion["connection"].rollback.assert_called_once()[m
+[32m+[m[32m    entorno_edicion["auditoria"].assert_not_called()[m
+[32m+[m
+[32m+[m
+[32m+[m[32mdef test_administrador_edita_solicitud_de_otro_emisor([m
+[32m+[m[32m    datos_edicion,[m
+[32m+[m[32m    entorno_edicion,[m
+[32m+[m[32m):[m
+[32m+[m[32m    entorno_edicion["actor"]["rol_nombre"] = "Administrador"[m
+[32m+[m[32m    entorno_edicion["solicitud"]["emisor_id"] = 99[m
+[32m+[m
+[32m+[m[32m    assert editar(datos_edicion) is True[m
+[32m+[m
+[32m+[m[32m    entorno_edicion["connection"].commit.assert_called_once()[m
+[32m+[m
+[32m+[m
+[32m+[m[32m@pytest.mark.parametrize([m
+[32m+[m[32m    "estado",[m
+[32m+[m[32m    ["En revisión", "Emitida", "Rechazada"],[m
+[32m+[m[32m)[m
+[32m+[m[32mdef test_rechaza_estado_distinto_de_pendiente([m
+[32m+[m[32m    datos_edicion,[m
+[32m+[m[32m    entorno_edicion,[m
+[32m+[m[32m    estado,[m
+[32m+[m[32m):[m
+[32m+[m[32m    entorno_edicion["estado"]["nombre"] = estado[m
+[32m+[m
+[32m+[m[32m    with pytest.raises([m
+[32m+[m[32m        servicio.ErrorGestionSolicitud,[m
+[32m+[m[32m        match="Pendientes",[m
+[32m+[m[32m    ):[m
+[32m+[m[32m        editar(datos_edicion)[m
+[32m+[m
+[32m+[m[32m    entorno_edicion["connection"].commit.assert_not_called()[m
+[32m+[m[32m    entorno_edicion["connection"].rollback.assert_called_once()[m
+[32m+[m[32m    entorno_edicion["auditoria"].assert_not_called()[m
+[32m+[m
+[32m+[m
+[32m+[m[32mdef test_rechaza_formulario_desactualizado([m
+[32m+[m[32m    datos_edicion,[m
+[32m+[m[32m    entorno_edicion,[m
+[32m+[m[32m):[m
+[32m+[m[32m    entorno_edicion["solicitud"]["version"] = 4[m
+[32m+[m
+[32m+[m[32m    with pytest.raises([m
+[32m+[m[32m        servicio.ErrorGestionSolicitud,[m
+[32m+[m[32m        match="cambió",[m
+[32m+[m[32m    ):[m
+[32m+[m[32m        editar(datos_edicion, version=3)[m
+[32m+[m
+[32m+[m[32m    entorno_edicion["connection"].commit.assert_not_called()[m
+[32m+[m[32m    entorno_edicion["connection"].rollback.assert_called_once()[m
+[32m+[m
+[32m+[m
+[32m+[m[32mdef test_no_permite_cambiar_cliente([m
+[32m+[m[32m    datos_edicion,[m
+[32m+[m[32m    entorno_edicion,[m
+[32m+[m[32m):[m
+[32m+[m[32m    datos_edicion["cliente_id"] = "99"[m
+[32m+[m
+[32m+[m[32m    with pytest.raises([m
+[32m+[m[32m        servicio.ErrorGestionSolicitud,[m
+[32m+
