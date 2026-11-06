@@ -1,0 +1,167 @@
+Delivered-To: wks.facturacioneslab@gmail.com
+Received: by 2002:ad4:4246:0:b0:91c:79b9:da05 with SMTP id l6csp719829qvq;
+        Fri, 6 Nov 2026 06:06:37 -0800 (PST)
+X-Received: by 2002:a05:6808:1807:b0:4c3:cab9:2ab7 with SMTP id 5614622812f47-567be626522mr2937144b6e.31.1793973997068;
+        Fri, 06 Nov 2026 06:06:37 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1793973997; cv=none;
+        d=google.com; s=arc-20260327;
+        b=CV815wxZo5WP466ahkQHrzQGIFwst+oJKShxo5i4RWPbE51KqpxiXJ/WUECkU2j4vK
+         RXHRJorWoRm7qo4yt5reGh+DoK4YEWmU9zQniePgPHbPRSeb6ptihpVoa5xhjxyHS5Lj
+         rEQ7Fs8/cs6D2eUF2j/62KaJkJeXwHDlA4qHWhDGqv83Z7YpEMj5sXxPDbAr+9bHrKNl
+         cTBT1LcRrHeS4YWobyQzAX1/c9nFTNlUL4GFsrRJbNhGWUWpRiNKLoGKTOT3Y51fGwkX
+         2J7uSN1TJiuRuirzWTylH0CLtPgvVKz2FPRfep1lRjnF4OezYrsH8Yds2XES+vKKFJdW
+         32iw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=to:from:subject:message-id:gmsai:feedback-id:date:mime-version
+         :dkim-signature;
+        bh=EYTSTXK0mWNARtqG80kcNDPlOmejIHIsS75fzTbctOA=;
+        fh=fJx2MvtfjJHRle0ShYfmGzuV9/VCIoKz05NozLIViEs=;
+        b=NCKrp7AzOKIJRXFni0K+7P+3dSuMm5GkMtt3xxyaoadC4hTnuIfgauKdIkcQaWBHvW
+         b2nX4A9TpH3njLYoGSd8/yGRAr79ky099CAtNBHgLfq5ccjqLwS5QbO3Bf2cQWhyH5zR
+         rkAg7qQBzbo3zpwbcrAiddBy1d9aQUd6D8qLS/w50T1XYBK2rqFvd+VPjMY59qsLYZYN
+         9s/wPErlm3CCgR/EAyjq0o9srpKqTWa1LPkWl4+TzSBmTfASBqM90u1t2MS03t4jXCWR
+         bcMMm3dTHPyLSLheRzjNYRwsnfHaOlFCobyXjateuVrVoayHnOO3RPM1rV7vTAebVv3k
+         +B0Q==;
+        dara=google.com
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@accounts.google.com header.s=20260707 header.b=VhXB3jdc;
+       spf=pass (google.com: domain of 37n7taggtal8st-wjuq3fhhtzsyx.lttlqj.htr@gaia.bounces.google.com designates 209.85.220.73 as permitted sender) smtp.mailfrom=37N7taggTAL8st-wjuq3fhhtzsyx.lttlqj.htr@gaia.bounces.google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=accounts.google.com;
+       dara=pass header.i=@gmail.com
+Return-Path: <37N7taggTAL8st-wjuq3fhhtzsyx.lttlqj.htr@gaia.bounces.google.com>
+Received: from mail-sor-f73.google.com (mail-sor-f73.google.com. [209.85.220.73])
+        by mx.google.com with SMTPS id 5614622812f47-567e1264512sor1000068b6e.6.2026.11.06.06.06.36
+        for <wks.facturacioneslab@gmail.com>
+        (Google Transport Security);
+        Fri, 06 Nov 2026 06:06:37 -0800 (PST)
+Received-SPF: pass (google.com: domain of 37n7taggtal8st-wjuq3fhhtzsyx.lttlqj.htr@gaia.bounces.google.com designates 209.85.220.73 as permitted sender) client-ip=209.85.220.73;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@accounts.google.com header.s=20260707 header.b=VhXB3jdc;
+       spf=pass (google.com: domain of 37n7taggtal8st-wjuq3fhhtzsyx.lttlqj.htr@gaia.bounces.google.com designates 209.85.220.73 as permitted sender) smtp.mailfrom=37N7taggTAL8st-wjuq3fhhtzsyx.lttlqj.htr@gaia.bounces.google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=accounts.google.com;
+       dara=pass header.i=@gmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=accounts.google.com; s=20260707; t=1793973996; x=1794578796; dara=google.com;
+        h=content-type:to:from:subject:message-id:gmsai:feedback-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=EYTSTXK0mWNARtqG80kcNDPlOmejIHIsS75fzTbctOA=;
+        b=VhXB3jdcNqsKvChGuId0sbF65syEffJrOQUU4g6seBaVfJJ1lBOT6xjL+petXw1Fbs
+         UuuhWasovnqFa6foUK+d9p2D8W2PXN4dowzGwirV666m+H/1uzNGnTpPuRg+Ty3r0Glc
+         6TkTBPVgCTmI8oYRZdLhyItFtVw7MPhb1AijM7dDsibLLU8dNBsvsF6jb/e8aBqImaFH
+         uLFrcd8+NxJYEI8XpM79w5PxufSC5yKrbe8y1qGHOC/5ybGROc36RtLE70ouWZA7HlCp
+         aB0Wl6OtwO+BL/xkNyM+HciDCSO+a1Lrka/NSGulGLOL5cHqpASeUf92tqJ+9XMx6f9y
+         zlSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793973996; x=1794578796;
+        h=content-type:to:from:subject:message-id:gmsai:feedback-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=EYTSTXK0mWNARtqG80kcNDPlOmejIHIsS75fzTbctOA=;
+        b=oZjzh9/gq//IguysiuM00uwaxz2Qsv35nlxUOr6y6oGe/NVQ/q5Eacs/30EHOytNoO
+         8jfxsv/C9TzfxfFTOIWltqaVOYY73xva+B8Xsw8iKcVazew8EJSsuQDfwLTh33tfTzzU
+         sa9Db+95AC1Qjt0lzabftvGVdyHwx6p6kG1/gnL7TYgPCmq23rs24sE1ayjKx7aTfLjJ
+         0nQDwrCVUWvXT2iAZ8jvJiS7EtUKa1EiGl4yYa2tQU5vF3U5ogqf1UfRgJNHUMNXFtsv
+         bzjNR69yZ0CP00G6lGK3IluV3DSBf53MPm+Ic/49ybnVjCD7oPloygiYL/Apkh2cqyt/
+         lN9g==
+X-Gm-Message-State: APuU4Z9x14/6t6Seme4nSvKZ2sAEsV0tMR8n7/ZneuX+yocQKLTUnqPc
+	90L1DW8Y4rI0V6o6wvQr7aomeyM0tLkcRBraB65WH1iskdABE3f/RWFVxlSsepopyVhBaEVZMBb
+	F0+pAM/PmTtyhn9C7+l38AyWZNY2C0/GToixhCX8=
+MIME-Version: 1.0
+X-Received: by 2002:a05:6808:654d:b0:567:dc9c:4aba with SMTP id
+ 5614622812f47-567dc9c4d2emr1398618b6e.34.1793973996697; Fri, 06 Nov 2026
+ 06:06:36 -0800 (PST)
+Date: Fri, 06 Nov 2026 14:06:33 GMT
+X-Account-Notification-Type: 1
+Feedback-ID: 1:account-notifier
+gmsai: true
+X-Google-Notification-Metadata: CgISAA
+X-Notifications: fec88af86afe0000
+X-Notifications-Bounce-Info: AUIOTatZ_dTFKWWevYkmT_0Cic9gQ-ndKuyMTl4LHZHKJoEsEHgndyxBrE70qHbJeBn1vUojMjNyHj3q0ZrFWGzmCUxsgUbDhLl6ld_Z7L8YOMTiS3cUvn_F9t9mOO4P2DrSSWyvktF4lhTvWIqw6I544N0blAks32xY1jOj6tgJ6hWn7UBp0r-xgimkyu-K8C-6ES83IdLXQdbvHuzQkxhLY1r1DISJFE27xeMI0BMsFfan4PyCvpYnC7Xpaj7-FqF-Ccbb84tmbTNSJfiMpN0GvTPuNjAwNjA0MDQxNTM1NTk2OTMzMg
+Message-ID: <n-mY12m84sAPc85Njokk3w@notifications.google.com>
+Subject: Alerta de seguridad
+From: Google <no-reply@accounts.google.com>
+To: wks.facturacioneslab@gmail.com
+Content-Type: multipart/alternative; boundary="000000000000cf3722065f9c1e3e"
+
+--000000000000cf3722065f9c1e3e
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: base64
+
+W2ltYWdlOiBHb29nbGVdDQpTZSBjYW1iacOzIHR1IGNvbnRyYXNlw7FhDQoNCg0Kd2tzLmZhY3R1
+cmFjaW9uZXNsYWJAZ21haWwuY29tDQpTZSBjYW1iacOzIGxhIGNvbnRyYXNlw7FhIGRlIHR1IEN1
+ZW50YSBkZSBHb29nbGUNCndrcy5mYWN0dXJhY2lvbmVzbGFiQGdtYWlsLmNvbS4gU2kgbm8gZnVp
+c3RlIHTDuiwgcmVjdXBlcmEgbGEgY3VlbnRhDQo8aHR0cHM6Ly9hY2NvdW50cy5nb29nbGUuY29t
+L1JlY292ZXJBY2NvdW50P2ZwT25seT0xJnNvdXJjZT1hbmNwJkVtYWlsPXdrcy5mYWN0dXJhY2lv
+bmVzbGFiQGdtYWlsLmNvbSZldD0wPg0KLg0KVGFtYmnDqW4gcHVlZGVzIHZlciBsYSBhY3Rpdmlk
+YWQgZGUgc2VndXJpZGFkIGVuDQpodHRwczovL215YWNjb3VudC5nb29nbGUuY29tL25vdGlmaWNh
+dGlvbnMNCkVudmlhbW9zIGVzdGUgY29ycmVvIGVsZWN0csOzbmljbyBwYXJhIGluZm9ybWFyIGNh
+bWJpb3MgaW1wb3J0YW50ZXMgZW4gbG9zDQpzZXJ2aWNpb3MgeSBsYSBDdWVudGEgZGUgR29vZ2xl
+Lg0KwqkgMjAyNiBHb29nbGUgTExDLCAxNjAwIEFtcGhpdGhlYXRyZSBQYXJrd2F5LCBNb3VudGFp
+biBWaWV3LCBDQSA5NDA0MywgVVNBDQo=
+--000000000000cf3722065f9c1e3e
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html><html lang=3D"en"><head><meta name=3D"format-detection" cont=
+ent=3D"email=3Dno"/><meta name=3D"format-detection" content=3D"date=3Dno"/>=
+<style nonce=3D"l7EyZvIh6zo_wTL0zs4f3g">.awl a {color: #FFFFFF; text-decora=
+tion: none;} .abml a {color: #000000; font-family: Roboto-Medium,Helvetica,=
+Arial,sans-serif; font-weight: bold; text-decoration: none;} .adgl a {color=
+: rgba(0, 0, 0, 0.87); text-decoration: none;} .afal a {color: #b0b0b0; tex=
+t-decoration: none;} @media screen and (min-width: 600px) {.v2sp {padding: =
+6px 30px 0px;} .v2rsp {padding: 0px 10px;}} @media screen and (min-width: 6=
+00px) {.mdv2rw {padding: 40px 40px;}} </style><link href=3D"//fonts.googlea=
+pis.com/css?family=3DGoogle+Sans" rel=3D"stylesheet" type=3D"text/css" nonc=
+e=3D"l7EyZvIh6zo_wTL0zs4f3g"/></head><body style=3D"margin: 0; padding: 0;"=
+ bgcolor=3D"#FFFFFF"><table width=3D"100%" height=3D"100%" style=3D"min-wid=
+th: 348px;" border=3D"0" cellspacing=3D"0" cellpadding=3D"0" lang=3D"en"><t=
+r height=3D"32" style=3D"height: 32px;"><td></td></tr><tr align=3D"center">=
+<td><div itemscope itemtype=3D"//schema.org/EmailMessage"><div itemprop=3D"=
+action" itemscope itemtype=3D"//schema.org/ViewAction"><link itemprop=3D"ur=
+l" href=3D"https://accounts.google.com/RecoverAccount?fpOnly=3D1&amp;source=
+=3Dancp&amp;Email=3Dwks.facturacioneslab@gmail.com&amp;et=3D0"/><meta itemp=
+rop=3D"name" content=3D"Revisar actividad"/></div></div><table border=3D"0"=
+ cellspacing=3D"0" cellpadding=3D"0" style=3D"padding-bottom: 20px; max-wid=
+th: 516px; min-width: 220px;"><tr><td width=3D"8" style=3D"width: 8px;"></t=
+d><td><div style=3D"border-style: solid; border-width: thin; border-color:#=
+dadce0; border-radius: 8px; padding: 40px 20px;" align=3D"center" class=3D"=
+mdv2rw"><img src=3D"https://www.gstatic.com/images/branding/googlelogo/2x/g=
+ooglelogo_color_74x24dp.png" width=3D"74" height=3D"24" aria-hidden=3D"true=
+" style=3D"margin-bottom: 16px;" alt=3D"Google"><div style=3D"font-family: =
+&#39;Google Sans&#39;,Roboto,RobotoDraft,Helvetica,Arial,sans-serif;border-=
+bottom: thin solid #dadce0; color: rgba(0,0,0,0.87); line-height: 32px; pad=
+ding-bottom: 24px;text-align: center; word-break: break-word;"><div style=
+=3D"font-size: 24px;">Se cambi=C3=B3 tu contrase=C3=B1a </div><table align=
+=3D"center" style=3D"margin-top:8px;"><tr style=3D"line-height: normal;"><t=
+d align=3D"right" style=3D"padding-right:8px;"><img width=3D"20" height=3D"=
+20" style=3D"width: 20px; height: 20px; vertical-align: sub; border-radius:=
+ 50%;;" src=3D"https://lh3.googleusercontent.com/a/ACg8ocK_XORJHyvFAvzu8Tki=
+S9yTVu8OBsZV_9TO-7Ox7n8NJzBHtQ=3Ds96-c" alt=3D""></td><td><a style=3D"font-=
+family: &#39;Google Sans&#39;,Roboto,RobotoDraft,Helvetica,Arial,sans-serif=
+;color: rgba(0,0,0,0.87); font-size: 14px; line-height: 20px;">wks.facturac=
+ioneslab@gmail.com</a></td></tr></table> </div><div style=3D"font-family: R=
+oboto-Regular,Helvetica,Arial,sans-serif; font-size: 14px; color: rgba(0,0,=
+0,0.87); line-height: 20px;padding-top: 20px; text-align: left;">Se cambi=
+=C3=B3 la contrase=C3=B1a de tu Cuenta de Google wks.facturacioneslab@gmail=
+.com. Si no fuiste t=C3=BA, <a href=3D"https://accounts.google.com/RecoverA=
+ccount?fpOnly=3D1&amp;source=3Dancp&amp;Email=3Dwks.facturacioneslab@gmail.=
+com&amp;et=3D0" data-meta-key=3D"recover-account" style=3D"text-decoration:=
+ none; color: #4285F4;" target=3D"_blank">recupera&nbsp;la&nbsp;cuenta</a>.=
+</div><div style=3D"padding-top: 20px; font-size: 12px; line-height: 16px; =
+color: #5f6368; letter-spacing: 0.3px; text-align: center">Tambi=C3=A9n pue=
+des ver la actividad de seguridad en <br><a href=3D"https://myaccount.googl=
+e.com/notifications" style=3D"text-decoration: none; color: #4285F4;" targe=
+t=3D"_blank">https://myaccount.google.com/notifications</a></div></div><div=
+ style=3D"text-align: left;"><div style=3D"font-family: Roboto-Regular,Helv=
+etica,Arial,sans-serif;color: rgba(0,0,0,0.54); font-size: 11px; line-heigh=
+t: 18px; padding-top: 12px; text-align: center;"><div>Enviamos este correo =
+electr=C3=B3nico para informar cambios importantes en los servicios y la Cu=
+enta de Google.</div><div style=3D"direction: ltr;">&copy; 2026 Google LLC,=
+ <a class=3D"afal" style=3D"font-family: Roboto-Regular,Helvetica,Arial,san=
+s-serif;color: rgba(0,0,0,0.54); font-size: 11px; line-height: 18px; paddin=
+g-top: 12px; text-align: center;">1600 Amphitheatre Parkway, Mountain View,=
+ CA 94043, USA</a></div></div></div></td><td width=3D"8" style=3D"width: 8p=
+x;"></td></tr></table></td></tr><tr height=3D"32" style=3D"height: 32px;"><=
+td></td></tr></table></body></html>
+--000000000000cf3722065f9c1e3e--
