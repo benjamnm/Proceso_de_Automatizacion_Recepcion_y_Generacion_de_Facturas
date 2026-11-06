@@ -1,0 +1,364 @@
+{% extends "base.html" %}
+
+{% block title %}
+Solicitud | Facturaciones SpA
+{% endblock %}
+
+{% block content %}
+<main class="container py-4 py-lg-5">
+    <header class="mb-4">
+        <h1 class="h2">Solicitud registrada</h1>
+
+        <p class="text-body-secondary text-break">
+            Identificador: {{ solicitud.public_id }}
+        </p>
+        <p>Versión: {{ solicitud.version }}</p>
+
+        <span class="badge text-bg-secondary">
+            {% if solicitud.estado_nombre == 'Pendiente' %}
+            <a
+                href="{{ url_for(
+                    'solicitudes.editar',
+                    public_id=solicitud.public_id
+                ) }}"
+                class="btn btn-primary"
+            >
+                Editar solicitud
+            </a>
+            {% endif %}
+
+            <a
+                href="{{ url_for('solicitudes.listado') }}"
+                class="btn btn-outline-secondary"
+            >
+                Volver al listado
+            </a>
+        </span>
+    </header>
+
+    <div class="row g-4">
+        <section class="col-12 col-lg-6">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Receptor histórico</h2>
+
+                    <dl class="mb-0">
+                        <dt>RUT</dt>
+                        <dd>{{ solicitud.rut }}</dd>
+
+                        <dt>Razón social</dt>
+                        <dd>{{ solicitud.nombre }}</dd>
+
+                        <dt>Giro</dt>
+                        <dd>{{ solicitud.giro }}</dd>
+
+                        <dt>Dirección</dt>
+                        <dd>{{ solicitud.direccion }}</dd>
+
+                        <dt>Correo de contacto</dt>
+                        <dd>
+                            {{ solicitud.email_contacto_receptor
+                               or 'No registrado históricamente' }}
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </section>
+
+        <section class="col-12 col-lg-6">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Datos de facturación</h2>
+
+                    <dl class="mb-0">
+                        <dt>Concepto</dt>
+                        <dd style="white-space: pre-wrap;">{{ solicitud.concepto }}</dd>
+
+                        <dt>Monto bruto</dt>
+                        <dd>
+                            {{ "{:,.0f}".format(
+                                solicitud.monto_bruto
+                            ).replace(",", ".") }} CLP
+                        </dd>
+
+                        <dt>Fecha de emisión solicitada</dt>
+                        <dd>{{ solicitud.fecha_emision }}</dd>
+
+                        <dt>Afectación</dt>
+                        <dd>{{ solicitud.tipo_afectacion }}</dd>
+
+                        <dt>Orden de compra</dt>
+                        <dd>
+                            {{ solicitud.nro_orden_compra or 'Sin orden' }}
+                        </dd>
+
+                        <dt>Correo del solicitante</dt>
+                        <dd>{{ solicitud.email_emisor }}</dd>
+
+                        <dt>Origen</dt>
+                        <dd>{{ solicitud.origen_nombre }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </section>
+    </div>
+
+<section class="card mt-4">
+    <div class="card-body p-4">
+        <h2 class="h5 mb-3">Documento XML</h2>
+
+        {% if registro_xml %}
+        <p class="mb-1">Archivo: {{ registro_xml.nombre_original }}</p>
+        <p class="mb-1">Tamaño: {{ registro_xml.tamano }} bytes</p>
+        <p class="mb-1">Cargado: {{ registro_xml.subido_en }}</p>
+        <p class="mb-3">
+            SHA-256:
+            <code class="text-break">{{ registro_xml.sha256 }}</code>
+        </p>
+        <a
+            href="{{ url_for('solicitudes.descargar_xml',
+                             public_id=solicitud.public_id) }}"
+            class="btn btn-outline-primary"
+        >
+            Descargar XML
+        </a>
+        {% else %}
+        <p class="text-body-secondary">Aún no hay un XML asociado.</p>
+        {% endif %}
+
+        {% if solicitud.estado_nombre in ['Pendiente', 'En revisión'] %}
+        <form
+            method="post"
+            enctype="multipart/form-data"
+            action="{{ url_for('solicitudes.cargar_xml',
+                               public_id=solicitud.public_id) }}"
+            class="mt-4"
+        >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <label for="archivo_xml" class="form-label">
+                {{ 'Reemplazar XML' if registro_xml else 'Cargar XML' }}
+            </label>
+            <input
+                id="archivo_xml"
+                name="archivo_xml"
+                type="file"
+                accept=".xml,application/xml,text/xml"
+                class="form-control mb-3"
+                required
+            >
+            <div class="form-text mb-3">
+                Solo XML bien formado, máximo 5 MB.
+            </div>
+            <button type="submit" class="btn btn-primary">
+                {{ 'Reemplazar XML' if registro_xml else 'Cargar XML' }}
+            </button>
+        </form>
+        {% else %}
+        <p class="text-body-secondary mt-3 mb-0">
+            El estado actual no permite cargar o reemplazar XML.
+        </p>
+        {% endif %}
+    </div>
+</section>    
+
+<section class="card mt-4">
+    <div class="card-body p-4">
+        <h2 class="h5 mb-3">Envío por correo</h2>
+
+        {% if permite_envio %}
+        <form
+            method="post"
+            action="{{ url_for('solicitudes.enviar_correo',
+                               public_id=solicitud.public_id) }}"
+            onsubmit="if (!confirm('¿Confirma el envío del XML al receptor?')) { return false; }
+                      this.querySelector('button').disabled = true;
+                      return true;"
+        >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <p class="mb-2">
+                Destinatario:
+                <strong>{{ solicitud.email_contacto_receptor }}</strong>
+            </p>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-envelope"></i>
+                {{ 'Reenviar XML' if envios else 'Enviar XML al receptor' }}
+            </button>
+        </form>
+        {% elif not registro_xml %}
+        <p class="text-body-secondary mb-0">
+            Cargue el XML para habilitar el envío.
+        </p>
+        {% elif not solicitud.email_contacto_receptor %}
+        <p class="text-body-secondary mb-0">
+            La solicitud no tiene correo de receptor registrado.
+        </p>
+        {% else %}
+        <p class="text-body-secondary mb-0">
+            El estado actual no permite enviar el XML.
+        </p>
+        {% endif %}
+
+        {% if envios %}
+        <div class="table-responsive mt-4">
+            <table class="table table-sm align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Destinatario</th>
+                        <th>Estado</th>
+                        <th>Enviado por</th>
+                        <th>Adjunto (SHA-256)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for envio in envios %}
+                    <tr>
+                        <td>{{ envio.creado_en }}</td>
+                        <td class="text-break">{{ envio.destinatario }}</td>
+                        <td>
+                            {% if envio.estado == 'ENVIADO' %}
+                            <span class="badge text-bg-success">Enviado</span>
+                            {% elif envio.estado == 'FALLIDO' %}
+                            <span class="badge text-bg-danger"
+                                  title="{{ envio.error_codigo }}">
+                                Fallido ({{ envio.error_codigo }})
+                            </span>
+                            {% else %}
+                            <span class="badge text-bg-warning">En proceso</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ envio.enviado_por_nombre or '—' }}</td>
+                        <td>
+                            <code title="{{ envio.adjunto_sha256 }}">
+                                {{ (envio.adjunto_sha256 or '')[:12] }}…
+                            </code>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+    {% if current_user.role_name == 'Administrador' %}
+<section class="card mt-4">
+    <div class="card-body p-4">
+        <h2 class="h5 mb-3">Gestión del estado</h2>
+
+        <p>
+            Estado actual:
+            <span class="badge text-bg-secondary">
+                {{ solicitud.estado_nombre }}
+            </span>
+        </p>
+
+        {% if estados_permitidos %}
+        <form
+            method="post"
+            action="{{ url_for(
+                'solicitudes.cambiar_estado',
+                public_id=solicitud.public_id
+            ) }}"
+            onsubmit="return confirm(
+                '¿Confirma el cambio de estado de esta solicitud?'
+            );"
+        >
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <input
+                type="hidden"
+                name="version"
+                value="{{ solicitud.version }}"
+            >
+
+            <div class="mb-3">
+                <label for="estado_destino" class="form-label">
+                    Nuevo estado
+                </label>
+
+                <select
+                    id="estado_destino"
+                    name="estado_destino"
+                    class="form-select"
+                    required
+                >
+                    <option value="">Seleccione un estado</option>
+
+                    {% for estado in estados_permitidos %}
+                    <option value="{{ estado }}">
+                        {{ estado }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="motivo_rechazo" class="form-label">
+                    Motivo de rechazo
+                </label>
+
+                <textarea
+                    id="motivo_rechazo"
+                    name="motivo_rechazo"
+                    class="form-control"
+                    rows="3"
+                    maxlength="300"
+                    aria-describedby="motivo-help"
+                ></textarea>
+
+                <div id="motivo-help" class="form-text">
+                    Obligatorio si selecciona Rechazada.
+                    Para otros estados no se guardará.
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Actualizar estado
+            </button>
+        </form>
+        {% else %}
+        <p class="text-body-secondary mb-0">
+            No hay transiciones habilitadas para este estado.
+        </p>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+
+{% if solicitud.estado_nombre == 'Rechazada'
+      and solicitud.motivo_rechazo %}
+<section class="alert alert-warning mt-4">
+    <h2 class="h6">Motivo del rechazo</h2>
+    <p class="mb-0" style="white-space: pre-wrap;">{{ solicitud.motivo_rechazo }}</p>
+</section>
+{% endif %}
+
+    <div class="alert alert-info mt-4">
+        Este registro es una solicitud de facturación,
+        no una factura tributaria emitida.
+    </div>
+
+    <div class="d-flex gap-2">
+        <a
+            href="{{ url_for('solicitudes.nueva') }}"
+            class="btn btn-primary"
+        >
+            Nueva solicitud
+        </a>
+
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="btn btn-outline-secondary"
+        >
+            Volver al panel
+        </a>
+    </div>
+</main>
+{% endblock %}

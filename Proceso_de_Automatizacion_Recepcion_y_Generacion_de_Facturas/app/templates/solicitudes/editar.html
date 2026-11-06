@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}
+Editar solicitud | Facturaciones SpA
+{% endblock %}
+
+{% block content %}
+<main class="container py-4 py-lg-5">
+    <div class="row justify-content-center">
+        <section class="col-12 col-lg-9">
+            <div class="card">
+                <div class="card-body p-4">
+                    <header class="mb-4">
+                        <h1 class="h3 mb-2">Editar solicitud</h1>
+
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <span class="badge text-bg-warning">
+                                {{ solicitud.estado_nombre }}
+                            </span>
+
+                            <span class="small text-body-secondary">
+                                Versión del formulario: {{ version }}
+                            </span>
+                        </div>
+                    </header>
+
+                    {% if errores %}
+                    <div class="alert alert-danger" role="alert">
+                        <ul class="mb-0">
+                            {% for error in errores.values() %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <section class="border rounded p-3 mb-4">
+                        <h2 class="h6 mb-2">Receptor histórico</h2>
+
+                        <p class="mb-1">{{ solicitud.nombre }}</p>
+                        <p class="mb-1">RUT: {{ solicitud.rut }}</p>
+                        <p class="mb-1">{{ solicitud.direccion }}</p>
+                        <p class="mb-1">{{ solicitud.giro }}</p>
+                        <p class="mb-0">
+                            {{ solicitud.email_contacto_receptor
+                               or 'Correo no registrado' }}
+                        </p>
+                    </section>
+
+                    <p class="small text-body-secondary">
+                        El cliente y los datos históricos del receptor
+                        permanecerán sin cambios.
+                    </p>
+
+                    <form
+                        method="post"
+                        action="{{ url_for(
+                            'solicitudes.editar',
+                            public_id=solicitud.public_id
+                        ) }}"
+                    >
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ csrf_token() }}"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="version"
+                            value="{{ version }}"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="cliente_id"
+                            value="{{ solicitud.cliente_id }}"
+                        >
+
+                        <div class="mb-3">
+                            <label for="concepto" class="form-label">
+                                Concepto de facturación
+                            </label>
+
+                            <textarea
+                                id="concepto"
+                                name="concepto"
+                                class="form-control"
+                                rows="4"
+                                maxlength="500"
+                                required
+                            >{{ values.concepto }}</textarea>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="monto_bruto" class="form-label">
+                                    Monto bruto — CLP
+                                </label>
+
+                                <input
+                                    id="monto_bruto"
+                                    name="monto_bruto"
+                                    type="text"
+                                    inputmode="numeric"
+                                    pattern="[0-9]{1,14}"
+                                    maxlength="14"
+                                    class="form-control"
+                                    value="{{ values.monto_bruto }}"
+                                    required
+                                >
+
+                                <div class="form-text">
+                                    Ingrese pesos enteros,
+                                    sin puntos ni comas.
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="fecha_emision" class="form-label">
+                                    Fecha de emisión solicitada
+                                </label>
+
+                                <input
+                                    id="fecha_emision"
+                                    name="fecha_emision"
+                                    type="date"
+                                    class="form-control"
+                                    value="{{ values.fecha_emision }}"
+                                    required
+                                >
+                            </div>
+
+                            <div class="col-md-6">
+                                <label
+                                    for="tipo_afectacion"
+                                    class="form-label"
+                                >
+                                    Afectación tributaria
+                                </label>
+
+                                <select
+                                    id="tipo_afectacion"
+                                    name="tipo_afectacion"
+                                    class="form-select"
+                                    required
+                                >
+                                    <option
+                                        value="AFECTA"
+                                        {% if values.tipo_afectacion == 'AFECTA' %}
+                                        selected
+                                        {% endif %}
+                                    >
+                                        Afecta
+                                    </option>
+
+                                    <option
+                                        value="EXENTA"
+                                        {% if values.tipo_afectacion == 'EXENTA' %}
+                                        selected
+                                        {% endif %}
+                                    >
+                                        Exenta
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label
+                                    for="nro_orden_compra"
+                                    class="form-label"
+                                >
+                                    Orden de compra — opcional
+                                </label>
+
+                                <input
+                                    id="nro_orden_compra"
+                                    name="nro_orden_compra"
+                                    class="form-control"
+                                    maxlength="40"
+                                    value="{{ values.nro_orden_compra }}"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 mt-4">
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                            >
+                                Guardar cambios
+                            </button>
+
+                            <a
+                                href="{{ url_for(
+                                    'solicitudes.detalle',
+                                    public_id=solicitud.public_id
+                                ) }}"
+                                class="btn btn-outline-secondary"
+                            >
+                                Cancelar
+                            </a>
+
+                            <a
+                                href="{{ url_for(
+                                    'solicitudes.editar',
+                                    public_id=solicitud.public_id
+                                ) }}"
+                                class="btn btn-outline-secondary"
+                            >
+                                Recargar datos guardados
+                            </a>
+                        </div>
+
+                        <p class="small text-body-secondary mt-3 mb-0">
+                            Recargar descarta los cambios que todavía
+                            no haya guardado.
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock %}

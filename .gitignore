@@ -1,0 +1,31 @@
+# Secretos y configuración local
+.env
+.env.*
+!.env.example
+
+# Entornos virtuales
+venv/
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Flask
+instance/
+*.log
+
+# Archivos XML subidos por usuarios (datos de clientes)
+Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/xml/*
+!Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/xml/.gitkeep
+uploads/
+
+# Editores y sistema
+.vscode/*
+!.vscode/settings.json
+Thumbs.db
+.DS_Store
+node_modules/

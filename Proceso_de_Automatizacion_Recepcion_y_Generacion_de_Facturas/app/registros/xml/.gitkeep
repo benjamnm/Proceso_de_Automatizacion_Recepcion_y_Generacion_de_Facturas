@@ -1,0 +1,2 @@
+app/registros/xml/*
+!app/registros/xml/.gitkeep

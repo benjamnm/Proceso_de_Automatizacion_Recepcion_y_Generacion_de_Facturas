@@ -2,7 +2,10 @@
 
 {% macro error_campo(campo) %}
     {% if errores.get(campo) %}
-    <div id="{{ campo }}_error" class="invalid-feedback d-block">
+    <div
+        id="{{ campo }}_error"
+        class="invalid-feedback d-block"
+    >
         {{ errores[campo] }}
     </div>
     {% endif %}
@@ -73,7 +76,7 @@
                     {% endif %}
 
                     {% if not editando and not clientes %}
-                    <div class="alert alert-warning">
+                    <div class="alert alert-warning" role="status">
                         No hay clientes activos.
                         Un Administrador debe registrar un cliente.
                     </div>
@@ -124,16 +127,17 @@
 
                             <input
                                 id="cliente_id"
+                                type="text"
                                 class="form-control{% if errores.get('cliente_id') %} is-invalid{% endif %}"
                                 value="{{ solicitud.nombre }} — {{ solicitud.rut }}"
                                 readonly
+                                aria-describedby="cliente_id_ayuda{% if errores.get('cliente_id') %} cliente_id_error{% endif %}"
                                 {% if errores.get('cliente_id') %}
                                 aria-invalid="true"
-                                aria-describedby="cliente_id_error"
                                 {% endif %}
                             >
 
-                            <div class="form-text">
+                            <div id="cliente_id_ayuda" class="form-text">
                                 El cliente y sus datos históricos
                                 no se modifican desde esta pantalla.
                             </div>
@@ -155,7 +159,7 @@
                                 {% for cliente in clientes %}
                                 <option
                                     value="{{ cliente.id }}"
-                                    {% if values.cliente_id == cliente.id|string %}
+                                    {% if (values.cliente_id|string) == (cliente.id|string) %}
                                     selected
                                     {% endif %}
                                 >
@@ -196,7 +200,10 @@
 
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="monto_bruto" class="form-label">
+                                <label
+                                    for="monto_bruto"
+                                    class="form-label"
+                                >
                                     Monto bruto — CLP *
                                 </label>
 
@@ -216,16 +223,23 @@
                                     {% endif %}
                                 >
 
-                                <div id="monto_bruto_ayuda" class="form-text">
+                                <div
+                                    id="monto_bruto_ayuda"
+                                    class="form-text"
+                                >
                                     Pesos enteros mayores que cero,
                                     sin puntos ni comas.
+                                    Máximo 14 dígitos.
                                 </div>
 
                                 {{ error_campo('monto_bruto') }}
                             </div>
 
                             <div class="col-md-6">
-                                <label for="fecha_emision" class="form-label">
+                                <label
+                                    for="fecha_emision"
+                                    class="form-label"
+                                >
                                     Fecha de emisión solicitada *
                                 </label>
 
@@ -300,14 +314,22 @@
                                 <input
                                     id="nro_orden_compra"
                                     name="nro_orden_compra"
+                                    type="text"
                                     class="form-control{% if errores.get('nro_orden_compra') %} is-invalid{% endif %}"
                                     maxlength="40"
                                     value="{{ values.nro_orden_compra }}"
+                                    aria-describedby="nro_orden_compra_ayuda{% if errores.get('nro_orden_compra') %} nro_orden_compra_error{% endif %}"
                                     {% if errores.get('nro_orden_compra') %}
                                     aria-invalid="true"
-                                    aria-describedby="nro_orden_compra_error"
                                     {% endif %}
                                 >
+
+                                <div
+                                    id="nro_orden_compra_ayuda"
+                                    class="form-text"
+                                >
+                                    Máximo 40 caracteres.
+                                </div>
 
                                 {{ error_campo('nro_orden_compra') }}
                             </div>
@@ -356,8 +378,8 @@
                             {% if editando %}
                             Recargar descarta los cambios no guardados.
                             {% else %}
-                            Abrir un formulario nuevo descarta los datos
-                            que todavía no hayas registrado.
+                            Abrir un formulario nuevo descarta
+                            los datos que todavía no hayas registrado.
                             {% endif %}
                         </p>
                     </form>

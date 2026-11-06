@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block title %}
+Solicitudes | Facturaciones SpA
+{% endblock %}
+
+{% block content %}
+<main class="container py-4 py-lg-5">
+    <header
+        class="d-flex flex-wrap justify-content-between
+               align-items-center gap-3 mb-4"
+    >
+        <div>
+            <h1 class="h2 mb-1">Solicitudes de facturación</h1>
+            <p class="text-body-secondary mb-0">
+                {{ total }} resultados disponibles para su cuenta.
+            </p>
+        </div>
+
+        <div class="d-flex gap-2">
+            <a
+                href="{{ url_for('dashboard') }}"
+                class="btn btn-outline-secondary"
+            >
+                Volver al panel
+            </a>
+
+            <a
+                href="{{ url_for('solicitudes.nueva') }}"
+                class="btn btn-primary"
+            >
+                Nueva solicitud
+            </a>
+        </div>
+    </header>
+
+    <section class="card mb-4">
+        <div class="card-body p-4">
+            <h2 class="h5 mb-3">Filtros</h2>
+
+            {% if errores %}
+            <div class="alert alert-danger" role="alert">
+                <ul class="mb-0">
+                    {% for error in errores %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <form
+                method="get"
+                action="{{ url_for('solicitudes.listado') }}"
+            >
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="rut" class="form-label">
+                            RUT receptor
+                        </label>
+                        <input
+                            id="rut"
+                            name="rut"
+                            class="form-control"
+                            value="{{ filtros.rut }}"
+                            maxlength="12"
+                        >
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="desde" class="form-label">
+                            Fecha solicitada desde
+                        </label>
+                        <input
+                            id="desde"
+                            name="desde"
+                            type="date"
+                            class="form-control"
+                            value="{{ filtros.desde }}"
+                        >
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="hasta" class="form-label">
+                            Fecha solicitada hasta
+                        </label>
+                        <input
+                            id="hasta"
+                            name="hasta"
+                            type="date"
+                            class="form-control"
+                            value="{{ filtros.hasta }}"
+                        >
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="monto" class="form-label">
+                            Monto bruto exacto
+                        </label>
+                        <input
+                            id="monto"
+                            name="monto"
+                            class="form-control"
+                            inputmode="numeric"
+                            maxlength="14"
+                            value="{{ filtros.monto }}"
+                            placeholder="Sin puntos ni comas"
+                        >
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="estado_id" class="form-label">
+                            Estado
+                        </label>
+                        <select
+                            id="estado_id"
+                            name="estado_id"
+                            class="form-select"
+                        >
+                            <option value="">Todos</option>
+
+                            {% for estado in estados %}
+                            <option
+                                value="{{ estado.id }}"
+                                {% if filtros.estado_id == estado.id|string %}
+                                selected
+                                {% endif %}
+                            >
+                                {{ estado.nombre }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    {% if es_admin %}
+                    <div class="col-md-4">
+                        <label for="emisor_id" class="form-label">
+                            Responsable
+                        </label>
+                        <select
+                            id="emisor_id"
+                            name="emisor_id"
+                            class="form-select"
+                        >
+                            <option value="">Todos</option>
+
+                            {% for responsable in responsables %}
+                            <option
+                                value="{{ responsable.id }}"
+                                {% if filtros.emisor_id == responsable.id|string %}
+                                selected
+                                {% endif %}
+                            >
+                                {{ responsable.nombre }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="d-flex gap-2 mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        Aplicar filtros
+                    </button>
+
+                    <a
+                        href="{{ url_for('solicitudes.listado') }}"
+                        class="btn btn-outline-secondary"
+                    >
+                        Limpiar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">RUT</th>
+                            <th scope="col">Cliente</th>
+                            <th scope="col">Monto bruto</th>
+                            <th scope="col">Fecha solicitada</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for solicitud in solicitudes %}
+                        <tr>
+                            <td class="text-nowrap">
+                                {{ solicitud.rut }}
+                            </td>
+                            <td>{{ solicitud.nombre }}</td>
+                            <td class="text-nowrap">
+                                {{ "{:,.0f}".format(solicitud.monto_bruto)
+                                   .replace(",", ".") }} CLP
+                            </td>
+                            <td>{{ solicitud.fecha_emision }}</td>
+                            <td>
+                                <span class="badge text-bg-secondary">
+                                    {{ solicitud.estado_nombre }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a
+                                        href="{{ url_for(
+                                            'solicitudes.detalle',
+                                            public_id=solicitud.public_id
+                                        ) }}"
+                                        class="btn btn-outline-primary btn-sm"
+                                    >
+                                        Ver
+                                    </a>
+
+                                    {% if solicitud.estado_nombre == 'Pendiente' %}
+                                    <a
+                                        href="{{ url_for(
+                                            'solicitudes.editar',
+                                            public_id=solicitud.public_id
+                                        ) }}"
+                                        class="btn btn-outline-secondary btn-sm"
+                                    >
+                                        Editar
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6">
+                                No hay resultados en esta página.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <nav
+                class="d-flex align-items-center gap-3 mt-3"
+                aria-label="Paginación de solicitudes"
+            >
+                {% if anterior_url %}
+                <a
+                    href="{{ anterior_url }}"
+                    class="btn btn-outline-secondary btn-sm"
+                >
+                    Anterior
+                </a>
+                {% endif %}
+
+                <span>Página {{ pagina }}</span>
+
+                {% if siguiente_url %}
+                <a
+                    href="{{ siguiente_url }}"
+                    class="btn btn-outline-secondary btn-sm"
+                >
+                    Siguiente
+                </a>
+                {% endif %}
+            </nav>
+        </div>
+    </section>
+</main>
+{% endblock %}

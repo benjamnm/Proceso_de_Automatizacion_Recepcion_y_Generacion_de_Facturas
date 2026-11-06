@@ -1,0 +1,2 @@
+# Las dependencias del proyecto están en la carpeta de la aplicación.
+-r Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/requirements.txt

@@ -26,9 +26,8 @@ TRANSICIONES_ESTADO = {
 class ErrorGestionSolicitud(Exception):
     pass
 
-
 def validar_solicitud(datos):
-    """Valida los campos sin modificar los datos originales del formulario."""
+    """Valida sin modificar los valores originales del formulario."""
     limpio = {}
     errores = {}
 
@@ -38,16 +37,14 @@ def validar_solicitud(datos):
         if valor is None:
             return ""
 
-        if not isinstance(valor, (str, int, Decimal, date)):
+        if isinstance(valor, bool):
             return ""
 
-        # bool es una subclase de int, pero no es un valor de formulario válido.
-        if isinstance(valor, bool):
+        if not isinstance(valor, (str, int, Decimal, date)):
             return ""
 
         return str(valor).strip()
 
-    # Cliente receptor.
     cliente_id = texto("cliente_id")
 
     if not cliente_id:
@@ -59,7 +56,6 @@ def validar_solicitud(datos):
     else:
         limpio["cliente_id"] = int(cliente_id)
 
-    # Concepto.
     concepto = texto("concepto")
 
     if not concepto:
@@ -71,7 +67,6 @@ def validar_solicitud(datos):
     else:
         limpio["concepto"] = concepto
 
-    # Monto en pesos enteros.
     monto = texto("monto_bruto")
 
     if not monto:
@@ -86,7 +81,6 @@ def validar_solicitud(datos):
     else:
         limpio["monto_bruto"] = Decimal(monto)
 
-    # Se mantiene compatibilidad con los dos nombres de fecha existentes.
     fecha_principal = datos.get("fecha_emision")
     fecha_alternativa = datos.get("fecha_emision_solicitada")
 
@@ -113,8 +107,7 @@ def validar_solicitud(datos):
         else:
             try:
                 if not re.fullmatch(
-                    r"[0-9]{4}-[0-9]{2}-[0-9]{2}",
-                    fecha,
+                    r"[0-9]{4}-[0-9]{2}-[0-9]{2}", fecha
                 ):
                     raise ValueError
 
@@ -125,7 +118,6 @@ def validar_solicitud(datos):
                     "Ingrese una fecha válida con formato AAAA-MM-DD."
                 )
 
-    # Afectación tributaria.
     afectacion = texto("tipo_afectacion")
 
     if not afectacion:
@@ -139,16 +131,15 @@ def validar_solicitud(datos):
     else:
         limpio["tipo_afectacion"] = afectacion
 
-    # Orden de compra opcional.
     orden_original = datos.get("nro_orden_compra")
 
-    if orden_original is not None and not isinstance(
-        orden_original, (str, int)
-    ):
-        errores["nro_orden_compra"] = (
-            "Ingrese una orden de compra válida."
+    if (
+        isinstance(orden_original, bool)
+        or (
+            orden_original is not None
+            and not isinstance(orden_original, (str, int))
         )
-    elif isinstance(orden_original, bool):
+    ):
         errores["nro_orden_compra"] = (
             "Ingrese una orden de compra válida."
         )
@@ -163,6 +154,28 @@ def validar_solicitud(datos):
             limpio["nro_orden_compra"] = orden or None
 
     return limpio, errores
+
+
+def huella_de_creacion(datos):
+    contenido = {
+        "cliente_id": datos["cliente_id"],
+        "concepto": datos["concepto"],
+        "monto_bruto": str(datos["monto_bruto"]),
+        "fecha_emision": datos["fecha_emision"].isoformat(),
+        "tipo_afectacion": datos["tipo_afectacion"],
+        "nro_orden_compra": datos["nro_orden_compra"],
+    }
+
+    serializado = json.dumps(
+        contenido,
+        sort_keys=True,
+        ensure_ascii=False,
+        separators=(",", ":"),
+    )
+
+    return hashlib.sha256(
+        serializado.encode("utf-8")
+    ).hexdigest()
 
 
 def comprobar_actor(cursor, actor_id):
