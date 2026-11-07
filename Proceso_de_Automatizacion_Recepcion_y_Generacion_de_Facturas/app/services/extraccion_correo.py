@@ -159,7 +159,6 @@ def texto_del_mensaje(mensaje):
         elif tipo == "text/html":
             html.append(html_a_texto(contenido))
     texto = "\n".join(planos) if any(p.strip() for p in planos) else "\n".join(html)
-    # Ignora texto citado de respuestas anteriores.
     return "\n".join(
         linea for linea in texto.splitlines()
         if not linea.lstrip().startswith(">")

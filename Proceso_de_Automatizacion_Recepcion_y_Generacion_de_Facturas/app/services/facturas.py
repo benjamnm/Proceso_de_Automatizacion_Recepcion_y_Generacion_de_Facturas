@@ -34,8 +34,6 @@ class ErrorFactura(Exception):
     pass
 
 
-# --- Cálculos y datos (sin BD) -------------------------------------------
-
 def _redondear(valor):
     return int(Decimal(valor).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
 
@@ -141,8 +139,6 @@ def _cargar_json(valor):
         return json.loads(valor)
     return valor
 
-
-# --- Operaciones dentro de una transacción ------------------------------
 
 def _estado_id(cursor, nombre):
     cursor.execute(
@@ -342,8 +338,6 @@ def _cambiar_estado(cursor, solicitud, estado_nombre):
     if cursor.rowcount != 1:
         raise ErrorFactura("No se pudo aplicar el cambio. Recargue.")
 
-
-# --- Casos de uso ----------------------------------------------------------
 
 def enviar_a_revision(actor_id, public_id, version_esperada, ip=None):
     """Genera la versión siguiente y deja la solicitud En revisión.
@@ -567,8 +561,6 @@ def aprobar_factura(actor_id, public_id, version_esperada, ip=None):
     finally:
         connection.close()
 
-
-# --- Consultas -------------------------------------------------------------
 
 def listar_versiones(solicitud_id):
     connection = get_db_connection()

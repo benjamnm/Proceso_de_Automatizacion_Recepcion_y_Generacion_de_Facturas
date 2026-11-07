@@ -44,8 +44,6 @@ def mensaje(asunto, cuerpo, remitente="prueba@ejemplo.com", **cabeceras):
     return m
 
 
-# --- Configuración -------------------------------------------------------
-
 @pytest.mark.parametrize("cambios", [
     {"IMAP_HOST": ""}, {"IMAP_USER": ""}, {"IMAP_SECURITY": "tls"},
     {"IMAP_PORT": "x"}, {"IMAP_MAILBOX": 'INBOX"; DELETE'},
@@ -60,8 +58,6 @@ def test_configuracion_imap_invalida(cambios):
 def test_sin_cifrado_solo_en_localhost():
     assert cfg(IMAP_HOST="localhost", IMAP_SECURITY="none")["seguridad"] == "none"
 
-
-# --- Conexión --------------------------------------------------------------
 
 class IMAPFalso:
     def __init__(self, host, puerto, ssl_context=None, timeout=None):
@@ -101,8 +97,6 @@ def test_credenciales_rechazadas():
     assert exc.value.codigo == "AUTENTICACION"
     assert "mala" not in str(exc.value) + exc.value.detalle
 
-
-# --- Descarga ---------------------------------------------------------------
 
 class BandejaFalsa:
     def __init__(self, mensajes):
@@ -162,8 +156,6 @@ def test_metadatos_saneados():
     assert datos["remitente"] == "prueba@ejemplo.com"
     assert len(datos["huella"]) == 64
 
-
-# --- Procesamiento (BD simulada) ------------------------------------------
 
 CLIENTE = {"id": 1, "rut": "12345678-5", "razon_social": "Cliente de Prueba MVP",
            "giro": "Servicios", "direccion": "Avenida Falsa 1234",

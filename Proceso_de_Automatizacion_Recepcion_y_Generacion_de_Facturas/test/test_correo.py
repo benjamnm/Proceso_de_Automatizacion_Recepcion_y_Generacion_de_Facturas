@@ -40,8 +40,6 @@ def mensaje_prueba(**cambios):
     return construir_mensaje(**datos)
 
 
-# --- Configuración ---------------------------------------------------
-
 def test_configuracion_valida():
     resultado = cfg()
     assert resultado["host"] == "smtp.ejemplo.cl"
@@ -69,8 +67,6 @@ def test_sin_cifrado_permitido_en_localhost():
                SMTP_PORT=1025)["seguridad"] == "none"
 
 
-# --- Mensaje -----------------------------------------------------------
-
 def test_mensaje_con_adjunto_xml():
     m = mensaje_prueba(responder_a="emisor@facturaciones.cl",
                        adjunto=("factura.xml", b"<DTE/>"))
@@ -90,8 +86,6 @@ def test_mensaje_bloquea_inyeccion_de_cabeceras():
     assert m["Bcc"] is None
     assert b"\nBcc:" not in m.as_bytes()
 
-
-# --- Transporte (servidor SMTP simulado) -------------------------------
 
 class SMTPFalso:
     instancias = []

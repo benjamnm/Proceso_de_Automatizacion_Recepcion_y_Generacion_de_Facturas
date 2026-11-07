@@ -39,6 +39,7 @@ COLUMNAS_INSERCION = (
     "huella_creacion",
 )
 
+
 class ErrorGestionSolicitud(Exception):
     pass
 
@@ -79,37 +80,16 @@ def validar_solicitud(datos):
     else:
         limpio["monto_bruto"] = Decimal(monto)
 
-    fecha_principal = datos.get("fecha_emision")
-    fecha_alternativa = datos.get("fecha_emision_solicitada")
+    fecha = str(datos.get("fecha_emision") or "").strip()
 
-    if (
-        fecha_principal is not None
-        and fecha_alternativa is not None
-        and str(fecha_principal) != str(fecha_alternativa)
-    ):
-        errores["fecha_emision"] = (
-            "Se recibieron dos fechas de emisión diferentes."
-        )
-    else:
-        fecha = (
-            fecha_principal
-            if fecha_principal is not None
-            else fecha_alternativa
-        )
+    try:
+        if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", fecha):
+            raise ValueError
 
-        fecha = str(fecha or "").strip()
+        limpio["fecha_emision"] = date.fromisoformat(fecha)
 
-        try:
-            if not re.fullmatch(
-                r"[0-9]{4}-[0-9]{2}-[0-9]{2}",
-                fecha,
-            ):
-                raise ValueError
-
-            limpio["fecha_emision"] = date.fromisoformat(fecha)
-
-        except ValueError:
-            errores["fecha_emision"] = "Ingrese una fecha válida."
+    except ValueError:
+        errores["fecha_emision"] = "Ingrese una fecha válida."
 
     afectacion = datos.get("tipo_afectacion", "")
 
@@ -556,6 +536,7 @@ def editar_solicitud(
     finally:
         connection.close()
 
+
 def cambiar_estado_solicitud(
     actor_id,
     public_id,
@@ -647,7 +628,7 @@ def cambiar_estado_solicitud(
                 raise ErrorGestionSolicitud(
                     "El estado actual no está disponible."
                 )
-                
+
             permitidos = TRANSICIONES_ESTADO.get(
                 estado_actual["nombre"],
                 (),
@@ -705,7 +686,6 @@ def cambiar_estado_solicitud(
                 )
 
             if destino["nombre"] == "Rechazada":
-                # La versión vigente de la factura queda cerrada.
                 cursor.execute(
                     """
                     UPDATE facturas

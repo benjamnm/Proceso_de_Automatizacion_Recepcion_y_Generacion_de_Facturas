@@ -27,6 +27,11 @@ Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/sii/*
 !Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/sii/.gitkeep
 uploads/
 
+# Repositorios de correos y DTE configurados fuera de app/ (datos sensibles)
+Registros_Correo/
+Registros_SII/
+*.eml
+
 # Editores y sistema
 .vscode/*
 !.vscode/settings.json

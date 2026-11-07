@@ -5,39 +5,13 @@
 {% endblock %}
 
 {% block content %}
-<nav class="navbar navbar-dark" style="background: #192f58;">
-    <div class="container-fluid">
-        <span class="navbar-brand mb-0 h1">
-            Facturaciones SpA
-        </span>
-
-        <div class="d-flex align-items-center gap-3">
-            <div class="text-white">
-                <small class="d-block opacity-75">Usuario</small>
-                <strong>{{ current_user.nombre }}</strong>
-                <span class="badge bg-secondary ms-2">
-                    {{ current_user.role_name }}
-                </span>
-            </div>
-
-            <form method="POST" action="{{ url_for('auth.logout') }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="btn btn-outline-light btn-sm">
-                    <i class="bi bi-box-arrow-right"></i>
-                    Cerrar sesión
-                </button>
-            </form>
-        </div>
-    </div>
-</nav>
-
-<main class="dashboard-content">
+<main>
     <div class="container py-5">
         <div class="row">
             <div class="col-12">
                 <h1 class="mb-3">Panel principal</h1>
                 <p class="text-secondary mb-4">
-                    Bienvenido al sistema de gestión de facturación.
+                    Bienvenido/a, {{ current_user.nombre }}.
                 </p>
             </div>
         </div>
@@ -78,7 +52,7 @@
                 </div>
             </div>
             {% endif %}
-            
+
             {% if current_user.role_name == 'Administrador' %}
             {% set por_validar = resumen.estados.get('En revisión') if resumen else None %}
             <div class="col-md-6 col-lg-4">
@@ -149,9 +123,7 @@
                         <p class="card-text text-secondary">
                             Gestiona usuarios y permisos del sistema.
                         </p>
-                        <a href="{{ url_for('admin.usuarios') }}"
-                            class="btn btn-outline-primary"
-                        >
+                        <a href="{{ url_for('admin.usuarios') }}" class="btn btn-outline-primary">
                             Administrar usuarios
                         </a>
                     </div>

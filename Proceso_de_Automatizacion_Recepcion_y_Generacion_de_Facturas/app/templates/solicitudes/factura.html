@@ -4,33 +4,32 @@
 {{ "{:,.0f}".format(valor | int).replace(",", ".") }}
 {%- endmacro %}
 
+{% set migas = [
+    ('Panel', url_for('dashboard')),
+    ('Solicitudes', url_for('solicitudes.listado')),
+    ('Solicitud ' ~ solicitud.public_id[:8],
+     url_for('solicitudes.detalle', public_id=solicitud.public_id)),
+    ('Factura', None),
+] %}
+
 {% block title %}
 Factura | Facturaciones SpA
 {% endblock %}
 
 {% block content %}
-<main class="container py-4 py-lg-5">
-    <header class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
-        <div>
-            <h1 class="h2 mb-1">
-                Factura
-                {% if vigente %}<span class="badge text-bg-primary align-middle">v{{ vigente.version }}</span>{% endif %}
-            </h1>
-            <p class="text-body-secondary mb-1 text-break">
-                Solicitud {{ solicitud.public_id }} · origen {{ solicitud.origen_nombre }}
-            </p>
-            <span class="badge text-bg-secondary">{{ solicitud.estado_nombre }}</span>
-        </div>
-
-        <div class="d-flex flex-wrap gap-2">
-            {% if editable %}
-            <a href="{{ url_for('solicitudes.editar', public_id=solicitud.public_id) }}"
-               class="btn btn-outline-primary">Corregir datos</a>
-            {% endif %}
-            <a href="{{ url_for('solicitudes.detalle', public_id=solicitud.public_id) }}"
-               class="btn btn-outline-secondary">Ver solicitud</a>
-        </div>
+{% from "solicitudes/_proceso.html" import navegacion_proceso %}
+<main class="container pt-3 pb-5">
+    <header class="mb-3">
+        <h1 class="h2 mb-1">
+            Factura
+            {% if vigente %}<span class="badge text-bg-primary align-middle">v{{ vigente.version }}</span>{% endif %}
+        </h1>
+        <p class="text-body-secondary mb-0 text-break">
+            Solicitud {{ solicitud.public_id }} · origen {{ solicitud.origen_nombre }}
+        </p>
     </header>
+
+    {{ navegacion_proceso(solicitud, 'factura', editable) }}
 
     {% if correo %}
     <section class="alert alert-secondary">
@@ -49,11 +48,17 @@ Factura | Facturaciones SpA
     {% if solicitud.estado_nombre == 'En corrección' and vigente and vigente.observacion %}
     <section class="alert alert-warning">
         <h2 class="h6">Observación del Administrador (v{{ vigente.version }})</h2>
-        <p class="mb-2" style="white-space: pre-wrap;">{{ vigente.observacion }}</p>
-        <p class="small mb-0">
+        <p class="mb-2 texto-preformateado">{{ vigente.observacion }}</p>
+        <p class="small mb-2">
             Corrija los datos de la solicitud (o la ficha del cliente) y
             reenvíe a revisión: se generará la versión {{ vigente.version + 1 }}.
         </p>
+        {% if editable %}
+        <a href="{{ url_for('solicitudes.editar', public_id=solicitud.public_id) }}"
+           class="btn btn-sm btn-warning">
+            <i class="bi bi-pencil" aria-hidden="true"></i> Corregir datos
+        </a>
+        {% endif %}
     </section>
     {% endif %}
 
@@ -85,13 +90,13 @@ Factura | Facturaciones SpA
                     <h3 class="h6 text-body-secondary">Documento</h3>
                     <dl class="mb-0">
                         <dt>Fecha de emisión</dt><dd>{{ d.fecha_emision }}</dd>
-                        <dt>Concepto</dt><dd style="white-space: pre-wrap;">{{ d.detalle.concepto }}</dd>
+                        <dt>Concepto</dt><dd class="texto-preformateado">{{ d.detalle.concepto }}</dd>
                         <dt>Orden de compra</dt><dd>{{ d.detalle.nro_orden_compra or 'Sin orden' }}</dd>
                     </dl>
                 </div>
             </div>
 
-            <table class="table table-sm mt-4 mb-0" style="max-width: 420px;">
+            <table class="table table-sm mt-4 mb-0 ancho-limitado">
                 <tbody>
                     {% if vigente.tipo_dte == 33 %}
                     <tr><th>Neto</th><td class="text-end">$ {{ clp(d.totales.monto_neto) }}</td></tr>
@@ -118,7 +123,6 @@ Factura | Facturaciones SpA
     </section>
     {% endif %}
 
-    {# --- Acciones ------------------------------------------------------ #}
     {% if solicitud.estado_nombre in ['Pendiente', 'En corrección']
           or (solicitud.estado_nombre == 'En revisión' and not vigente) %}
     <section class="card mb-4">
@@ -129,7 +133,8 @@ Factura | Facturaciones SpA
                 con los datos actuales de la solicitud y del cliente.
             </p>
             <form method="post"
-                  action="{{ url_for('solicitudes.factura_revision', public_id=solicitud.public_id) }}">
+                  action="{{ url_for('solicitudes.factura_revision', public_id=solicitud.public_id) }}"
+                  data-bloquear-envio>
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" name="version" value="{{ solicitud.version }}">
                 <button type="submit" class="btn btn-primary">
@@ -153,7 +158,8 @@ Factura | Facturaciones SpA
                 <div class="col-12 col-lg-5">
                     <form method="post"
                           action="{{ url_for('solicitudes.factura_aprobar', public_id=solicitud.public_id) }}"
-                          onsubmit="return confirm('¿Confirma que la factura v{{ vigente.version }} es correcta? Se generará el archivo para el SII.');">
+                          data-confirmar="¿Confirma que la factura v{{ vigente.version }} es correcta? Se generará el archivo para el SII."
+                          data-bloquear-envio>
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="version" value="{{ solicitud.version }}">
                         <button type="submit" class="btn btn-success w-100"
@@ -210,7 +216,6 @@ Factura | Facturaciones SpA
     </section>
     {% endif %}
 
-    {# --- Historial de versiones ---------------------------------------- #}
     {% if versiones %}
     <section class="card">
         <div class="card-body p-4">

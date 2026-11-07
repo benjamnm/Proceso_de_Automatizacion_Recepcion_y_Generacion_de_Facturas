@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -22,7 +23,7 @@ def _booleano(nombre, por_defecto=False):
 
 
 class Config:
-    # Obligatoria: create_app() se niega a iniciar sin ella.
+    # Obligatoria (mínimo 32 caracteres): create_app() se niega a iniciar sin ella.
     SECRET_KEY = os.getenv("SECRET_KEY", "")
 
     # Base de datos (XAMPP por defecto, salvo la contraseña).
@@ -32,11 +33,20 @@ class Config:
     DB_USER = os.getenv("DB_USER", "root")
     DB_PASSWORD = os.getenv("DB_PASSWORD", "")
 
-    # Sesión y cookies.
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
+    # Debe ser 1 en producción (HTTPS): la cookie no viaja por HTTP plano.
     SESSION_COOKIE_SECURE = _booleano("SESSION_COOKIE_SECURE", False)
     REMEMBER_COOKIE_HTTPONLY = True
+    # La sesión se cierra tras este tiempo sin actividad.
+    SESSION_INACTIVIDAD = timedelta(
+        minutes=_entero("SESSION_MINUTOS_INACTIVIDAD", 60)
+    )
+
+    # Bloqueo temporal tras intentos fallidos de inicio de sesión.
+    LOGIN_MAX_INTENTOS = _entero("LOGIN_MAX_INTENTOS", 5)
+    LOGIN_MAX_INTENTOS_IP = _entero("LOGIN_MAX_INTENTOS_IP", 20)
+    LOGIN_BLOQUEO_MINUTOS = _entero("LOGIN_BLOQUEO_MINUTOS", 15)
 
     # Almacenamiento privado de XML (fuera de /static).
     XML_UPLOAD_FOLDER = os.getenv(
@@ -46,7 +56,6 @@ class Config:
     MAX_XML_UPLOAD_BYTES = 5 * 1024 * 1024
     MAX_CONTENT_LENGTH = 6 * 1024 * 1024
 
-    # SMTP: correo de salida.
     SMTP_HOST = os.getenv("SMTP_HOST", "")
     SMTP_PORT = _entero("SMTP_PORT", 587)
     SMTP_SECURITY = os.getenv("SMTP_SECURITY", "starttls").lower()
@@ -55,7 +64,6 @@ class Config:
     SMTP_FROM = os.getenv("SMTP_FROM", "")
     SMTP_TIMEOUT = _entero("SMTP_TIMEOUT", 20)
 
-    # IMAP: correo de entrada (bandeja que recibe las solicitudes).
     IMAP_HOST = os.getenv("IMAP_HOST", "")
     IMAP_PORT = _entero("IMAP_PORT", 993)
     IMAP_SECURITY = os.getenv("IMAP_SECURITY", "ssl").lower()
@@ -96,6 +104,6 @@ class Config:
 
 class TestingConfig(Config):
     TESTING = True
-    SECRET_KEY = "clave-solo-para-pruebas"
+    SECRET_KEY = "clave-solo-para-pruebas-automatizadas-0123456789"
     WTF_CSRF_ENABLED = False
     DB_NAME = os.getenv("DB_NAME_TEST", "facturaciones_spa_mvp_test")

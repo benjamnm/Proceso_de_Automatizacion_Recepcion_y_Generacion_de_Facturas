@@ -71,8 +71,6 @@ class ErrorCorreoEntrante(Exception):
         self.detalle = (detalle or mensaje)[:500]
 
 
-# --- Configuración y conexión --------------------------------------------
-
 def validar_configuracion_imap(config=None):
     config = config if config is not None else current_app.config
     host = str(config.get("IMAP_HOST") or "").strip()
@@ -168,11 +166,9 @@ def conectar(cfg, fabrica_ssl=imaplib.IMAP4_SSL, fabrica=imaplib.IMAP4):
 def _cerrar(conexion):
     try:
         conexion.logout()
-    except Exception:  # noqa: BLE001 - el cierre nunca debe ocultar el resultado
+    except Exception:
         pass
 
-
-# --- Utilidades de BD ----------------------------------------------------
 
 def obtener_usuario_sistema(cursor):
     cursor.execute(
@@ -204,8 +200,6 @@ def _ruta_eml(nombre):
         raise ErrorCorreoEntrante("REGISTRO", "El registro del correo no es válido.")
     return os.path.join(current_app.config["CORREOS_FOLDER"], nombre)
 
-
-# --- Etapa 1: descarga ---------------------------------------------------
 
 def metadatos(crudo, mensaje):
     message_id = limpiar_cabecera(mensaje.get("Message-ID"), 255)
@@ -348,12 +342,12 @@ def descargar_correos(cfg=None, conectar_fn=conectar):
             if es_automatico(mensaje) or not es_facturacion(
                 mensaje.get("Subject"), texto_del_mensaje(mensaje)
             ):
-                resumen["ignorados"] += 1   # queda no leído en la bandeja
+                resumen["ignorados"] += 1
                 continue
 
             try:
                 estado = guardar_correo(crudo, mensaje)
-            except Exception:  # noqa: BLE001 - se sigue con el resto
+            except Exception:
                 resumen["errores"] += 1
                 current_app.logger.exception("No se pudo guardar el UID %s", uid)
                 continue
@@ -365,8 +359,6 @@ def descargar_correos(cfg=None, conectar_fn=conectar):
     finally:
         _cerrar(conexion)
 
-
-# --- Etapa 2: procesamiento ----------------------------------------------
 
 def resolver_cliente(cursor, remitente, rut):
     """Devuelve (cliente | None, alertas, motivos)."""
@@ -622,7 +614,7 @@ def _registrar_error(correo_id, exc):
                 (_json({"motivos": [detalle], "alertas": []}), correo_id),
             )
         connection.commit()
-    except Exception:  # noqa: BLE001
+    except Exception:
         connection.rollback()
         current_app.logger.exception("No se pudo marcar el error del correo %s", correo_id)
     finally:
@@ -697,8 +689,6 @@ def revisar_bandeja(descargar=True):
     finally:
         bloqueo.close()
 
-
-# --- Acciones del Administrador ------------------------------------------
 
 def _admin(cursor, actor_id):
     try:
@@ -812,5 +802,5 @@ def obtener_eml_autorizado(actor_id, correo_id):
 
     if correo is None:
         raise ErrorCorreoEntrante("REGISTRO", "El correo no existe.")
-    _leer_eml(correo)  # verifica integridad
+    _leer_eml(correo)
     return actor, correo, _ruta_eml(correo["nombre_almacenado"])

@@ -1,9 +1,11 @@
+import hashlib
+
 import pymysql
 import pytest
 
 from app.services.correo import construir_mensaje
 from app.services.facturas import ErrorFactura, construir_datos
-from app.services.notificaciones import componer
+from app.services.notificaciones import ErrorAviso, _contenido_aprobada, componer
 from test_facturas import SOLICITUD
 
 PID = "a" * 32
@@ -60,8 +62,10 @@ def test_lector_no_envia_a_revision(client, login_como):
     assert client.post(BASE + "/revision").status_code == 403
 
 
-def test_admin_aprueba(client, login_como, monkeypatch):
+def test_admin_aprueba_y_envia_el_dte_por_correo(client, login_como, monkeypatch):
     llamadas = simular(monkeypatch, "app.solicitudes.routes.aprobar_factura", 2)
+    avisos = simular(monkeypatch, "app.solicitudes.routes.notificar_factura_aprobada",
+                     {"enviados": 1, "fallidos": 0, "error": None})
     login_como("Administrador", user_id=1)
 
     respuesta = client.post(BASE + "/aprobar", data={"version": "6"})
@@ -70,7 +74,34 @@ def test_admin_aprueba(client, login_como, monkeypatch):
     assert respuesta.headers["Location"].endswith(BASE)
     assert llamadas[0]["actor_id"] == 1
     assert llamadas[0]["version_esperada"] == "6"
-    assert any("versión 2 validada" in m for m in flashes(client))
+    assert avisos == [(1, PID, "127.0.0.1")]
+    mensajes = flashes(client)
+    assert any("versión 2 validada" in m for m in mensajes)
+    assert any("enviado por correo a 1" in m for m in mensajes)
+
+
+def test_aprobacion_sin_correo_avisa_sin_deshacer(client, login_como, monkeypatch):
+    simular(monkeypatch, "app.solicitudes.routes.aprobar_factura", 2)
+    simular(monkeypatch, "app.solicitudes.routes.notificar_factura_aprobada",
+            {"enviados": 0, "fallidos": 0, "error": "SMTP no configurado"})
+    login_como("Administrador")
+
+    client.post(BASE + "/aprobar", data={"version": "6"})
+
+    mensajes = flashes(client)
+    assert any("versión 2 validada" in m for m in mensajes)
+    assert any("no se pudo enviar el archivo SII" in m for m in mensajes)
+
+
+def test_aprobacion_fallida_no_envia_aviso(client, login_como, monkeypatch):
+    simular(monkeypatch, "app.solicitudes.routes.aprobar_factura",
+            error=ErrorFactura("La factura no está en revisión."))
+    avisos = simular(monkeypatch, "app.solicitudes.routes.notificar_factura_aprobada")
+    login_como("Administrador")
+
+    client.post(BASE + "/aprobar", data={"version": "6"})
+
+    assert avisos == []
 
 
 def test_admin_observa_con_error_de_negocio(client, login_como, monkeypatch):
@@ -159,8 +190,6 @@ def test_cabeceras_extra_solo_x_y_saneadas():
     assert m["Bcc"] is None
 
 
-# --- Plantillas ----------------------------------------------------------------
-
 def _solicitud(estado):
     return dict(SOLICITUD, estado_nombre=estado, origen_nombre="Correo",
                 version=6, emisor_id=1, cliente_id=1, motivo_rechazo=None,
@@ -225,3 +254,52 @@ def test_pantalla_bandeja(client, login_como, monkeypatch):
     assert "No se identificó al cliente" in html
     assert "<script>alert(1)</script>" not in html   # autoescape
     assert "Reprocesar" in html
+
+
+def _factura_aprobada(contenido):
+    return {
+        "id": 4, "version": 2, "tipo_dte": 33,
+        "datos": construir_datos(SOLICITUD),
+        "archivo_sii": "dte.xml",
+        "archivo_sii_sha256": hashlib.sha256(contenido).hexdigest(),
+    }
+
+
+class _CursorUnaFila:
+    def __init__(self, fila):
+        self.fila = fila
+
+    def execute(self, sql, parametros):
+        assert "APROBADA" in sql
+
+    def fetchone(self):
+        return self.fila
+
+
+def test_aviso_de_aprobacion_adjunta_el_dte(app, tmp_path):
+    contenido = b"<DTE>aprobado</DTE>"
+    (tmp_path / "dte.xml").write_bytes(contenido)
+    app.config["SII_FOLDER"] = str(tmp_path)
+    solicitud = {"id": 1, "public_id": PID, "nombre": "Cliente\r\nBcc: x"}
+
+    with app.test_request_context():
+        _, asunto, cuerpo, adjunto = _contenido_aprobada(
+            _CursorUnaFila(_factura_aprobada(contenido)), solicitud
+        )
+
+    assert asunto.startswith("[Facturaciones] Factura v2 aprobada")
+    assert "\n" not in asunto
+    assert f"/solicitudes/{PID}/factura" in cuerpo
+    assert "no incluye firma electrónica" in cuerpo
+    assert adjunto == (f"DTE_33_{PID[:8]}_v2.xml", contenido)
+
+
+def test_aviso_de_aprobacion_rechaza_dte_alterado(app, tmp_path):
+    (tmp_path / "dte.xml").write_bytes(b"<DTE>modificado</DTE>")
+    app.config["SII_FOLDER"] = str(tmp_path)
+
+    with app.test_request_context(), pytest.raises(ErrorAviso, match="SHA-256"):
+        _contenido_aprobada(
+            _CursorUnaFila(_factura_aprobada(b"<DTE>original</DTE>")),
+            {"id": 1, "public_id": PID, "nombre": "Cliente"},
+        )

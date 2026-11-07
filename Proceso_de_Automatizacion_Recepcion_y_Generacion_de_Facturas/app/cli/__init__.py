@@ -63,7 +63,7 @@ def registrar_comandos(app):
         finally:
             try:
                 conexion.logout()
-            except Exception:  # noqa: BLE001
+            except Exception:
                 pass
 
         click.echo(

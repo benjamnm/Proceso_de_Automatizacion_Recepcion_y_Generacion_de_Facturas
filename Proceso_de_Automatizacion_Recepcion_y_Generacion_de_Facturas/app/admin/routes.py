@@ -139,7 +139,7 @@ def usuarios():
                                 1,
                             ),
                         )
-                        
+
                         nuevo_usuario_id = cursor.lastrowid
                         registrar_evento(
                             connection,
@@ -206,7 +206,8 @@ def usuarios():
 
     finally:
         connection.close()
-        
+
+
 @admin_bp.route(
     "/usuarios/<int:usuario_id>/editar",
     methods=["GET", "POST"],
@@ -214,43 +215,43 @@ def usuarios():
 @admin_required
 def usuario_editar(usuario_id):
     connection = get_db_connection()
-    
+
     try:
         with connection.cursor() as cursor:
             cursor.execute(
                 """
-                SELECT id,  nombre, email, rol_id, activo
+                SELECT id, nombre, email, rol_id, activo
                 FROM usuarios
                 WHERE id = %s
                 """,
                 (usuario_id,),
             )
             usuario = cursor.fetchone()
-            
+
             if usuario is None:
                 abort(404, description="Usuario no encontrado.")
-                
+
             cursor.execute(
                 "SELECT id, nombre FROM roles ORDER BY nombre"
             )
             roles = cursor.fetchall()
     finally:
         connection.close()
-    
+
     error = None
     values = {
         "nombre": usuario["nombre"],
         "email": usuario["email"],
         "rol_id": str(usuario["rol_id"])
     }
-    
+
     if request.method == "POST":
         values = {
             "nombre": request.form.get("nombre", "").strip(),
             "email": request.form.get("email", "").strip().lower(),
             "rol_id": request.form.get("rol_id", ""),
         }
-        
+
         try:
             changed = modificar_usuario(
                 actor_id=int(current_user.id),
@@ -259,16 +260,16 @@ def usuario_editar(usuario_id):
                 datos=values,
                 ip=request.remote_addr,
             )
-        
+
         except ErrorGestionUsuario as exc:
             error = str(exc)
-        
+
         except pymysql.err.IntegrityError:
-            error = ( 
+            error = (
                 "No se pudo guardar, reintente nuevamente. "
                 "Compruebe que el correo no esté registrado."
             )
-        
+
         except pymysql.MySQLError:
             current_app.logger.exception(
                 "Error al editar el usuario %s", usuario_id,
@@ -288,6 +289,7 @@ def usuario_editar(usuario_id):
         error=error,
     )
 
+
 @admin_bp.post("/usuarios/<int:usuario_id>/estado")
 @admin_required
 def usuario_estado(usuario_id):
@@ -301,10 +303,10 @@ def usuario_estado(usuario_id):
             },
             ip=request.remote_addr,
         )
-    
+
     except ErrorGestionUsuario as exc:
         flash(str(exc), "danger")
-        
+
     except pymysql.MySQLError:
         current_app.logger.exception(
             "Error al cambiar el estado del usuario %s", usuario_id,
@@ -312,7 +314,7 @@ def usuario_estado(usuario_id):
         flash(
             "No se logro cambiar el estado, reintente nuevamente.", "danger",
         )
-        
+
     else:
         flash(
             "Estado actualizado correctamente."
@@ -320,8 +322,9 @@ def usuario_estado(usuario_id):
             else "La cuenta ya tenia ese estado.",
             "success" if changed else "info",
         )
-    
+
     return redirect(url_for("admin.usuarios"))
+
 
 @admin_bp.get("/auditoria")
 @admin_required
@@ -391,8 +394,6 @@ def auditoria():
         eventos=eventos,
     )
 
-
-# --- Bandeja de correos entrantes ----------------------------------------
 
 ESTADOS_CORREO = (
     "RECIBIDO", "PROCESADO", "REQUIERE_REVISION", "DESCARTADO", "ERROR",
@@ -518,7 +519,6 @@ def correo_eml(correo_id):
     finally:
         connection.close()
 
-    # Se entrega como descarga (nunca se renderiza en el navegador).
     return send_file(
         ruta,
         mimetype="message/rfc822",

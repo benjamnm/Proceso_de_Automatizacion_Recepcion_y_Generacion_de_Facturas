@@ -34,8 +34,6 @@ EMISOR_CFG = {
 }
 
 
-# --- Totales -----------------------------------------------------------------
-
 def test_totales_afecta():
     t = calcular_totales(Decimal("980000"), "AFECTA")
     assert (t["tipo_dte"], t["monto_neto"], t["iva"], t["monto_total"]) == (
@@ -56,8 +54,6 @@ def test_totales_cumplen_regla_sii(bruto):
     assert abs(t["diferencia_redondeo"]) <= 1
     assert t["monto_total"] - bruto == t["diferencia_redondeo"]
 
-
-# --- Versiones ---------------------------------------------------------------
 
 def test_comparar_datos_detecta_solo_diferencias():
     a = construir_datos(SOLICITUD)
@@ -133,8 +129,6 @@ def test_cambio_directo_solo_permite_rechazo():
     with pytest.raises(ErrorGestionSolicitud, match="revisión de la factura"):
         cambiar_estado_solicitud(1, "a" * 32, "Aprobada", 1)
 
-
-# --- DTE para el SII ---------------------------------------------------------
 
 def test_emisor_incompleto_o_invalido():
     with pytest.raises(ErrorDTE, match="EMPRESA_COMUNA"):

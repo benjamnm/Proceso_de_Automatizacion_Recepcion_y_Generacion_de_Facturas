@@ -33,8 +33,6 @@ def correo(cuerpo="", asunto="Solicitud de factura", html=None, adjuntos=(),
     return m
 
 
-# --- Clasificación ---------------------------------------------------------
-
 @pytest.mark.parametrize("asunto,cuerpo", [
     ("Solicitud de FACTURACIÓN", ""),
     ("Hola", "Necesito que me facturen... perdón, que emitan la factura."),
@@ -75,8 +73,6 @@ def test_verificacion_spf_dmarc():
         Authentication_Results="mx.ejemplo; spf=pass; dmarc=fail")) == "fallida"
 
 
-# --- Normalización ---------------------------------------------------------
-
 @pytest.mark.parametrize("valor,esperado", [
     ("$980.000", ("980000", False)),
     ("980000 CLP", ("980000", False)),
@@ -101,8 +97,6 @@ def test_normalizar_monto(valor, esperado):
 def test_normalizar_fecha(valor, esperado):
     assert normalizar_fecha(valor) == esperado
 
-
-# --- Extracción --------------------------------------------------------------
 
 CUERPO = """Estimados, solicito la factura de octubre:
 

@@ -1,7 +1,6 @@
 import re
-import pymysql
-import os
 
+import pymysql
 from datetime import date
 from decimal import Decimal
 
@@ -56,7 +55,10 @@ from ..services.facturas import (
     obtener_archivo_sii,
     observar_factura,
 )
-from ..services.notificaciones import notificar_factura_generada
+from ..services.notificaciones import (
+    notificar_factura_aprobada,
+    notificar_factura_generada,
+)
 from ..services.correos_solicitud import (
     ESTADOS_QUE_ADMITEN_ENVIO,
     ErrorEnvioCorreo,
@@ -327,9 +329,6 @@ def nueva():
         clientes=obtener_clientes_activos(),
         values=values,
         errores=errores,
-        editando=False,
-        solicitud=None,
-        version=None,
         token_envio=token_envio,
     )
 
@@ -547,6 +546,7 @@ def enviar_correo(public_id):
 
     return redirect(url_for("solicitudes.detalle", public_id=public_id))
 
+
 @solicitudes_bp.post("/<string:public_id>/xml")
 @solicitud_required
 def cargar_xml(public_id):
@@ -627,33 +627,7 @@ def descargar_xml(public_id):
 )
 @solicitud_required
 def editar(public_id):
-    connection = get_db_connection()
-
-    try:
-        with connection.cursor() as cursor:
-            sql = """
-                SELECT
-                    s.*,
-                    e.nombre AS estado_nombre
-                FROM solicitudes AS s
-                INNER JOIN estados_solicitud AS e
-                    ON e.id = s.estado_id
-                WHERE s.public_id = %s
-            """
-            parametros = [public_id]
-
-            if current_user.role_name != "Administrador":
-                sql += " AND s.emisor_id = %s"
-                parametros.append(int(current_user.id))
-
-            cursor.execute(sql, tuple(parametros))
-            solicitud = cursor.fetchone()
-
-    finally:
-        connection.close()
-
-    if solicitud is None:
-        abort(404)
+    solicitud = obtener_solicitud_autorizada(public_id)
 
     if solicitud["estado_nombre"] not in ESTADOS_EDITABLES:
         flash(
@@ -678,11 +652,7 @@ def editar(public_id):
     errores = {}
 
     if request.method == "POST":
-        values = {
-            campo: request.form.get(campo, "")
-            for campo in CAMPOS_FORMULARIO
-        }
-
+        values = leer_formulario()
         version = request.form.get("version", "")
         _, errores = validar_solicitud(values)
 
@@ -731,7 +701,8 @@ def editar(public_id):
         errores=errores,
         version=version,
     )
-    
+
+
 @solicitudes_bp.post("/<string:public_id>/estado")
 @solicitud_required
 def cambiar_estado(public_id):
@@ -781,8 +752,6 @@ def cambiar_estado(public_id):
         public_id=public_id,
     ))
 
-
-# --- Factura: versiones, validación y archivo SII -------------------------
 
 def _error_bd(mensaje, public_id):
     current_app.logger.exception("%s (%s)", mensaje, public_id)
@@ -874,6 +843,22 @@ def factura_aprobar(public_id):
             f"El archivo para el SII está disponible.",
             "success",
         )
+        aviso = notificar_factura_aprobada(
+            int(current_user.id), public_id, request.remote_addr,
+        )
+        if aviso["error"] or aviso["fallidos"]:
+            flash(
+                "La factura quedó validada, pero no se pudo enviar el "
+                f"archivo SII por correo: {aviso['error'] or 'falló el envío'}. "
+                "Puede descargarlo desde esta pantalla.",
+                "warning",
+            )
+        else:
+            flash(
+                f"Archivo SII enviado por correo a {aviso['enviados']} "
+                "destinatario(s).",
+                "info",
+            )
 
     return redirect(url_for("solicitudes.factura", public_id=public_id))
 

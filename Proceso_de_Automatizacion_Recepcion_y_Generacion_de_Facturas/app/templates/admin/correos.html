@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 
+{% set migas = [('Panel', url_for('dashboard')), ('Bandeja de correos', None)] %}
+
 {% block title %}
 Bandeja de correos | Facturaciones SpA
 {% endblock %}
 
 {% block content %}
-<main class="container py-4 py-lg-5">
+<main class="container pt-3 pb-5">
     <header class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <div>
             <h1 class="h3 mb-1">Bandeja de correos de facturación</h1>
@@ -14,16 +16,13 @@ Bandeja de correos | Facturaciones SpA
             </p>
         </div>
 
-        <div class="d-flex gap-2">
-            <form method="post" action="{{ url_for('admin.correos_revisar') }}"
-                  onsubmit="this.querySelector('button').disabled = true;">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-arrow-repeat"></i> Revisar bandeja ahora
-                </button>
-            </form>
-            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">Panel</a>
-        </div>
+        <form method="post" action="{{ url_for('admin.correos_revisar') }}"
+              data-bloquear-envio>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-arrow-repeat" aria-hidden="true"></i> Revisar bandeja ahora
+            </button>
+        </form>
     </header>
 
     {% if not imap_configurado %}
@@ -33,7 +32,7 @@ Bandeja de correos | Facturaciones SpA
     </div>
     {% endif %}
 
-    <form method="get" class="d-flex gap-2 mb-3" style="max-width: 420px;">
+    <form method="get" class="d-flex gap-2 mb-3 ancho-limitado">
         <select name="estado" class="form-select" aria-label="Filtrar por estado">
             <option value="">Todos los estados</option>
             {% for e in estados %}

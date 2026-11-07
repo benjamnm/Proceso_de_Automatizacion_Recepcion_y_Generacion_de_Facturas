@@ -54,6 +54,15 @@ Orden de compra: 4500012345
 - Remitente no registrado o falla SPF/DMARC → revisión manual; RUT de otro contacto → alerta visible al validar.
 - Avisos propios (`X-Facturaciones-Origen`), respuestas automáticas y listas se ignoran (evita bucles).
 - Solo el Administrador valida, observa, descarga DTE y gestiona la bandeja; todo queda en `auditoria`.
+- Las carpetas `CORREOS_FOLDER` y `SII_FOLDER` contienen datos de clientes: deben quedar fuera del repositorio (`.gitignore` excluye `Registros_Correo/`, `Registros_SII/` y `*.eml`).
+
+### Plataforma web
+
+- Inicio de sesión con respuesta y tiempo uniformes (no revela qué correos existen) y bloqueo temporal tras `LOGIN_MAX_INTENTOS` fallos por cuenta e IP (`LOGIN_MAX_INTENTOS_IP` por IP). El contador vive en memoria de cada proceso.
+- La sesión se regenera al iniciar sesión, se invalida si cambia la IP o el navegador y expira tras `SESSION_MINUTOS_INACTIVIDAD`. En producción con HTTPS: `SESSION_COOKIE_SECURE=1` y `FLASK_DEBUG=0`.
+- Cabeceras HTTP: Content-Security-Policy sin scripts ni estilos en línea, `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy` y `Cache-Control: no-store` en páginas y descargas (HSTS cuando la petición llega por HTTPS).
+- Bootstrap se carga desde el CDN con verificación de integridad (SRI).
+- `SECRET_KEY` obligatoria de al menos 32 caracteres; formularios protegidos con CSRF.
 
 ## 5. Límite conocido
 

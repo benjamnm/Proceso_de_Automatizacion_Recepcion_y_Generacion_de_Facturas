@@ -1,12 +1,18 @@
 {% extends "base.html" %}
 
+{% set migas = [
+    ('Panel', url_for('dashboard')),
+    ('Clientes', url_for('clientes.listado')),
+    ('Editar cliente' if editando else 'Nuevo cliente', None),
+] %}
+
 {% block title %}
 {{ 'Editar cliente' if editando else 'Nuevo cliente' }}
 | Facturaciones SpA
 {% endblock %}
 
 {% block content %}
-<main class="container py-4 py-lg-5">
+<main class="container pt-3 pb-5">
     <div class="row justify-content-center">
         <section class="col-12 col-lg-9 col-xl-8">
             <div class="card">
