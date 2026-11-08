@@ -32,6 +32,23 @@ Registros_Correo/
 Registros_SII/
 *.eml
 
+# Certificados digitales / claves (firma electrónica SII, CAF, TLS)
+*.pfx
+*.p12
+*.pem
+*.key
+*.crt
+
+# Bases de datos locales y respaldos
+*.db
+*.sqlite
+*.sqlite3
+*.bak
+dump*.sql
+
+# Configuración local de Claude Code
+.claude/settings.local.json
+
 # Editores y sistema
 .vscode/*
 !.vscode/settings.json
