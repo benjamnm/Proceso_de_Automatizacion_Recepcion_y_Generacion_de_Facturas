@@ -1,0 +1,128 @@
+Delivered-To: wks.facturacioneslab@gmail.com
+Received: by 2002:a0c:c790:0:b0:91c:79b9:da05 with SMTP id k16csp153398qvj;
+        Sun, 8 Nov 2026 14:58:48 -0800 (PST)
+X-Received: by 2002:a05:7301:719b:b0:373:5ffa:b3a9 with SMTP id 5a478bee46e88-3735ffab4bfmr1783721eec.28.1794178727804;
+        Sun, 08 Nov 2026 14:58:47 -0800 (PST)
+ARC-Seal: i=2; a=rsa-sha256; t=1794178727; cv=pass;
+        d=google.com; s=arc-20260327;
+        b=irzm6dW9fDaAwajPUCLSedelUsAbaF3jeHTS1GQAXDSvf+fgUWF0Uq4+B2X95du1el
+         aBfNhrcAozJJXZNynvpEY4zafL0qnTgSiBKMfiMZ0ka8mshMJjuOV1GWhN2u+Aq1kvu2
+         yGtYP8b+Vta+fBp0jtY7BQdedNUHtRzUOaIWAEEcUJYHl/GJVdOdm7O8JxwdK97wV96U
+         VWHBNwJk4r2xfxhD+AQjYNDvgDaXBJCTurhqcJxayIBKfL+w9YOKK5SvmS1w1jBhPprn
+         qeb/OFf74qGt3x0sNmzOZWF9rYHZdUbe7b4T8hBGvlmK55LyKJpmswZQ2J0L4G4I+ceX
+         WJRw==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=to:subject:message-id:date:from:mime-version:dkim-signature;
+        bh=eMw6nTLG4cY50gOtfQ/Duh0A30TpAkyFf2BE6Xcac8U=;
+        fh=BaT23SlxiL2H9yjc21G3GOvgYct0Ja7r4eDKE2RhK7c=;
+        b=laSQkmMRTzCc8X892eYfexKGIFQvzFGuZacSQ9j6ixAIINvIHYGNQgfcECjdp2kltN
+         7PGr/YKIb1ZMC2UP6y30am0+kEDz7xJ2QKpIwX9qIjxXxwNt0U+pN0g+ZNLB2PSD34JA
+         44YyOGjTo/Mye86vZVpCcq4U1yX0xV0M5CxAmUuMckz+3sIXGhjTk1fHdR7Bx5I0tzwH
+         bazWc+ny/H5Ewb1vBZFk2qIokStXHG2wckyPk5EcDmNPxsElUgqazQq3axQD8Brdntdo
+         jYghiaU9arC54bjU6TNsVX5SyThVkwYNtnBLo27ofcPYpIW6z1W587SNIjuQAcJRs4+j
+         ULew==;
+        dara=google.com
+ARC-Authentication-Results: i=2; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20260707 header.b=e8t08vBz;
+       arc=pass (i=1);
+       spf=pass (google.com: domain of facturacioneswks@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=facturacioneswks@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com;
+       dara=pass header.i=@gmail.com
+Return-Path: <facturacioneswks@gmail.com>
+Received: from mail-sor-f65.google.com (mail-sor-f65.google.com. [209.85.220.65])
+        by mx.google.com with SMTPS id 5a478bee46e88-37260783ce4sor1854453eec.0.2026.11.08.14.58.47
+        for <wks.facturacioneslab@gmail.com>
+        (Google Transport Security);
+        Sun, 08 Nov 2026 14:58:47 -0800 (PST)
+Received-SPF: pass (google.com: domain of facturacioneswks@gmail.com designates 209.85.220.65 as permitted sender) client-ip=209.85.220.65;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20260707 header.b=e8t08vBz;
+       arc=pass (i=1);
+       spf=pass (google.com: domain of facturacioneswks@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=facturacioneswks@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com;
+       dara=pass header.i=@gmail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1794178727; cv=none;
+        d=google.com; s=arc-20260327;
+        b=gsd93EhPo1of6uT55C1XlkMreegl82ZfW9Ef7/khUrHGf6AhTTSRgJ53Gf4GWbnlsM
+         /i0uAlW/zJr+PzRoCEL6TvHpDhVh2S1fEdnxmlh2Z6DIGwyidxcvqwBo0qQa2dykYjeF
+         l2IO4KHUjVxdXcAWp2+hH+moJmu34/G/LXdKEn9FhLSoEJ1CZ+FZX/cGw7HsBgSNiXCi
+         XUA4i7k4CUUvxXeYAsO0ZfoOth6vr5T2ueG1nly865AJd2bIhvQYhemXTeyJ2l3h77fc
+         v8CSUkGo/oW2jNoz+hRV7MDjQk39cqBM9Z7geJO+Pb3Ba3gRVtsvLgpMK+erDcGKIeve
+         klzQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=to:subject:message-id:date:from:mime-version:dkim-signature;
+        bh=eMw6nTLG4cY50gOtfQ/Duh0A30TpAkyFf2BE6Xcac8U=;
+        fh=BaT23SlxiL2H9yjc21G3GOvgYct0Ja7r4eDKE2RhK7c=;
+        b=rl2XfFBVnW4PUAW0mhd6G2cInIh6YK8Vb4F1QNIOSdGCyA2vyQPG6zwVoa4o4CHF3g
+         lh+6hWiVrKREyLOhBM6s/dBXxNS/GfBtfDfzj45coYNiwZyI62OIRZVF66t1rBN2E1Bd
+         WdrhN7pfL/fr8aLYmwbHKlwiL4skJNvAJM7nJw64A8Xgv0d+Nqqa16fCNp/4qfCQBmo1
+         C9MJqzLDA9hTj276Ubxey/ncP86+Utu9qYh3eOKzhJeyVGH9VatbbRzqQVwypzOSfPkw
+         cz8RfA0V18NivGNVqB9ugBi5RYkk7XpavqUmSHiuB0mLgZMGZgbnRyZcz3fnXtx+Wzrp
+         lp8w==;
+        dara=google.com
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794178727; x=1794783527; dara=google.com;
+        h=content-type:to:subject:message-id:date:from:mime-version:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=eMw6nTLG4cY50gOtfQ/Duh0A30TpAkyFf2BE6Xcac8U=;
+        b=e8t08vBzHzQw+ojxYBxgIejd/iigkEaoWy5ZGmTXhM7hPxag4r197QTS3k0cUboQha
+         7ANXxVVa/zfCdrutxMCZm3eV2hPMfSKMSMD9CRcp3oDob84yY/7ywSchksEZ6AeaJZ2N
+         qyu6P/dssIFbgl3DCNVsE31i26qJo11OFODOjnwiRqUCUWtFzQzYWwfzqoRGbdeVH6bB
+         8yUJGEDRe9W/h+f9TvdJ2KnMLxvzFTDZFC9fHwv5HoX9++SucT/JHhJeMfhNVZcT0G9j
+         oXIIjZNkHVLQ+n6TM4Cz936cFcNPotdry9GWe+9yhSA23uGaPidQS7RByRUR/wdZnF3w
+         z7Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794178727; x=1794783527;
+        h=content-type:to:subject:message-id:date:from:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=eMw6nTLG4cY50gOtfQ/Duh0A30TpAkyFf2BE6Xcac8U=;
+        b=NX9ygYyVG65qbv5XiX7Ra1fZ3xO6xPgvFI42PiU8Yzrl4wkiIO0UJSydPI2dw3Pr4D
+         IZMnzHlkI0iZUoDcE+8WvPNhbgDnAGZB5rggx4O00SvdofJFLJxGDcMnuBdUvMr/J8R3
+         /vV7uJgCPiM2+uTm4+ynyK0quBd5VdgF7GSJ541/+YHF418T0hPj+6n1IwDDGJLWnCMk
+         Vg1QkKLTcLevPQPa29pR3MPRg9gYXX557Nikn0u5qk44el4cdxUphOmIM4pA28aLC8Kj
+         ceq/g4O5KGgLicsGa2eH1bYAtblg31rVlUnna+8mzf5uluzi0vfc7nD2SvgZD1ixQu42
+         Nd/w==
+X-Gm-Message-State: APuU4Z+Wy9j+tKKD7F5jhYHPO1R75HeGUv/ovsbiZNhC1rVtOGOlmbuv
+	Ccwds7rKQIzFnbl9tcvhjB1lffFPtHaNUeIGbi6iJnJ0Y2IkXX07ostHIteJYtq2z38oSGQciDs
+	TxPNFZnM/djJKaAPpST0tq0Zc0qYlPS65bGcF9aw/TUhQ
+X-Gm-Gg: AYBFou0yh2qk5nGoDzVY7XWNLXGVdAcAc2rr9ospJbPrUhr112eDgxCv/eZcF2GdB0y
+	8VAIsWu6qg5/ak8eqlzTllLERDWbaSuNeJI5NMNmQ+iGE1uFAC83GpNaBHY20HDCj3q2jLIjqgd
+	dvsjCQWBGBJXpF/1ghWAMKkCTZdn17EfxZdkuwQywN+aZsrxc4Q679DJXGRES2iG7qX9Kcj4BWr
+	0kbUcZl34VBzkMSmXasnabbKk4heLDr8tqRTLKA0jEyjwAJBD+EAvDGrpoONVBh/kysvzjh+Kdo
+	A8yfbIML1u8GIaGi8zH9yCM9oCbObvTq0wu6wDsAzJ/F17M2VB/HrJYDdjvlOEnu28ClQF5d45J
+	Ah/Xa2cGZnoPQ7j7iIdZU0w9gu6Jgj8Qtux35ekdP7oCaTfmp5Y4vGKfeuD9yHdukMSZ09DXha1
+	j6ezL/M+npJWQQyL7YdkrqDdsSHC1iuEyuu6+6FGdwn9UOiLkL/Ug4UDC/
+X-Received: by 2002:a05:693c:80dc:b0:358:eccb:af7c with SMTP id
+ 5a478bee46e88-372573ce755mr5066673eec.33.1794178727205; Sun, 08 Nov 2026
+ 14:58:47 -0800 (PST)
+MIME-Version: 1.0
+From: Claudia <facturacioneswks@gmail.com>
+Date: Sun, 8 Nov 2026 19:58:35 -0300
+X-Gm-Features: AclHuK8Ysm83AFgtbPhHNqKmCmpe1iK64m2X2ovbpQmiWz9EKYIHK42FG3pYWD4
+Message-ID: <CANF=t+Nsoyy_EPRzk4AXPEV9KSzOqtrg=WmowssLHd99_N1J9A@mail.gmail.com>
+Subject: Solicitud de factura QA-001
+To: "wks.facturacioneslab@gmail.com" <wks.facturacioneslab@gmail.com>
+Content-Type: multipart/alternative; boundary="000000000000b2decd065fcbc9da"
+
+--000000000000b2decd065fcbc9da
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+RUT: 11892076-7
+Concepto: Servicio de prueba QA-001
+Monto: 119000
+Fecha de emisi=C3=B3n: 08-11-2026
+Afectaci=C3=B3n: Afecta
+Orden de compra: QA-OC-001
+
+--000000000000b2decd065fcbc9da
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">RUT: 11892076-7<br>Concepto: Servicio de prueba QA-001<br>=
+Monto: 119000<br>Fecha de emisi=C3=B3n: 08-11-2026<br>Afectaci=C3=B3n: Afec=
+ta<br>Orden de compra: QA-OC-001</div>
+
+--000000000000b2decd065fcbc9da--
