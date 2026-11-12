@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="same-origin">
 
     <title>
         {% block title %}Facturaciones SpA{% endblock %}
@@ -10,11 +11,15 @@
 
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+        crossorigin="anonymous"
         rel="stylesheet"
     >
 
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+"
+        crossorigin="anonymous"
         rel="stylesheet"
     >
 
@@ -27,11 +32,90 @@
 </head>
 
 <body>
+    {% macro enlace_menu(endpoint, texto, icono, activo) %}
+    <li class="nav-item">
+        <a
+            class="nav-link{{ ' active' if activo }}"
+            href="{{ url_for(endpoint) }}"
+            {% if activo %}aria-current="page"{% endif %}
+        >
+            <i class="bi {{ icono }}" aria-hidden="true"></i>
+            {{ texto }}
+        </a>
+    </li>
+    {% endmacro %}
+
+    {% if current_user.is_authenticated %}
+    {% set endpoint = request.endpoint or '' %}
+    <nav class="navbar navbar-expand-lg navbar-dark barra-principal">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+                Facturaciones SpA
+            </a>
+
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#menu-principal"
+                aria-controls="menu-principal"
+                aria-expanded="false"
+                aria-label="Mostrar menú"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="menu-principal">
+                <ul class="navbar-nav me-auto">
+                    {{ enlace_menu('dashboard', 'Panel', 'bi-house',
+                                   endpoint == 'dashboard') }}
+
+                    {% if current_user.role_name in ['Administrador', 'Emisor'] %}
+                    {{ enlace_menu('solicitudes.listado', 'Solicitudes', 'bi-list-ul',
+                                   request.blueprint == 'solicitudes'
+                                   and endpoint != 'solicitudes.nueva') }}
+                    {{ enlace_menu('solicitudes.nueva', 'Nueva solicitud', 'bi-plus-circle',
+                                   endpoint == 'solicitudes.nueva') }}
+                    {% endif %}
+
+                    {% if current_user.role_name == 'Administrador' %}
+                    {{ enlace_menu('admin.correos', 'Bandeja de correos', 'bi-envelope-paper',
+                                   endpoint.startswith('admin.correo')) }}
+                    {{ enlace_menu('clientes.listado', 'Clientes', 'bi-building',
+                                   request.blueprint == 'clientes') }}
+                    {{ enlace_menu('admin.usuarios', 'Usuarios', 'bi-people',
+                                   endpoint.startswith('admin.usuario')) }}
+                    {{ enlace_menu('admin.auditoria', 'Auditoría', 'bi-journal-text',
+                                   endpoint == 'admin.auditoria') }}
+                    {% endif %}
+                </ul>
+
+                <div class="d-flex align-items-center gap-3 py-2 py-lg-0">
+                    <div class="text-white small">
+                        <strong>{{ current_user.nombre }}</strong>
+                        <span class="badge bg-secondary ms-1">
+                            {{ current_user.role_name }}
+                        </span>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('auth.logout') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-outline-light btn-sm">
+                            <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+                            Cerrar sesión
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             <div class="flash-container">
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show">
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
                         {{ message }}
 
                         <button
@@ -46,11 +130,45 @@
         {% endif %}
     {% endwith %}
 
+    {% if migas is defined and migas %}
+    {% set ns = namespace(volver=None) %}
+    {% for _, url in migas[:-1] %}
+        {% if url %}{% set ns.volver = url %}{% endif %}
+    {% endfor %}
+    <div class="container pt-3">
+        <nav
+            class="d-flex flex-wrap justify-content-between align-items-center gap-2"
+            aria-label="Ruta de navegación"
+        >
+            <ol class="breadcrumb mb-0">
+                {% for texto, url in migas %}
+                    {% if url and not loop.last %}
+                    <li class="breadcrumb-item"><a href="{{ url }}">{{ texto }}</a></li>
+                    {% else %}
+                    <li class="breadcrumb-item active" aria-current="page">{{ texto }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ol>
+
+            {% if ns.volver %}
+            <a href="{{ ns.volver }}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                Volver
+            </a>
+            {% endif %}
+        </nav>
+    </div>
+    {% endif %}
+
     {% block content %}{% endblock %}
 
     <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous">
     </script>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 
     {% block scripts %}{% endblock %}
 </body>

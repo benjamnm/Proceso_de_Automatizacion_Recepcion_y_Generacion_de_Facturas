@@ -30,7 +30,7 @@ from .solicitudes import ErrorGestionSolicitud, comprobar_actor
 from .usuarios import registrar_evento
 from .validaciones import ErrorValidacion, normalizar_correo
 
-ESTADOS_QUE_ADMITEN_ENVIO = ("Pendiente", "En revisión")
+ESTADOS_QUE_ADMITEN_ENVIO = ("Pendiente", "En revisión", "Aprobada")
 VENTANA_EN_PROCESO_MIN = 10
 
 
@@ -152,6 +152,7 @@ def _preparar_envio(actor_id, public_id):
                 SELECT id
                 FROM envios_correo
                 WHERE solicitud_id = %s
+                  AND tipo = 'XML_CLIENTE'
                   AND estado = 'EN_PROCESO'
                   AND creado_en > NOW() - INTERVAL %s MINUTE
                 LIMIT 1
@@ -185,10 +186,10 @@ def _preparar_envio(actor_id, public_id):
                     solicitud_id, registro_xml_id, enviado_por,
                     destinatario, responder_a, asunto,
                     adjunto_nombre, adjunto_sha256, message_id,
-                    smtp_host, estado
+                    smtp_host, estado, tipo
                 )
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                        'EN_PROCESO')
+                        'EN_PROCESO', 'XML_CLIENTE')
                 """,
                 (
                     solicitud["id"], registro_xml["id"], actor["id"],
@@ -310,7 +311,7 @@ def listar_envios(solicitud_id, limite=20):
         with connection.cursor() as cursor:
             cursor.execute(
                 """
-                SELECT e.id, e.destinatario, e.estado, e.error_codigo,
+                SELECT e.id, e.tipo, e.destinatario, e.estado, e.error_codigo,
                        e.adjunto_nombre, e.adjunto_sha256,
                        e.creado_en, e.finalizado_en,
                        u.nombre AS enviado_por_nombre

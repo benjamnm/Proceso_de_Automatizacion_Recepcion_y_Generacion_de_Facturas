@@ -1,11 +1,17 @@
 {% extends "base.html" %}
 
+{% set migas = [
+    ('Panel', url_for('dashboard')),
+    ('Usuarios', url_for('admin.usuarios')),
+    ('Editar usuario', None),
+] %}
+
 {% block title %}
 Editar usuario | Facturaciones SpA
 {% endblock %}
 
 {% block content %}
-<main class="container py-5">
+<main class="container pt-3 pb-5">
     <div class="row justify-content-center">
         <section class="col-12 col-lg-7">
             <div class="card">

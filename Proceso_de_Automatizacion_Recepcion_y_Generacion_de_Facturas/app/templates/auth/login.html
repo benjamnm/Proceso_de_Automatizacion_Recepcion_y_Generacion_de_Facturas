@@ -58,8 +58,8 @@
                 class="needs-validation"
                 novalidate
             >
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div class="mb-4">
                     <label
                         for="email"
@@ -74,7 +74,8 @@
                         name="email"
                         class="form-control login-input"
                         placeholder="usuario@empresa.cl"
-                        autocomplete="email"
+                        autocomplete="username"
+                        maxlength="150"
                         required
                     >
 
@@ -83,18 +84,12 @@
                     </div>
                 </div>
 
-                <div class="password-heading">
-                    <label
-                        for="password"
-                        class="form-label"
-                    >
-                        Contraseña
-                    </label>
-
-                    <a href="#" class="forgot-link">
-                        ¿Olvidó su contraseña?
-                    </a>
-                </div>
+                <label
+                    for="password"
+                    class="form-label"
+                >
+                    Contraseña
+                </label>
 
                 <div class="input-group mb-4">
                     <input
@@ -103,7 +98,7 @@
                         name="password"
                         class="form-control login-input password-input"
                         placeholder="••••••••••••"
-                        minlength="8"
+                        maxlength="128"
                         autocomplete="current-password"
                         required
                     >
@@ -134,22 +129,14 @@
             </form>
 
             <div class="security-note">
-                <i class="bi bi-lock"></i>
+                <i class="bi bi-lock" aria-hidden="true"></i>
                 <span>
-                    Conexión cifrada TLS 1.3 · Sus datos están protegidos
+                    Acceso restringido a usuarios autorizados.
+                    Si olvidó su contraseña, contacte al Administrador.
                 </span>
             </div>
         </div>
     </section>
-
-    <button
-        type="button"
-        class="help-button"
-        aria-label="Ayuda"
-        title="Ayuda"
-    >
-        ?
-    </button>
 </main>
 {% endblock %}
 

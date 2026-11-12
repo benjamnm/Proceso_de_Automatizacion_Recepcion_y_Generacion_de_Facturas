@@ -157,7 +157,7 @@ def test_credenciales_invalidas_no_crean_sesion(
 
     respuesta = iniciar_sesion(client, app, email, password)
 
-    assert respuesta.status_code == 200
+    assert respuesta.status_code == 401
     assert (
         "El correo o la contraseña no son válidos."
         in respuesta.get_data(as_text=True)
@@ -202,7 +202,7 @@ def test_cuenta_inactiva_no_inicia_sesion(
         PASSWORD_PRUEBA,
     )
 
-    assert respuesta.status_code == 200
+    assert respuesta.status_code == 401
     assert (
         "El correo o la contraseña no son válidos."
         in respuesta.get_data(as_text=True)

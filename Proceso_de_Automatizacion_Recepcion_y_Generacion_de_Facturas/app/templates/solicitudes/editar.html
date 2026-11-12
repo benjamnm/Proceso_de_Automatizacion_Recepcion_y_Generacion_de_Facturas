@@ -1,11 +1,22 @@
 {% extends "base.html" %}
 
+{% set migas = [
+    ('Panel', url_for('dashboard')),
+    ('Solicitudes', url_for('solicitudes.listado')),
+    ('Solicitud ' ~ solicitud.public_id[:8],
+     url_for('solicitudes.detalle', public_id=solicitud.public_id)),
+    ('Editar', None),
+] %}
+
 {% block title %}
 Editar solicitud | Facturaciones SpA
 {% endblock %}
 
 {% block content %}
-<main class="container py-4 py-lg-5">
+{% from "solicitudes/_proceso.html" import navegacion_proceso %}
+<main class="container pt-3 pb-5">
+    {{ navegacion_proceso(solicitud, 'editar', True) }}
+
     <div class="row justify-content-center">
         <section class="col-12 col-lg-9">
             <div class="card">

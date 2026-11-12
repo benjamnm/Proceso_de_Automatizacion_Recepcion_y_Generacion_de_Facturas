@@ -1,35 +1,18 @@
 {% extends "base.html" %}
 
+{% set migas = [('Panel', url_for('dashboard')), ('Usuarios', None)] %}
+
 {% block title %}
 Usuarios | Facturaciones SpA
 {% endblock %}
 
 {% block content %}
-<main class="container py-4 py-lg-5">
-    <header
-        class="d-flex flex-wrap justify-content-between
-               align-items-center gap-3 mb-4"
-    >
-        <div>
-            <h1 class="h2 mb-1">Gestión de usuarios</h1>
-            <p class="text-body-secondary mb-0">
-                Crea cuentas y consulta sus perfiles de acceso.
-            </p>
-        </div>
-
-        <a
-            href="{{ url_for('admin.auditoria') }}"
-            class="btn btn-outline-primary"
-        >
-            Ver auditoría
-        </a>
-
-        <a
-            href="{{ url_for('dashboard') }}"
-            class="btn btn-outline-secondary"
-        >
-            Volver al panel
-        </a>
+<main class="container pt-3 pb-5">
+    <header class="mb-4">
+        <h1 class="h2 mb-1">Gestión de usuarios</h1>
+        <p class="text-body-secondary mb-0">
+            Crea cuentas y consulta sus perfiles de acceso.
+        </p>
     </header>
 
     <div class="row g-4">
@@ -220,9 +203,7 @@ Usuarios | Facturaciones SpA
                                                     'admin.usuario_estado',
                                                     usuario_id=usuario.id
                                                 ) }}"
-                                                onsubmit="return confirm(
-                                                    '¿Confirma el cambio de estado de esta cuenta?'
-                                                );"
+                                                data-confirmar="¿Confirma el cambio de estado de esta cuenta?"
                                             >
                                                 <input
                                                     type="hidden"

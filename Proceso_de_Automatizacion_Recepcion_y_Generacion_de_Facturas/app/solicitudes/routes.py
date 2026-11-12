@@ -1,7 +1,6 @@
 import re
-import pymysql
-import os
 
+import pymysql
 from datetime import date
 from decimal import Decimal
 
@@ -29,6 +28,8 @@ from ..services.envios_solicitud import (
     verificar_token_envio,
 )
 from ..services.solicitudes import (
+    ESTADOS_CAMBIO_DIRECTO,
+    ESTADOS_EDITABLES,
     ErrorGestionSolicitud,
     TRANSICIONES_ESTADO,
     cambiar_estado_solicitud,
@@ -44,6 +45,19 @@ from ..services.registros_xml import (
     ErrorArchivoXML,
     guardar_xml,
     obtener_xml_autorizado,
+)
+from ..services.dte_sii import advertencias as advertencias_dte
+from ..services.facturas import (
+    ErrorFactura,
+    aprobar_factura,
+    enviar_a_revision,
+    listar_versiones,
+    obtener_archivo_sii,
+    observar_factura,
+)
+from ..services.notificaciones import (
+    notificar_factura_aprobada,
+    notificar_factura_generada,
 )
 from ..services.correos_solicitud import (
     ESTADOS_QUE_ADMITEN_ENVIO,
@@ -315,9 +329,6 @@ def nueva():
         clientes=obtener_clientes_activos(),
         values=values,
         errores=errores,
-        editando=False,
-        solicitud=None,
-        version=None,
         token_envio=token_envio,
     )
 
@@ -441,7 +452,11 @@ def detalle(public_id):
     solicitud = obtener_solicitud_autorizada(public_id)
 
     estados_permitidos = (
-        TRANSICIONES_ESTADO.get(solicitud["estado_nombre"], ())
+        tuple(
+            estado
+            for estado in TRANSICIONES_ESTADO.get(solicitud["estado_nombre"], ())
+            if estado in ESTADOS_CAMBIO_DIRECTO
+        )
         if current_user.role_name == "Administrador"
         else ()
     )
@@ -460,6 +475,18 @@ def detalle(public_id):
             )
             registro_xml = cursor.fetchone()
 
+            cursor.execute(
+                """
+                SELECT version, estado
+                FROM facturas
+                WHERE solicitud_id = %s
+                ORDER BY version DESC
+                LIMIT 1
+                """,
+                (solicitud["id"],),
+            )
+            factura_actual = cursor.fetchone()
+
     finally:
         connection.close()
 
@@ -467,6 +494,8 @@ def detalle(public_id):
         "solicitudes/detalle.html",
         solicitud=solicitud,
         registro_xml=registro_xml,
+        factura_actual=factura_actual,
+        editable=solicitud["estado_nombre"] in ESTADOS_EDITABLES,
         estados_permitidos=estados_permitidos,
         envios=listar_envios(solicitud["id"]),
         permite_envio=(
@@ -516,6 +545,7 @@ def enviar_correo(public_id):
             )
 
     return redirect(url_for("solicitudes.detalle", public_id=public_id))
+
 
 @solicitudes_bp.post("/<string:public_id>/xml")
 @solicitud_required
@@ -597,37 +627,11 @@ def descargar_xml(public_id):
 )
 @solicitud_required
 def editar(public_id):
-    connection = get_db_connection()
+    solicitud = obtener_solicitud_autorizada(public_id)
 
-    try:
-        with connection.cursor() as cursor:
-            sql = """
-                SELECT
-                    s.*,
-                    e.nombre AS estado_nombre
-                FROM solicitudes AS s
-                INNER JOIN estados_solicitud AS e
-                    ON e.id = s.estado_id
-                WHERE s.public_id = %s
-            """
-            parametros = [public_id]
-
-            if current_user.role_name != "Administrador":
-                sql += " AND s.emisor_id = %s"
-                parametros.append(int(current_user.id))
-
-            cursor.execute(sql, tuple(parametros))
-            solicitud = cursor.fetchone()
-
-    finally:
-        connection.close()
-
-    if solicitud is None:
-        abort(404)
-
-    if solicitud["estado_nombre"] != "Pendiente":
+    if solicitud["estado_nombre"] not in ESTADOS_EDITABLES:
         flash(
-            "Solo se pueden editar solicitudes Pendientes.",
+            "Solo se pueden editar solicitudes Pendientes o En corrección.",
             "warning",
         )
         return redirect(url_for(
@@ -648,11 +652,7 @@ def editar(public_id):
     errores = {}
 
     if request.method == "POST":
-        values = {
-            campo: request.form.get(campo, "")
-            for campo in CAMPOS_FORMULARIO
-        }
-
+        values = leer_formulario()
         version = request.form.get("version", "")
         _, errores = validar_solicitud(values)
 
@@ -687,10 +687,12 @@ def editar(public_id):
                     "success" if changed else "info",
                 )
 
-                return redirect(url_for(
-                    "solicitudes.detalle",
-                    public_id=public_id,
-                ))
+                destino = (
+                    "solicitudes.factura"
+                    if solicitud["estado_nombre"] == "En corrección"
+                    else "solicitudes.detalle"
+                )
+                return redirect(url_for(destino, public_id=public_id))
 
     return render_template(
         "solicitudes/editar.html",
@@ -699,7 +701,8 @@ def editar(public_id):
         errores=errores,
         version=version,
     )
-    
+
+
 @solicitudes_bp.post("/<string:public_id>/estado")
 @solicitud_required
 def cambiar_estado(public_id):
@@ -748,3 +751,186 @@ def cambiar_estado(public_id):
         "solicitudes.detalle",
         public_id=public_id,
     ))
+
+
+def _error_bd(mensaje, public_id):
+    current_app.logger.exception("%s (%s)", mensaje, public_id)
+    flash(f"{mensaje}. Intente nuevamente.", "danger")
+
+
+@solicitudes_bp.get("/<string:public_id>/factura")
+@solicitud_required
+def factura(public_id):
+    solicitud = obtener_solicitud_autorizada(public_id)
+    versiones, correo = listar_versiones(solicitud["id"])
+    vigente = versiones[0] if versiones else None
+
+    return render_template(
+        "solicitudes/factura.html",
+        solicitud=solicitud,
+        versiones=versiones,
+        vigente=vigente,
+        correo=correo,
+        advertencias=advertencias_dte(vigente["datos"]) if vigente else [],
+        es_admin=current_user.role_name == "Administrador",
+        editable=solicitud["estado_nombre"] in ESTADOS_EDITABLES,
+        emisor_configurado=all(
+            str(current_app.config.get(c) or "").strip()
+            for c in ("EMPRESA_RUT", "EMPRESA_RAZON_SOCIAL", "EMPRESA_GIRO",
+                      "EMPRESA_ACTECO", "EMPRESA_DIRECCION", "EMPRESA_COMUNA")
+        ),
+    )
+
+
+@solicitudes_bp.post("/<string:public_id>/factura/revision")
+@solicitud_required
+def factura_revision(public_id):
+    try:
+        resultado = enviar_a_revision(
+            actor_id=int(current_user.id),
+            public_id=public_id,
+            version_esperada=request.form.get("version", ""),
+            ip=request.remote_addr,
+        )
+    except (ErrorFactura, ErrorGestionSolicitud) as exc:
+        flash(str(exc), "danger")
+    except pymysql.MySQLError:
+        _error_bd("No se pudo generar la factura", public_id)
+    else:
+        flash(
+            f"Factura versión {resultado['version']} generada y enviada a "
+            f"revisión.",
+            "success",
+        )
+        if resultado["notificar"]:
+            aviso = notificar_factura_generada(
+                int(current_user.id), resultado["solicitud_id"],
+                request.remote_addr,
+            )
+            if aviso["error"] or aviso["fallidos"]:
+                flash(
+                    "La factura quedó guardada, pero no se pudo avisar al "
+                    "Administrador por correo.",
+                    "warning",
+                )
+
+    return redirect(url_for("solicitudes.factura", public_id=public_id))
+
+
+@solicitudes_bp.post("/<string:public_id>/factura/aprobar")
+@solicitud_required
+def factura_aprobar(public_id):
+    if current_user.role_name != "Administrador":
+        abort(403)
+
+    try:
+        version = aprobar_factura(
+            actor_id=int(current_user.id),
+            public_id=public_id,
+            version_esperada=request.form.get("version", ""),
+            ip=request.remote_addr,
+        )
+    except ErrorFactura as exc:
+        flash(str(exc), "danger")
+    except pymysql.MySQLError:
+        _error_bd("No se pudo aprobar la factura", public_id)
+    except OSError:
+        current_app.logger.exception("No se pudo escribir el DTE")
+        flash("No se pudo guardar el archivo para el SII.", "danger")
+    else:
+        flash(
+            f"Factura versión {version} validada. "
+            f"El archivo para el SII está disponible.",
+            "success",
+        )
+        aviso = notificar_factura_aprobada(
+            int(current_user.id), public_id, request.remote_addr,
+        )
+        if aviso["error"] or aviso["fallidos"]:
+            flash(
+                "La factura quedó validada, pero no se pudo enviar el "
+                f"archivo SII por correo: {aviso['error'] or 'falló el envío'}. "
+                "Puede descargarlo desde esta pantalla.",
+                "warning",
+            )
+        else:
+            flash(
+                f"Archivo SII enviado por correo a {aviso['enviados']} "
+                "destinatario(s).",
+                "info",
+            )
+
+    return redirect(url_for("solicitudes.factura", public_id=public_id))
+
+
+@solicitudes_bp.post("/<string:public_id>/factura/observar")
+@solicitud_required
+def factura_observar(public_id):
+    if current_user.role_name != "Administrador":
+        abort(403)
+
+    try:
+        version = observar_factura(
+            actor_id=int(current_user.id),
+            public_id=public_id,
+            version_esperada=request.form.get("version", ""),
+            observacion=request.form.get("observacion", ""),
+            ip=request.remote_addr,
+        )
+    except ErrorFactura as exc:
+        flash(str(exc), "danger")
+    except pymysql.MySQLError:
+        _error_bd("No se pudo registrar la observación", public_id)
+    else:
+        flash(
+            f"Versión {version} devuelta a corrección. Corrija los datos y "
+            f"reenvíela para generar la versión {version + 1}.",
+            "info",
+        )
+
+    return redirect(url_for("solicitudes.factura", public_id=public_id))
+
+
+@solicitudes_bp.get("/<string:public_id>/factura/sii")
+@solicitud_required
+def descargar_sii(public_id):
+    if current_user.role_name != "Administrador":
+        abort(403)
+
+    try:
+        actor, fila, ruta = obtener_archivo_sii(int(current_user.id), public_id)
+    except ErrorFactura as exc:
+        flash(str(exc), "danger")
+        return redirect(url_for("solicitudes.factura", public_id=public_id))
+
+    connection = get_db_connection()
+    try:
+        registrar_evento(
+            connection, actor["id"], "ARCHIVO_SII_DESCARGADO",
+            {
+                "solicitud_afectada_id": fila["id"],
+                "public_id": public_id,
+                "factura_id": fila["factura_id"],
+                "version_factura": fila["version"],
+                "sha256": fila["archivo_sii_sha256"],
+            },
+            request.remote_addr,
+        )
+        connection.commit()
+    except pymysql.MySQLError:
+        connection.rollback()
+        current_app.logger.exception("No se pudo auditar la descarga SII.")
+        flash("No se pudo registrar la descarga.", "danger")
+        return redirect(url_for("solicitudes.factura", public_id=public_id))
+    finally:
+        connection.close()
+
+    return send_file(
+        ruta,
+        mimetype="application/xml",
+        as_attachment=True,
+        download_name=(
+            f"DTE_{fila['tipo_dte']}_{public_id[:8]}_v{fila['version']}.xml"
+        ),
+        max_age=0,
+    )

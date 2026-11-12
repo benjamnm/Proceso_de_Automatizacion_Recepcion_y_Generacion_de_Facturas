@@ -11,30 +11,27 @@
     {% endif %}
 {% endmacro %}
 
+{% set migas = [
+    ('Panel', url_for('dashboard')),
+    ('Solicitudes', url_for('solicitudes.listado')),
+    ('Nueva solicitud', None),
+] %}
+
 {% block title %}
-{{ 'Editar solicitud' if editando else 'Nueva solicitud' }}
-| Facturaciones SpA
+Nueva solicitud | Facturaciones SpA
 {% endblock %}
 
 {% block content %}
-<main class="container py-4 py-lg-5">
+<main class="container pt-3 pb-5">
     <div class="row justify-content-center">
         <section class="col-12 col-lg-9">
             <div class="card">
                 <div class="card-body p-4">
-                    <h1 class="h3 mb-2">
-                        {{ 'Editar solicitud' if editando
-                           else 'Nueva solicitud de facturación' }}
-                    </h1>
+                    <h1 class="h3 mb-2">Nueva solicitud de facturación</h1>
 
                     <p class="text-body-secondary">
-                        {% if editando %}
-                        Solo se permiten cambios mientras la solicitud
-                        permanezca Pendiente.
-                        {% else %}
                         La solicitud se registrará como Pendiente.
                         Este proceso no emite una factura tributaria.
-                        {% endif %}
                     </p>
 
                     {% if errores %}
@@ -75,7 +72,7 @@
                     </div>
                     {% endif %}
 
-                    {% if not editando and not clientes %}
+                    {% if not clientes %}
                     <div class="alert alert-warning" role="status">
                         No hay clientes activos.
                         Un Administrador debe registrar un cliente.
@@ -88,60 +85,17 @@
 
                     <form
                         method="post"
-                        action="{{ url_for(
-                            'solicitudes.editar',
-                            public_id=solicitud.public_id
-                        ) if editando else url_for('solicitudes.nueva') }}"
+                        action="{{ url_for('solicitudes.nueva') }}"
+                        data-bloquear-envio
                     >
-                        <input
-                            type="hidden"
-                            name="csrf_token"
-                            value="{{ csrf_token() }}"
-                        >
-
-                        {% if editando %}
-                        <input
-                            type="hidden"
-                            name="version"
-                            value="{{ version }}"
-                        >
-                        {% else %}
-                        <input
-                            type="hidden"
-                            name="token_envio"
-                            value="{{ token_envio }}"
-                        >
-                        {% endif %}
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="token_envio" value="{{ token_envio }}">
 
                         <div class="mb-3">
                             <label for="cliente_id" class="form-label">
                                 Cliente receptor *
                             </label>
 
-                            {% if editando %}
-                            <input
-                                type="hidden"
-                                name="cliente_id"
-                                value="{{ solicitud.cliente_id }}"
-                            >
-
-                            <input
-                                id="cliente_id"
-                                type="text"
-                                class="form-control{% if errores.get('cliente_id') %} is-invalid{% endif %}"
-                                value="{{ solicitud.nombre }} — {{ solicitud.rut }}"
-                                readonly
-                                aria-describedby="cliente_id_ayuda{% if errores.get('cliente_id') %} cliente_id_error{% endif %}"
-                                {% if errores.get('cliente_id') %}
-                                aria-invalid="true"
-                                {% endif %}
-                            >
-
-                            <div id="cliente_id_ayuda" class="form-text">
-                                El cliente y sus datos históricos
-                                no se modifican desde esta pantalla.
-                            </div>
-                            {% else %}
                             <select
                                 id="cliente_id"
                                 name="cliente_id"
@@ -168,7 +122,7 @@
                                 </option>
                                 {% endfor %}
                             </select>
-                            {% endif %}
+
 
                             {{ error_campo('cliente_id') }}
                         </div>
@@ -339,48 +293,31 @@
                             <button
                                 type="submit"
                                 class="btn btn-primary"
-                                {% if not editando and not clientes %}
-                                disabled
-                                {% endif %}
+                                {% if not clientes %}disabled{% endif %}
                             >
-                                {{ 'Guardar cambios' if editando
-                                   else 'Registrar solicitud' }}
+                                Registrar solicitud
                             </button>
 
                             <a
                                 href="{{ url_for('solicitudes.listado') }}"
                                 class="btn btn-outline-secondary"
                             >
-                                Volver al listado
+                                Cancelar
                             </a>
 
-                            {% if editando %}
-                            <a
-                                href="{{ url_for(
-                                    'solicitudes.editar',
-                                    public_id=solicitud.public_id
-                                ) }}"
-                                class="btn btn-outline-secondary"
-                            >
-                                Recargar datos guardados
-                            </a>
-                            {% else %}
                             <a
                                 href="{{ url_for('solicitudes.nueva') }}"
                                 class="btn btn-outline-secondary"
                             >
                                 Abrir formulario nuevo
                             </a>
-                            {% endif %}
                         </div>
 
                         <p class="small text-body-secondary mt-3 mb-0">
-                            {% if editando %}
-                            Recargar descarta los cambios no guardados.
-                            {% else %}
+
                             Abrir un formulario nuevo descarta
                             los datos que todavía no hayas registrado.
-                            {% endif %}
+
                         </p>
                     </form>
                 </div>

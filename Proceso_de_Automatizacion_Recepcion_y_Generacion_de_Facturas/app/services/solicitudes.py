@@ -11,17 +11,34 @@ from .usuarios import registrar_evento
 from .validaciones import validar_cliente
 
 
+# Flujo de la factura:
+#   Pendiente ----(generar factura vN)----> En revisión
+#   En revisión --(Admin valida OK)-------> Aprobada (genera archivo SII)
+#   En revisión --(Admin observa)---------> En corrección
+#   En corrección (editar + reenviar) ----> En revisión (factura vN+1)
+#   Cualquiera no final ------------------> Rechazada
 TRANSICIONES_ESTADO = {
-    "Pendiente": (
-        "En revisión",
-        "Rechazada",
-    ),
-    "En revisión": (
-        "Pendiente",
-        "Rechazada",
-    ),
+    "Pendiente": ("En revisión", "Rechazada"),
+    "En revisión": ("Aprobada", "En corrección", "Rechazada"),
+    "En corrección": ("En revisión", "Rechazada"),
+    "Aprobada": (),
     "Rechazada": (),
 }
+
+# Estados que se modifican con cambiar_estado_solicitud(). El resto pasa
+# por services/facturas.py, porque generan versiones o archivos.
+ESTADOS_CAMBIO_DIRECTO = ("Rechazada",)
+
+ESTADOS_EDITABLES = ("Pendiente", "En corrección")
+
+COLUMNAS_INSERCION = (
+    "public_id", "emisor_id", "cliente_id", "estado_id", "origen_id",
+    "rut", "nombre", "direccion", "giro", "email_contacto_receptor",
+    "concepto", "nro_orden_compra", "fecha_emision", "monto_bruto",
+    "tipo_afectacion", "email_emisor", "clave_idempotencia",
+    "huella_creacion",
+)
+
 
 class ErrorGestionSolicitud(Exception):
     pass
@@ -228,6 +245,17 @@ def comprobar_actor(cursor, actor_id):
     return actor
 
 
+def insertar_solicitud(cursor, registro):
+    """INSERT común a la creación web y a la creación desde correo."""
+    columnas = ", ".join(COLUMNAS_INSERCION)
+    valores = ", ".join(f"%({c})s" for c in COLUMNAS_INSERCION)
+    cursor.execute(
+        f"INSERT INTO solicitudes ({columnas}) VALUES ({valores})",
+        registro,
+    )
+    return cursor.lastrowid
+
+
 def crear_solicitud(
     actor_id,
     datos,
@@ -360,53 +388,7 @@ def crear_solicitud(
                 "huella_creacion": huella,
             }
 
-            cursor.execute(
-                """
-                INSERT INTO solicitudes (
-                    public_id,
-                    emisor_id,
-                    cliente_id,
-                    estado_id,
-                    origen_id,
-                    rut,
-                    nombre,
-                    direccion,
-                    giro,
-                    email_contacto_receptor,
-                    concepto,
-                    nro_orden_compra,
-                    fecha_emision,
-                    monto_bruto,
-                    tipo_afectacion,
-                    email_emisor,
-                    clave_idempotencia,
-                    huella_creacion
-                )
-                VALUES (
-                    %(public_id)s,
-                    %(emisor_id)s,
-                    %(cliente_id)s,
-                    %(estado_id)s,
-                    %(origen_id)s,
-                    %(rut)s,
-                    %(nombre)s,
-                    %(direccion)s,
-                    %(giro)s,
-                    %(email_contacto_receptor)s,
-                    %(concepto)s,
-                    %(nro_orden_compra)s,
-                    %(fecha_emision)s,
-                    %(monto_bruto)s,
-                    %(tipo_afectacion)s,
-                    %(email_emisor)s,
-                    %(clave_idempotencia)s,
-                    %(huella_creacion)s
-                )
-                """,
-                registro,
-            )
-
-            solicitud_id = cursor.lastrowid
+            solicitud_id = insertar_solicitud(cursor, registro)
 
         registrar_evento(
             connection,
@@ -513,9 +495,10 @@ def editar_solicitud(
             )
             estado = cursor.fetchone()
 
-            if estado is None or estado["nombre"] != "Pendiente":
+            if estado is None or estado["nombre"] not in ESTADOS_EDITABLES:
                 raise ErrorGestionSolicitud(
-                    "Solo se pueden editar solicitudes Pendientes."
+                    "Solo se pueden editar solicitudes Pendientes "
+                    "o En corrección."
                 )
 
             if solicitud["version"] != version_esperada:
@@ -596,6 +579,7 @@ def editar_solicitud(
             {
                 "solicitud_afectada_id": solicitud["id"],
                 "public_id": public_id,
+                "estado": estado["nombre"],
                 "version_anterior": version_esperada,
                 "version_nueva": version_esperada + 1,
                 "cambios": cambios,
@@ -612,6 +596,7 @@ def editar_solicitud(
 
     finally:
         connection.close()
+
 
 def cambiar_estado_solicitud(
     actor_id,
@@ -638,6 +623,11 @@ def cambiar_estado_solicitud(
     if len(motivo_rechazo) > 300:
         raise ErrorGestionSolicitud(
             "El motivo no puede superar 300 caracteres."
+        )
+
+    if estado_destino not in ESTADOS_CAMBIO_DIRECTO:
+        raise ErrorGestionSolicitud(
+            "Este cambio se realiza desde la revisión de la factura."
         )
 
     if estado_destino == "Rechazada" and not motivo_rechazo:
@@ -699,7 +689,7 @@ def cambiar_estado_solicitud(
                 raise ErrorGestionSolicitud(
                     "El estado actual no está disponible."
                 )
-                
+
             permitidos = TRANSICIONES_ESTADO.get(
                 estado_actual["nombre"],
                 (),
@@ -754,6 +744,20 @@ def cambiar_estado_solicitud(
                 raise ErrorGestionSolicitud(
                     "No se pudo aplicar el cambio. "
                     "Recargue el detalle."
+                )
+
+            if destino["nombre"] == "Rechazada":
+                cursor.execute(
+                    """
+                    UPDATE facturas
+                    SET estado = 'RECHAZADA',
+                        revisada_por = %s,
+                        revisada_en = NOW(),
+                        observacion = %s
+                    WHERE solicitud_id = %s
+                      AND estado IN ('EN_REVISION', 'OBSERVADA')
+                    """,
+                    (actor["id"], nuevo_motivo, solicitud["id"]),
                 )
 
         registrar_evento(

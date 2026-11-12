@@ -51,7 +51,7 @@ def preparar_respuestas(
     *,
     estado_actual="Pendiente",
     version=1,
-    estado_destino="En revisión",
+    estado_destino="Rechazada",
 ):
     entorno["cursor"].fetchone.side_effect = [
         {
@@ -75,7 +75,8 @@ def ejecutar_cambio(**cambios):
     argumentos = {
         "actor_id": 1,
         "public_id": "solicitud-prueba",
-        "estado_destino": "En revisión",
+        "estado_destino": "Rechazada",
+        "motivo_rechazo": "Antecedentes inconsistentes.",
         "version_esperada": 1,
     }
     argumentos.update(cambios)
@@ -83,7 +84,7 @@ def ejecutar_cambio(**cambios):
     return servicio.cambiar_estado_solicitud(**argumentos)
 
 
-def test_administrador_cambia_pendiente_a_revision(entorno):
+def test_administrador_rechaza_pendiente_con_motivo(entorno):
     preparar_respuestas(entorno)
 
     resultado = ejecutar_cambio()
@@ -111,7 +112,7 @@ def test_cambio_registra_actor_y_estados(entorno):
 
     assert detalle["solicitud_afectada_id"] == 10
     assert detalle["estado_anterior"] == "Pendiente"
-    assert detalle["estado_nuevo"] == "En revisión"
+    assert detalle["estado_nuevo"] == "Rechazada"
     assert detalle["version_anterior"] == 1
     assert detalle["version_nueva"] == 2
 
@@ -131,14 +132,14 @@ def test_servicio_rechaza_actor_no_administrador(entorno, rol):
     entorno["auditoria"].assert_not_called()
 
 
-def test_rechaza_transicion_no_definida(entorno):
-    preparar_respuestas(entorno)
+def test_rechaza_transicion_desde_estado_final(entorno):
+    preparar_respuestas(entorno, estado_actual="Aprobada")
 
     with pytest.raises(
         servicio.ErrorGestionSolicitud,
         match="no está permitido",
     ):
-        ejecutar_cambio(estado_destino="ESTADO_INEXISTENTE")
+        ejecutar_cambio(estado_destino="Rechazada")
 
     entorno["connection"].commit.assert_not_called()
     entorno["connection"].rollback.assert_called_once()
@@ -220,3 +221,28 @@ def test_actualizacion_sin_fila_afectada_se_rechaza(entorno):
     entorno["connection"].commit.assert_not_called()
     entorno["connection"].rollback.assert_called_once()
     entorno["auditoria"].assert_not_called()
+
+@pytest.mark.parametrize(
+    "destino",
+    [
+        "En revisi\u00f3n",
+        "Aprobada",
+        "En correcci\u00f3n",
+        "ESTADO_INEXISTENTE",
+    ],
+)
+def test_destino_no_admite_cambio_directo(entorno, monkeypatch, destino):
+    conectar = Mock()
+    monkeypatch.setattr(servicio, "get_db_connection", conectar)
+
+    with pytest.raises(
+        servicio.ErrorGestionSolicitud,
+        match="Este cambio se realiza desde",
+    ):
+        ejecutar_cambio(estado_destino=destino)
+
+    conectar.assert_not_called()
+    entorno["connection"].begin.assert_not_called()
+    entorno["connection"].commit.assert_not_called()
+    entorno["auditoria"].assert_not_called()
+

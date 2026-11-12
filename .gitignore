@@ -21,7 +21,33 @@ instance/
 # Archivos XML subidos por usuarios (datos de clientes)
 Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/xml/*
 !Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/xml/.gitkeep
+Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/correos/*
+!Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/correos/.gitkeep
+Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/sii/*
+!Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/sii/.gitkeep
 uploads/
+
+# Repositorios de correos y DTE configurados fuera de app/ (datos sensibles)
+Registros_Correo/
+Registros_SII/
+*.eml
+
+# Certificados digitales / claves (firma electrónica SII, CAF, TLS)
+*.pfx
+*.p12
+*.pem
+*.key
+*.crt
+
+# Bases de datos locales y respaldos
+*.db
+*.sqlite
+*.sqlite3
+*.bak
+dump*.sql
+
+# Configuración local de Claude Code
+.claude/settings.local.json
 
 # Editores y sistema
 .vscode/*

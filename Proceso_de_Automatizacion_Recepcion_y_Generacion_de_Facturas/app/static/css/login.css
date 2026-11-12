@@ -181,24 +181,6 @@
     color: #ffffff;
 }
 
-.password-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.forgot-link {
-    margin-bottom: 0.7rem;
-    color: var(--mint);
-    font-size: 0.95rem;
-    text-decoration: none;
-}
-
-.forgot-link:hover {
-    color: #b6e7d6;
-    text-decoration: underline;
-}
-
 .password-input {
     border-right: 0;
 }
@@ -246,25 +228,6 @@
 
 .security-note i {
     font-size: 1.15rem;
-}
-
-.help-button {
-    position: fixed;
-    right: 1.5rem;
-    bottom: 1rem;
-    width: 44px;
-    height: 44px;
-    border: 1px solid #4b4d50;
-    border-radius: 50%;
-    background: #202326;
-    color: #efefed;
-    font-size: 1.6rem;
-    line-height: 1;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
-}
-
-.help-button:hover {
-    background: #2c3034;
 }
 
 @media (max-width: 900px) {
