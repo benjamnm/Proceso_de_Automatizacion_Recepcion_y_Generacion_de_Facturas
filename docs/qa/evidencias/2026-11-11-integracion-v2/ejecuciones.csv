@@ -1,0 +1,9 @@
+id,fecha_local,zona_horaria,bloque,recopiladas,aprobadas,fallidas,xfailed,duracion_segundos,codigo_salida,carpeta_local_reportada,junit_reportado,procedencia
+R01,2026-11-11,-03,HU03,44,44,0,0,0.85,0,Integracion-v2-HU03-20261111-225911,hu03-junit.xml,Salida compartida por el ejecutor; original no incorporado
+R02,2026-11-11,-03,HU07,16,16,0,0,0.57,0,Integracion-v2-HU07-20261111-230345,hu07-junit.xml,Salida compartida por el ejecutor; original no incorporado
+R03,2026-11-11,-03,HU06 inicial,10,2,8,0,0.39,1,Integracion-v2-HU06-20261111-230609,hu06-junit.xml,Salida compartida por el ejecutor; original no incorporado
+R04,2026-11-11,-03,Facturas y rutas,46,46,0,0,1.32,0,Integracion-v2-Facturas-20261111-230758,facturas-junit.xml,Salida compartida por el ejecutor; original no incorporado
+R05,2026-11-11,-03,Regresion inicial,360,345,13,2,20.26,1,Integracion-v2-Regresion-20261111-230920,regresion-junit.xml,Salida compartida por el ejecutor; original no incorporado
+R06,2026-11-11,-03,HU01 y seguridad reprueba,22,22,0,0,8.86,0,Integracion-v2-HU01-Seguridad-20261111-231132,hu01-seguridad-junit.xml,Salida compartida por el ejecutor; original no incorporado
+R07,2026-11-11,-03,HU06 reprueba,14,14,0,0,0.39,0,Integracion-v2-HU06-Reprueba-20261111-231342,hu06-junit.xml,Salida compartida por el ejecutor; original no incorporado
+R08,2026-11-11,-03,Regresion conjunta reprueba,364,362,0,2,23.54,0,Integracion-v2-Regresion-Reprueba-20261111-231448,regresion-junit.xml,Salida compartida por el ejecutor; original no incorporado
