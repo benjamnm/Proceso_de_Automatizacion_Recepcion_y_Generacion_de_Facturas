@@ -1,0 +1,8 @@
+﻿ejecucion=pytest-20261113-000326-026
+rama=QA
+commit=ae0d72a81ba55492bf88bca76c778a92a156356e
+directorio_ejecucion=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas
+python=Python 3.15.2
+pytest=C:\Users\vicen\AppData\Local\Python\pythoncore-3.15-64\python.exe: No module named pytest
+
+Estado Git previo a la ejecución:

@@ -1,0 +1,5 @@
+﻿Clasificacion: error de ambiente previo al inicio de pytest.
+Causa observada: el Python global utilizado no tiene el modulo pytest.
+Pruebas ejecutadas: ninguna.
+No interpretar codigo de salida 1 como casos funcionales fallidos.
+No se genero el reporte JUnit.

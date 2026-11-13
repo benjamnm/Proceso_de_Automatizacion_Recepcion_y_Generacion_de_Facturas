@@ -1,0 +1,1 @@
+﻿& "C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\.venv\Scripts\python.exe" -m pytest test/ -v -ra --tb=short --color=no --junitxml="C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\pytest-20261113-000522-418\pytest-junit.xml"

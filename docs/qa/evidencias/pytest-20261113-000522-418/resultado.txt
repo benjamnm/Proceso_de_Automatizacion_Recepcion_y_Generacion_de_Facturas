@@ -1,0 +1,10 @@
+﻿ejecucion=pytest-20261113-000522-418
+inicio=2026-11-13T00:05:23.2018113-03:00
+fin=2026-11-13T00:05:41.1510519-03:00
+duracion_segundos=17.95
+codigo_salida_pytest=0
+junit_generado_no_vacio=True
+
+Consultar pytest.log y pytest-junit.xml para los resultados.
+Los xfailed no se consideran funcionalidades aprobadas.
+Esta ejecución no acredita Selenium, Lighthouse ni JMeter.

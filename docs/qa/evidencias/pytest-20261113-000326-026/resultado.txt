@@ -1,0 +1,9 @@
+﻿ejecucion=pytest-20261113-000326-026
+inicio=2026-11-13T00:03:27.2867567-03:00
+fin=2026-11-13T00:03:27.4549202-03:00
+duracion_segundos=0.17
+codigo_salida_pytest=1
+junit_generado=False
+
+El resultado funcional debe revisarse en pytest.log y pytest-junit.xml.
+Los xfailed no se consideran funcionalidades aprobadas.

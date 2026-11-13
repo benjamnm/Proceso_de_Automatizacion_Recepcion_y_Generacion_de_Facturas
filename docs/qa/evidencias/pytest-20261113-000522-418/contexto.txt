@@ -1,0 +1,25 @@
+﻿ejecucion=pytest-20261113-000522-418
+rama=QA
+commit=ae0d72a81ba55492bf88bca76c778a92a156356e
+directorio=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas
+pytest=pytest 9.1.1
+
+Interprete:
+C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\.venv\Scripts\python.exe
+3.15.2 (tags/v3.15.2:5e58eaa, Oct 25 2026, 17:27:03) [MSC v.1951 64 bit (AMD64)]
+venv=True
+
+Estado Git previo:
+ M __pycache__/config.cpython-315.pyc
+ M app/__pycache__/__init__.cpython-315.pyc
+ M app/__pycache__/extensions.cpython-315.pyc
+ M app/__pycache__/models.cpython-315.pyc
+ M app/__pycache__/security.cpython-315.pyc
+ M app/admin/__pycache__/routes.cpython-315.pyc
+ M app/auth/__pycache__/routes.cpython-315.pyc
+ M app/cli/__pycache__/__init__.cpython-315.pyc
+ M app/services/__pycache__/correo.cpython-315.pyc
+ M app/services/__pycache__/correos_solicitud.cpython-315.pyc
+ M app/services/__pycache__/solicitudes.cpython-315.pyc
+ M app/solicitudes/__pycache__/routes.cpython-315.pyc
+?? ../docs/qa/evidencias/pytest-20261113-000326-026/
