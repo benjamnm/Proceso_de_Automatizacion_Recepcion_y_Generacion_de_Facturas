@@ -30,6 +30,10 @@ Nueva solicitud | Facturaciones SpA
                             <li>{{ error }}</li>
                             {% endfor %}
                         </ul>
+                        <p class="mb-0 mt-2 small">
+                            Si había seleccionado documentos adjuntos,
+                            vuelva a seleccionarlos antes de enviar.
+                        </p>
                     </div>
                     {% endif %}
 
@@ -43,6 +47,7 @@ Nueva solicitud | Facturaciones SpA
                     <form
                         method="post"
                         action="{{ url_for('solicitudes.nueva') }}"
+                        enctype="multipart/form-data"
                         data-bloquear-envio
                     >
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -183,6 +188,32 @@ Nueva solicitud | Facturaciones SpA
                                     maxlength="40"
                                     value="{{ values.nro_orden_compra }}"
                                 >
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <label for="adjuntos" class="form-label">
+                                Documentos adjuntos — opcional
+                            </label>
+
+                            <input
+                                type="file"
+                                name="adjuntos"
+                                id="adjuntos"
+                                class="form-control{% if errores.adjuntos %} is-invalid{% endif %}"
+                                multiple
+                                accept=".pdf,.png,.jpg,.jpeg"
+                                aria-describedby="adjuntos-help{% if errores.adjuntos %} adjuntos-error{% endif %}"
+                            >
+
+                            {% if errores.adjuntos %}
+                            <div id="adjuntos-error" class="invalid-feedback">
+                                {{ errores.adjuntos }}
+                            </div>
+                            {% endif %}
+
+                            <div id="adjuntos-help" class="form-text">
+                                Opcional. PDF, PNG o JPG; hasta 3 archivos de 5 MB.
                             </div>
                         </div>
 

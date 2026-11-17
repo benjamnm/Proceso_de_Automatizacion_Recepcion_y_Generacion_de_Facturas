@@ -25,6 +25,8 @@ Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/corre
 !Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/correos/.gitkeep
 Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/sii/*
 !Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/sii/.gitkeep
+Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/adjuntos/*
+!Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/adjuntos/.gitkeep
 uploads/
 
 # Repositorios de correos y DTE configurados fuera de app/ (datos sensibles)

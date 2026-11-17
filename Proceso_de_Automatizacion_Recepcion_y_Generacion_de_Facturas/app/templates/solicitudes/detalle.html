@@ -98,6 +98,57 @@ Solicitud | Facturaciones SpA
 
     <section class="card mt-4">
         <div class="card-body p-4">
+            <h2 class="h5 mb-3">Documentos adjuntos</h2>
+
+            {% if adjuntos is none %}
+            <p class="text-body-secondary mb-0">
+                No se pudieron cargar los documentos adjuntos.
+            </p>
+            {% elif adjuntos %}
+            <div class="table-responsive">
+                <table class="table table-sm align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Tipo</th>
+                            <th scope="col">Tamaño</th>
+                            <th scope="col">Cargado</th>
+                            <th scope="col"><span class="visually-hidden">Acciones</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for adjunto in adjuntos %}
+                        <tr>
+                            <td class="text-break">{{ adjunto.nombre_original }}</td>
+                            <td>{{ adjunto.tipo }}</td>
+                            <td class="text-nowrap">
+                                {{ (adjunto.tamano + 1023) // 1024 }} KB
+                            </td>
+                            <td class="text-nowrap">{{ adjunto.subido_en }}</td>
+                            <td class="text-end">
+                                <a
+                                    href="{{ url_for('solicitudes.descargar_adjunto',
+                                                     public_id=solicitud.public_id,
+                                                     adjunto_id=adjunto.id) }}"
+                                    class="btn btn-outline-primary btn-sm"
+                                >
+                                    <i class="bi bi-download" aria-hidden="true"></i>
+                                    Descargar
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-body-secondary mb-0">Sin documentos adjuntos.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="card mt-4">
+        <div class="card-body p-4">
             <h2 class="h5 mb-3">Documento XML</h2>
 
             {% if registro_xml %}

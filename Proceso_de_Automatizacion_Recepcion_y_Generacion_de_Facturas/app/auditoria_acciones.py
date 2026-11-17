@@ -30,6 +30,8 @@ ACCIONES_VISIBLES = (
     "ARCHIVO_SII_DESCARGADO",
     "NOTIFICACION_ENVIADA",
     "NOTIFICACION_FALLIDA",
+    "ADJUNTO_CARGADO",
+    "ADJUNTO_DESCARGADO",
 )
 
 ETIQUETAS_ACCION = {
@@ -58,6 +60,8 @@ ETIQUETAS_ACCION = {
     "ARCHIVO_SII_DESCARGADO": "Archivo SII descargado",
     "NOTIFICACION_ENVIADA": "Notificación enviada",
     "NOTIFICACION_FALLIDA": "Notificación fallida",
+    "ADJUNTO_CARGADO": "Documento adjuntado",
+    "ADJUNTO_DESCARGADO": "Documento adjunto descargado",
 }
 
 

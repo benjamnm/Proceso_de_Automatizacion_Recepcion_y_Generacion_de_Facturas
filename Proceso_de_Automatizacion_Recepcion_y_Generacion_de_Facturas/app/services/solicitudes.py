@@ -195,12 +195,31 @@ def insertar_solicitud(cursor, registro):
     return cursor.lastrowid
 
 
+def huella_con_adjuntos(huella, adjuntos):
+    """Sin adjuntos, la huella es la de siempre."""
+    if not adjuntos:
+        return huella
+
+    shas = ",".join(sorted(a["sha256"] for a in adjuntos))
+    return hashlib.sha256(
+        (huella + "|" + shas).encode("utf-8")
+    ).hexdigest()
+
+
 def crear_solicitud(
     actor_id,
     datos,
     clave_idempotencia,
     ip=None,
+    adjuntos=None,
 ):
+    """Crea la solicitud. Con adjuntos=None se comporta como siempre.
+
+    adjuntos: lista devuelta por services.adjuntos.leer_adjuntos().
+    """
+    # Import local: adjuntos -> registros_xml -> solicitudes (ciclo).
+    from .adjuntos import eliminar_rutas, guardar_adjuntos
+
     limpio, errores = validar_solicitud(datos)
 
     if errores:
@@ -219,7 +238,8 @@ def crear_solicitud(
             "La clave de creación no es válida."
         )
 
-    huella = huella_de_creacion(limpio)
+    huella = huella_con_adjuntos(huella_de_creacion(limpio), adjuntos)
+    rutas_escritas = []
     connection = get_db_connection()
 
     try:
@@ -329,37 +349,65 @@ def crear_solicitud(
 
             solicitud_id = insertar_solicitud(cursor, registro)
 
+            ids_adjuntos = []
+            if adjuntos:
+                ids_adjuntos, rutas_escritas = guardar_adjuntos(
+                    cursor, solicitud_id, actor["id"], adjuntos
+                )
+
+        detalle_creacion = {
+            "solicitud_afectada_id": solicitud_id,
+            "public_id": registro["public_id"],
+            "cliente_id": cliente["id"],
+            "estado": "Pendiente",
+            "origen": "Web",
+            "concepto": limpio["concepto"],
+            "monto_bruto": str(limpio["monto_bruto"]),
+            "fecha_emision": limpio["fecha_emision"].isoformat(),
+            "tipo_afectacion": limpio["tipo_afectacion"],
+            "nro_orden_compra": limpio["nro_orden_compra"],
+            "receptor_historico": {
+                "rut": receptor["rut"],
+                "nombre": receptor["razon_social"],
+                "direccion": receptor["direccion"],
+                "giro": receptor["giro"],
+                "email": receptor["email_contacto"],
+            },
+        }
+        if adjuntos:
+            detalle_creacion["adjuntos"] = len(adjuntos)
+
         registrar_evento(
             connection,
             actor["id"],
             "SOLICITUD_CREADA",
-            {
-                "solicitud_afectada_id": solicitud_id,
-                "public_id": registro["public_id"],
-                "cliente_id": cliente["id"],
-                "estado": "Pendiente",
-                "origen": "Web",
-                "concepto": limpio["concepto"],
-                "monto_bruto": str(limpio["monto_bruto"]),
-                "fecha_emision": limpio["fecha_emision"].isoformat(),
-                "tipo_afectacion": limpio["tipo_afectacion"],
-                "nro_orden_compra": limpio["nro_orden_compra"],
-                "receptor_historico": {
-                    "rut": receptor["rut"],
-                    "nombre": receptor["razon_social"],
-                    "direccion": receptor["direccion"],
-                    "giro": receptor["giro"],
-                    "email": receptor["email_contacto"],
-                },
-            },
+            detalle_creacion,
             ip,
         )
+
+        for adjunto_id, adjunto in zip(ids_adjuntos, adjuntos or ()):
+            registrar_evento(
+                connection,
+                actor["id"],
+                "ADJUNTO_CARGADO",
+                {
+                    "solicitud_afectada_id": solicitud_id,
+                    "public_id": registro["public_id"],
+                    "adjunto_id": adjunto_id,
+                    "nombre_original": adjunto["nombre_original"],
+                    "tamano": adjunto["tamano"],
+                    "sha256": adjunto["sha256"],
+                },
+                ip,
+            )
 
         connection.commit()
         return registro["public_id"]
 
     except Exception:
         connection.rollback()
+        # Nunca un archivo sin su fila.
+        eliminar_rutas(rutas_escritas)
         raise
 
     finally:

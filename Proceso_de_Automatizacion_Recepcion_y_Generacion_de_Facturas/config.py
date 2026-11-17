@@ -54,7 +54,18 @@ class Config:
         str(BASE_DIR / "app" / "registros" / "xml"),
     )
     MAX_XML_UPLOAD_BYTES = 5 * 1024 * 1024
-    MAX_CONTENT_LENGTH = 6 * 1024 * 1024
+
+    # Documentos adjuntos a la solicitud (privados, fuera de /static).
+    ADJUNTOS_FOLDER = os.getenv(
+        "ADJUNTOS_FOLDER",
+        str(BASE_DIR / "app" / "registros" / "adjuntos"),
+    )
+    MAX_ADJUNTO_BYTES = 5 * 1024 * 1024
+    MAX_ADJUNTOS_SOLICITUD = 3
+
+    # Cuerpo máximo de una petición: 3 adjuntos de 5 MB más el formulario.
+    # Cada archivo tiene además su propio límite (XML y adjuntos: 5 MB).
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024
 
     SMTP_HOST = os.getenv("SMTP_HOST", "")
     SMTP_PORT = _entero("SMTP_PORT", 587)

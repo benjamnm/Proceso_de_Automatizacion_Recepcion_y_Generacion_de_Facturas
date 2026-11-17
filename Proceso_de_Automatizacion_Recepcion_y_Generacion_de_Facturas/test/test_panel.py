@@ -6,6 +6,18 @@ from app.auditoria_acciones import ACCIONES_VISIBLES, ETIQUETAS_ACCION
 from app.services import panel
 
 PUBLIC_ID = "ab" * 16
+
+# Lista que tenía admin.auditoria() antes de la Fase 3.
+ACCIONES_ORIGINALES = (
+    "USUARIO_CREADO", "USUARIO_EDITADO", "USUARIO_DESACTIVADO",
+    "USUARIO_REACTIVADO", "CLIENTE_CREADO", "CLIENTE_EDITADO",
+    "SOLICITUD_CREADA", "SOLICITUD_EDITADA", "SOLICITUD_ESTADO_CAMBIADO",
+    "XML_CARGADO", "XML_REEMPLAZADO", "XML_DESCARGADO", "CORREO_ENVIADO",
+    "CORREO_FALLIDO", "CORREO_RECIBIDO", "CORREO_REQUIERE_REVISION",
+    "CORREO_REPROCESADO", "CORREO_DESCARTADO", "CORREO_ENTRANTE_DESCARGADO",
+    "FACTURA_GENERADA", "FACTURA_OBSERVADA", "FACTURA_APROBADA",
+    "ARCHIVO_SII_DESCARGADO", "NOTIFICACION_ENVIADA", "NOTIFICACION_FALLIDA",
+)
 ESTADOS = [
     {"id": 1, "nombre": "Pendiente", "total": 2},
     {"id": 2, "nombre": "En revisión", "total": 1},
@@ -247,10 +259,12 @@ def test_auditoria_usa_las_25_acciones_con_marcadores(
     assert client.get("/admin/auditoria").status_code == 200
 
     sql, parametros = consultas[0]
-    assert len(ACCIONES_VISIBLES) == 25
-    assert len(set(ACCIONES_VISIBLES)) == 25
+    # Las 25 acciones originales siguen visibles (Fase 5 suma 2 de adjuntos).
+    assert set(ACCIONES_ORIGINALES) <= set(ACCIONES_VISIBLES)
+    assert len(ACCIONES_ORIGINALES) == 25
+    assert len(set(ACCIONES_VISIBLES)) == len(ACCIONES_VISIBLES)
     assert parametros == ACCIONES_VISIBLES
-    assert sql.count("%s") == 25
+    assert sql.count("%s") == len(ACCIONES_VISIBLES)
     assert "'USUARIO_CREADO'" not in sql
 
 

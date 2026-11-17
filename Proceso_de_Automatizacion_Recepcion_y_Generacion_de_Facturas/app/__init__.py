@@ -115,6 +115,14 @@ def registrar_manejadores_error(app):
                 public_id=public_id,
             ))
 
+        if request.endpoint == "solicitudes.nueva":
+            flash(
+                "Los archivos superan el tamaño máximo permitido "
+                "(5 MB por archivo, 3 archivos).",
+                "danger",
+            )
+            return redirect(url_for("solicitudes.nueva"))
+
         return _pagina_error(
             413, "El contenido enviado supera el tamaño permitido."
         )

@@ -41,6 +41,12 @@ from ..services.validaciones import (
     ErrorValidacion,
     normalizar_rut,
 )
+from ..services.adjuntos import (
+    ErrorAdjunto,
+    leer_adjuntos,
+    listar_adjuntos,
+    obtener_adjunto_autorizado,
+)
 from ..services.registros_xml import (
     ErrorArchivoXML,
     guardar_xml,
@@ -338,6 +344,7 @@ def nueva():
     if request.method == "POST":
         values = leer_formulario()
         _, errores = validar_solicitud(values)
+        adjuntos = []
 
         try:
             clave_idempotencia = verificar_token_envio(
@@ -348,6 +355,12 @@ def nueva():
         except ErrorTokenEnvio as exc:
             errores["envio"] = str(exc)
 
+        try:
+            adjuntos = leer_adjuntos(request.files.getlist("adjuntos"))
+
+        except ErrorAdjunto as exc:
+            errores["adjuntos"] = str(exc)
+
         if not errores:
             try:
                 public_id = crear_solicitud(
@@ -355,10 +368,20 @@ def nueva():
                     datos=values,
                     clave_idempotencia=clave_idempotencia,
                     ip=request.remote_addr,
+                    adjuntos=adjuntos or None,
                 )
 
             except ErrorGestionSolicitud as exc:
                 errores["general"] = str(exc)
+
+            except OSError:
+                current_app.logger.exception(
+                    "Error al guardar un adjunto de la solicitud"
+                )
+                errores["general"] = (
+                    "No se pudo guardar un archivo adjunto. "
+                    "Puede reintentar."
+                )
 
             except pymysql.MySQLError:
                 current_app.logger.exception(
@@ -556,9 +579,19 @@ def detalle(public_id):
     finally:
         connection.close()
 
+    # Si la migración 004 aún no se ejecutó, el detalle sigue funcionando.
+    try:
+        adjuntos = listar_adjuntos(solicitud["id"])
+    except pymysql.MySQLError:
+        current_app.logger.warning(
+            "No se pudieron listar los adjuntos de %s", public_id
+        )
+        adjuntos = None
+
     return render_template(
         "solicitudes/detalle.html",
         solicitud=solicitud,
+        adjuntos=adjuntos,
         registro_xml=registro_xml,
         factura_actual=factura_actual,
         editable=solicitud["estado_nombre"] in ESTADOS_EDITABLES,
@@ -683,6 +716,57 @@ def descargar_xml(public_id):
         mimetype="application/xml",
         as_attachment=True,
         download_name=registro_xml["nombre_original"],
+        max_age=0,
+    )
+
+
+@solicitudes_bp.get("/<string:public_id>/adjuntos/<int:adjunto_id>")
+@solicitud_required
+def descargar_adjunto(public_id, adjunto_id):
+    try:
+        actor, solicitud, adjunto, ruta = obtener_adjunto_autorizado(
+            actor_id=int(current_user.id),
+            public_id=public_id,
+            adjunto_id=adjunto_id,
+        )
+    except ErrorAdjunto as exc:
+        flash(str(exc), "danger")
+        return redirect(url_for("solicitudes.detalle", public_id=public_id))
+    except pymysql.MySQLError:
+        current_app.logger.exception("Error de BD al buscar un adjunto.")
+        flash("El documento adjunto no está disponible.", "danger")
+        return redirect(url_for("solicitudes.detalle", public_id=public_id))
+
+    connection = get_db_connection()
+
+    try:
+        registrar_evento(
+            connection,
+            actor["id"],
+            "ADJUNTO_DESCARGADO",
+            {
+                "solicitud_afectada_id": solicitud["id"],
+                "public_id": public_id,
+                "adjunto_id": adjunto["id"],
+                "sha256": adjunto["sha256"],
+            },
+            request.remote_addr,
+        )
+        connection.commit()
+    except pymysql.MySQLError:
+        connection.rollback()
+        current_app.logger.exception("No se pudo auditar la descarga.")
+        flash("No se pudo registrar la descarga.", "danger")
+        return redirect(url_for("solicitudes.detalle", public_id=public_id))
+    finally:
+        connection.close()
+
+    # Siempre como descarga y con el MIME detectado por el servidor.
+    return send_file(
+        ruta,
+        mimetype=adjunto["mimetype"],
+        as_attachment=True,
+        download_name=adjunto["nombre_original"],
         max_age=0,
     )
 
