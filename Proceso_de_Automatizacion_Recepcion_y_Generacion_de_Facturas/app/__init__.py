@@ -70,40 +70,30 @@ def create_app(config_class=Config):
 
 
 def resumen_panel():
-    """Contadores del panel del Administrador. None si la BD no responde."""
-    if current_user.role_name != "Administrador":
+    """Totales del panel según el rol. None si no aplica o la BD no responde.
+
+    Administrador: totales globales y actividad de auditoría.
+    Emisor: solo sus solicitudes. Otro rol: None.
+    """
+    rol = current_user.role_name
+    if rol not in ("Administrador", "Emisor"):
         return None
 
     from .models import get_db_connection
+    from .services.panel import resumen_administrador, resumen_emisor
 
     try:
         connection = get_db_connection()
         try:
             with connection.cursor() as cursor:
-                cursor.execute(
-                    """
-                    SELECT e.id, e.nombre, COUNT(s.id) AS total
-                    FROM estados_solicitud AS e
-                    LEFT JOIN solicitudes AS s ON s.estado_id = e.id
-                    WHERE e.nombre IN ('En revisión', 'En corrección')
-                    GROUP BY e.id, e.nombre
-                    """
-                )
-                estados = {f["nombre"]: f for f in cursor.fetchall()}
-                cursor.execute(
-                    """
-                    SELECT COUNT(*) AS total FROM correos_entrantes
-                    WHERE estado IN ('REQUIERE_REVISION', 'ERROR')
-                    """
-                )
-                correos = cursor.fetchone()["total"]
+                if rol == "Administrador":
+                    return resumen_administrador(cursor)
+                return resumen_emisor(cursor, current_user.id)
         finally:
             connection.close()
     except pymysql.MySQLError:
         current_app.logger.warning("No se pudo calcular el resumen del panel.")
         return None
-
-    return {"estados": estados, "correos_por_revisar": correos}
 
 
 def _pagina_error(codigo, mensaje):

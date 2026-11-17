@@ -32,6 +32,7 @@ from ..services.correo_entrante import (
 )
 
 from . import admin_bp
+from ..auditoria_acciones import ACCIONES_VISIBLES, marcadores_acciones
 from ..models import get_db_connection
 from ..security import admin_required
 
@@ -333,8 +334,10 @@ def auditoria():
 
     try:
         with connection.cursor() as cursor:
+            # Solo se interpolan marcadores %s fijos; las acciones van
+            # como parámetros.
             cursor.execute(
-                """
+                f"""
                 SELECT
                     a.id,
                     a.accion,
@@ -345,36 +348,11 @@ def auditoria():
                 FROM auditoria AS a
                 LEFT JOIN usuarios AS u
                     ON u.id = a.usuario_id
-                WHERE a.accion IN (
-                    'USUARIO_CREADO',
-                    'USUARIO_EDITADO',
-                    'USUARIO_DESACTIVADO',
-                    'USUARIO_REACTIVADO',
-                    'CLIENTE_CREADO',
-                    'CLIENTE_EDITADO',
-                    'SOLICITUD_CREADA',
-                    'SOLICITUD_EDITADA',
-                    'SOLICITUD_ESTADO_CAMBIADO',
-                    'XML_CARGADO',
-                    'XML_REEMPLAZADO',
-                    'XML_DESCARGADO',
-                    'CORREO_ENVIADO',
-                    'CORREO_FALLIDO',
-                    'CORREO_RECIBIDO',
-                    'CORREO_REQUIERE_REVISION',
-                    'CORREO_REPROCESADO',
-                    'CORREO_DESCARTADO',
-                    'CORREO_ENTRANTE_DESCARGADO',
-                    'FACTURA_GENERADA',
-                    'FACTURA_OBSERVADA',
-                    'FACTURA_APROBADA',
-                    'ARCHIVO_SII_DESCARGADO',
-                    'NOTIFICACION_ENVIADA',
-                    'NOTIFICACION_FALLIDA'
-                )
+                WHERE a.accion IN ({marcadores_acciones()})
                 ORDER BY a.id DESC
                 LIMIT 100
-                """
+                """,
+                ACCIONES_VISIBLES,
             )
             eventos = cursor.fetchall()
 

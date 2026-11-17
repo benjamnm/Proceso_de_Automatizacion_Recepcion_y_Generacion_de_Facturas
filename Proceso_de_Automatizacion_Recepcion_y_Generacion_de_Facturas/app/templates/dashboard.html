@@ -16,6 +16,138 @@
             </div>
         </div>
 
+        {% if resumen %}
+        <section class="mb-5" aria-labelledby="titulo-resumen">
+            <h2 id="titulo-resumen" class="h4 mb-3">Resumen</h2>
+
+            <div class="row g-3">
+                <div class="col-6 col-md-4 col-lg-2">
+                    <a href="{{ url_for('solicitudes.listado') }}"
+                       class="card h-100 text-decoration-none">
+                        <div class="card-body">
+                            <p class="text-secondary small mb-1">Solicitudes</p>
+                            <p class="h3 mb-0">{{ resumen.solicitudes_total }}</p>
+                        </div>
+                    </a>
+                </div>
+
+                {% for estado in resumen.estados.values() %}
+                <div class="col-6 col-md-4 col-lg-2">
+                    <a href="{{ url_for('solicitudes.listado', estado_id=estado.id) }}"
+                       class="card h-100 text-decoration-none">
+                        <div class="card-body">
+                            <p class="text-secondary small mb-1">{{ estado.nombre }}</p>
+                            <p class="h3 mb-0">{{ estado.total }}</p>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if current_user.role_name == 'Administrador' and resumen.usuarios %}
+            <div class="row g-3 mt-1">
+                <div class="col-md-4">
+                    <a href="{{ url_for('admin.usuarios') }}"
+                       class="card h-100 text-decoration-none">
+                        <div class="card-body">
+                            <p class="text-secondary small mb-1">
+                                <i class="bi bi-people" aria-hidden="true"></i>
+                                Usuarios activos
+                            </p>
+                            <p class="h3 mb-0">
+                                {{ resumen.usuarios.activos }}
+                                <span class="fs-6 text-secondary">de {{ resumen.usuarios.total }}</span>
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-4">
+                    <a href="{{ url_for('clientes.listado') }}"
+                       class="card h-100 text-decoration-none">
+                        <div class="card-body">
+                            <p class="text-secondary small mb-1">
+                                <i class="bi bi-building" aria-hidden="true"></i>
+                                Clientes activos
+                            </p>
+                            <p class="h3 mb-0">
+                                {{ resumen.clientes.activos }}
+                                <span class="fs-6 text-secondary">de {{ resumen.clientes.total }}</span>
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-4">
+                    <a href="{{ url_for('admin.auditoria') }}"
+                       class="card h-100 text-decoration-none">
+                        <div class="card-body">
+                            <p class="text-secondary small mb-1">
+                                <i class="bi bi-journal-text" aria-hidden="true"></i>
+                                Eventos registrados
+                            </p>
+                            <p class="h3 mb-0">{{ resumen.eventos_total }}</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Actividad reciente</h2>
+
+                    {% if resumen.actividad %}
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Fecha</th>
+                                    {% if current_user.role_name == 'Administrador' %}
+                                    <th scope="col">Evento</th>
+                                    <th scope="col">Responsable</th>
+                                    {% else %}
+                                    <th scope="col">Cliente</th>
+                                    <th scope="col">Estado</th>
+                                    {% endif %}
+                                    <th scope="col"><span class="visually-hidden">Enlace</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in resumen.actividad %}
+                                <tr>
+                                    {% if current_user.role_name == 'Administrador' %}
+                                    <td class="text-nowrap">{{ item.creado_en }}</td>
+                                    <td>{{ item.etiqueta }}</td>
+                                    <td>{{ item.usuario_nombre or 'Usuario no disponible' }}</td>
+                                    {% else %}
+                                    <td class="text-nowrap">{{ item.actualizado_en }}</td>
+                                    <td>{{ item.nombre }}</td>
+                                    <td>
+                                        <span class="badge text-bg-secondary">{{ item.estado_nombre }}</span>
+                                    </td>
+                                    {% endif %}
+                                    <td class="text-end">
+                                        {% if item.public_id %}
+                                        <a href="{{ url_for('solicitudes.detalle', public_id=item.public_id) }}"
+                                           class="btn btn-outline-primary btn-sm">
+                                            Ver solicitud
+                                        </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-secondary mb-0">Sin actividad registrada.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
         <div class="row g-4">
             {% if current_user.role_name in ['Administrador', 'Emisor'] %}
             <div class="col-md-6 col-lg-4">
