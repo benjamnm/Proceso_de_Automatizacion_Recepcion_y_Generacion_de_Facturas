@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_ui.html" import estado_solicitud %}
 
 {% set migas = [('Panel', url_for('dashboard')), ('Solicitudes', None)] %}
 
@@ -28,9 +29,32 @@ Solicitudes | Facturaciones SpA
         </a>
     </header>
 
-    <section class="card mb-4">
+    {# Chips: enlaces GET que conservan los filtros activos (sin la página) y fijan estado_id. #}
+    {% set args_chips = {} %}
+    {% for clave, valor in filtros.items() if valor and clave != 'estado_id' %}
+        {% set _ = args_chips.update({clave: valor}) %}
+    {% endfor %}
+    <nav class="chips-estado" aria-label="Filtrar por estado">
+        <a
+            class="chip-estado{{ ' active' if not filtros.estado_id }}"
+            href="{{ url_for('solicitudes.listado', **args_chips) }}"
+            {% if not filtros.estado_id %}aria-current="true"{% endif %}
+        >Todas</a>
+        {% for estado in estados %}
+        <a
+            class="chip-estado{{ ' active' if filtros.estado_id == estado.id|string }}"
+            href="{{ url_for('solicitudes.listado', estado_id=estado.id, **args_chips) }}"
+            {% if filtros.estado_id == estado.id|string %}aria-current="true"{% endif %}
+        >{{ estado.nombre }}</a>
+        {% endfor %}
+    </nav>
+
+    <section class="card panel-filtros mb-4">
         <div class="card-body p-4">
-            <h2 class="h5 mb-3">Filtros</h2>
+            <h2 class="h5 mb-3">
+                <i class="bi bi-funnel text-body-secondary" aria-hidden="true"></i>
+                Filtros
+            </h2>
 
             {% if errores %}
             <div class="alert alert-danger" role="alert">
@@ -47,21 +71,26 @@ Solicitudes | Facturaciones SpA
                 action="{{ url_for('solicitudes.listado') }}"
             >
                 <div class="row g-3">
-                    <div class="col-md-4">
+                    <div class="col-lg-6">
                         <label for="q" class="form-label">
                             Cliente o concepto
                         </label>
-                        <input
-                            id="q"
-                            name="q"
-                            type="search"
-                            class="form-control"
-                            value="{{ filtros.q }}"
-                            maxlength="100"
-                        >
+                        <div class="input-group">
+                            <span class="input-group-text" aria-hidden="true">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input
+                                id="q"
+                                name="q"
+                                type="search"
+                                class="form-control"
+                                value="{{ filtros.q }}"
+                                maxlength="100"
+                            >
+                        </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-lg-6">
                         <label for="cliente_id" class="form-label">
                             Cliente
                         </label>
@@ -85,7 +114,7 @@ Solicitudes | Facturaciones SpA
                         </select>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-6 col-lg-3">
                         <label for="rut" class="form-label">
                             RUT receptor
                         </label>
@@ -98,7 +127,7 @@ Solicitudes | Facturaciones SpA
                         >
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-6 col-lg-3">
                         <label for="desde" class="form-label">
                             Fecha solicitada desde
                         </label>
@@ -111,7 +140,7 @@ Solicitudes | Facturaciones SpA
                         >
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-6 col-lg-3">
                         <label for="hasta" class="form-label">
                             Fecha solicitada hasta
                         </label>
@@ -124,7 +153,7 @@ Solicitudes | Facturaciones SpA
                         >
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-6 col-lg-3">
                         <label for="monto" class="form-label">
                             Monto bruto exacto
                         </label>
@@ -139,7 +168,7 @@ Solicitudes | Facturaciones SpA
                         >
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-6 col-lg-3">
                         <label for="estado_id" class="form-label">
                             Estado
                         </label>
@@ -164,7 +193,7 @@ Solicitudes | Facturaciones SpA
                     </div>
 
                     {% if es_admin %}
-                    <div class="col-md-4">
+                    <div class="col-md-6 col-lg-3">
                         <label for="emisor_id" class="form-label">
                             Responsable
                         </label>
@@ -190,8 +219,9 @@ Solicitudes | Facturaciones SpA
                     {% endif %}
                 </div>
 
-                <div class="d-flex gap-2 mt-3">
+                <div class="d-flex flex-wrap justify-content-end gap-2 mt-3">
                     <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-funnel" aria-hidden="true"></i>
                         Aplicar filtros
                     </button>
 
@@ -236,20 +266,16 @@ Solicitudes | Facturaciones SpA
                             <td title="{{ solicitud.concepto }}">
                                 {{ solicitud.concepto | truncate(60, True) }}
                             </td>
-                            <td class="text-nowrap">
+                            <td class="text-nowrap fw-semibold">
                                 {{ "{:,.0f}".format(solicitud.monto_bruto)
                                    .replace(",", ".") }} CLP
                             </td>
-                            <td>{{ solicitud.fecha_emision }}</td>
+                            <td class="text-nowrap">{{ solicitud.fecha_emision }}</td>
                             <td>{{ solicitud.origen_nombre }}</td>
                             {% if es_admin %}
                             <td>{{ solicitud.responsable_nombre or '—' }}</td>
                             {% endif %}
-                            <td>
-                                <span class="badge text-bg-secondary">
-                                    {{ solicitud.estado_nombre }}
-                                </span>
-                            </td>
+                            <td>{{ estado_solicitud(solicitud.estado_nombre) }}</td>
                             <td>
                                 <div class="d-flex gap-2">
                                     <a
@@ -288,7 +314,7 @@ Solicitudes | Facturaciones SpA
                         </tr>
                         {% else %}
                         <tr>
-                            <td colspan="{{ 9 if es_admin else 8 }}">
+                            <td colspan="{{ 9 if es_admin else 8 }}" class="text-center text-body-secondary py-4">
                                 No hay resultados en esta página.
                             </td>
                         </tr>
@@ -297,29 +323,30 @@ Solicitudes | Facturaciones SpA
                 </table>
             </div>
 
-            <nav
-                class="d-flex align-items-center gap-3 mt-3"
-                aria-label="Paginación de solicitudes"
-            >
-                {% if anterior_url %}
-                <a
-                    href="{{ anterior_url }}"
-                    class="btn btn-outline-secondary btn-sm"
-                >
-                    Anterior
-                </a>
-                {% endif %}
+            <nav class="mt-3" aria-label="Paginación de solicitudes">
+                <ul class="pagination pagination-sm mb-0">
+                    {% if anterior_url %}
+                    <li class="page-item">
+                        <a href="{{ anterior_url }}" class="page-link">
+                            <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                            Anterior
+                        </a>
+                    </li>
+                    {% endif %}
 
-                <span>Página {{ pagina }}</span>
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">Página {{ pagina }}</span>
+                    </li>
 
-                {% if siguiente_url %}
-                <a
-                    href="{{ siguiente_url }}"
-                    class="btn btn-outline-secondary btn-sm"
-                >
-                    Siguiente
-                </a>
-                {% endif %}
+                    {% if siguiente_url %}
+                    <li class="page-item">
+                        <a href="{{ siguiente_url }}" class="page-link">
+                            Siguiente
+                            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
             </nav>
         </div>
     </section>
