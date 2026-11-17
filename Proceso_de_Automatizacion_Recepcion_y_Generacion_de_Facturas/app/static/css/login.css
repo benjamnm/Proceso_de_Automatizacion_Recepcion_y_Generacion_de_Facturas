@@ -1,184 +1,119 @@
+/* =====================================================================
+   Login — tema claro salvia/grafito (Fase 3 del plan de rediseño v2)
+   Usa solo los tokens declarados en app.css.
+   ===================================================================== */
+
 .login-page {
     min-height: 100vh;
     display: grid;
-    grid-template-columns: minmax(420px, 1fr) minmax(520px, 1fr);
-    background: var(--dark);
+    grid-template-columns: 1fr;
+    background-color: var(--color-superficie);
 }
 
+/* Panel de marca (solo ≥ 992 px; en móvil lo oculta .d-none) */
 .login-brand-panel {
-    position: relative;
-    display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 4.2rem 4.5rem;
-    overflow: hidden;
-    background:
-        linear-gradient(
-            rgba(25, 47, 88, 0.97),
-            rgba(25, 47, 88, 0.97)
-        ),
-        linear-gradient(
-            90deg,
-            transparent 49%,
-            rgba(255, 255, 255, 0.04) 50%
-        );
-    background-size: auto, 58px 58px;
+    gap: 2rem;
+    padding: 3.5rem 4rem;
+    background: linear-gradient(160deg, var(--color-salvia-claro), var(--color-salvia-tenue));
 }
 
-.login-brand-panel::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: linear-gradient(
-        115deg,
-        transparent 0%,
-        rgba(255, 255, 255, 0.04) 48%,
-        transparent 49%
-    );
-}
-
-.brand-header,
-.brand-content,
-.brand-footer {
-    position: relative;
-    z-index: 1;
-}
-
-.brand-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.brand-mark {
-    width: 50px;
-    height: 50px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 4px;
-    padding: 14px;
-    border-radius: 3px;
-    background: #2b765f;
-}
-
-.brand-mark span {
-    background: #d8e5dc;
-    opacity: 0.9;
-}
-
-.brand-mark span:nth-child(2) {
-    opacity: 0.65;
-}
-
-.brand-mark span:nth-child(3) {
-    opacity: 0.75;
-}
-
-.brand-mark span:nth-child(4) {
-    opacity: 0.45;
-}
-
-.brand-name {
-    color: #c1c6ce;
-    font-size: 0.95rem;
-    font-weight: 700;
-    letter-spacing: 0.22em;
+.brand-header img {
+    display: block;
+    width: 280px;
+    max-width: 100%;
+    height: auto;
 }
 
 .brand-content {
-    margin-top: auto;
-    margin-bottom: auto;
+    margin-block: auto;
 }
 
 .eyebrow {
-    margin-bottom: 2.5rem;
-    color: #a7b4c8;
-    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    color: var(--color-texto-secundario);
+    font-size: 0.8rem;
     font-weight: 700;
-    letter-spacing: 0.35em;
+    letter-spacing: 0.2em;
 }
 
 .brand-content h1 {
-    margin: 0;
-    color: #f3efeb;
-    font-size: clamp(3.6rem, 5vw, 5.3rem);
-    font-weight: 800;
-    line-height: 0.98;
-    letter-spacing: -0.055em;
+    margin: 0 0 2rem;
+    color: var(--color-grafito);
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+}
+
+.login-ilustracion {
+    display: block;
+    width: 100%;
+    max-width: 460px;
+    height: auto;
 }
 
 .brand-footer {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    color: #8ca0bc;
-    font-size: 0.95rem;
+    gap: 0.6rem;
+    color: var(--color-texto-secundario);
+    font-size: 0.875rem;
 }
 
-.brand-footer i {
-    color: var(--mint);
-    font-size: 1.35rem;
+.brand-footer .bi {
+    color: var(--color-salvia-oscuro);
+    font-size: 1.15rem;
 }
 
+/* Panel del formulario */
 .login-form-panel {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 3rem 4rem;
-    background: var(--dark);
+    padding: 3rem 1.5rem;
+    background-color: var(--color-superficie);
 }
 
 .login-card {
-    width: min(100%, 525px);
+    width: min(100%, 400px);
+}
+
+.login-logo-movil {
+    display: block;
+    width: 180px;
+    height: auto;
+    margin: 0 auto 2rem;
 }
 
 .login-heading {
-    margin-bottom: 3.5rem;
+    margin-bottom: 2rem;
 }
 
 .login-heading h2 {
-    margin-bottom: 0.7rem;
-    color: #f1eeea;
-    font-size: 2rem;
+    margin-bottom: 0.4rem;
+    color: var(--color-grafito);
+    font-size: 1.6rem;
     font-weight: 700;
 }
 
 .login-heading p {
     margin: 0;
-    color: var(--muted);
-    font-size: 1.2rem;
+    color: var(--color-texto-secundario);
+    font-size: 0.95rem;
 }
 
-.form-label {
-    margin-bottom: 0.7rem;
-    color: #c8c3bd;
-    font-size: 0.95rem;
+.login-page .form-label {
+    margin-bottom: 0.4rem;
+    font-size: 0.8125rem;
     font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    color: var(--color-grafito);
 }
 
 .login-input {
-    min-height: 62px;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    background: var(--input);
-    color: #f5f2ee;
-    font-size: 1.05rem;
-    padding: 0 1.35rem;
-}
-
-.login-input::placeholder {
-    color: #747572;
-}
-
-.login-input:focus {
-    border-color: var(--mint);
-    background: var(--input);
-    box-shadow: 0 0 0 0.2rem rgba(143, 208, 187, 0.15);
-    color: #ffffff;
+    min-height: 44px;
+    font-size: 0.95rem;
 }
 
 .password-input {
@@ -186,90 +121,74 @@
 }
 
 .password-toggle {
-    min-width: 62px;
-    border: 1px solid var(--border);
+    min-width: 46px;
+    border: 1px solid var(--color-borde);
     border-left: 0;
-    border-radius: 0 4px 4px 0;
-    background: var(--input);
-    color: #aaa9a4;
+    background-color: var(--color-superficie);
+    color: var(--color-texto-secundario);
 }
 
-.password-toggle:hover,
-.password-toggle:focus {
-    color: var(--mint);
+.password-toggle:hover {
+    background-color: var(--color-salvia-tenue);
+    color: var(--color-grafito);
+}
+
+.password-toggle:focus-visible {
+    box-shadow: var(--anillo-foco);
+}
+
+/* El campo y el botón de mostrar contraseña comparten el foco. */
+.input-group:focus-within .password-toggle {
+    border-color: var(--color-salvia);
+}
+
+.was-validated .password-input:invalid + .password-toggle {
+    border-color: var(--bs-form-invalid-border-color);
 }
 
 .btn-login {
-    min-height: 60px;
-    border: 0;
-    border-radius: 4px;
-    background: #193867;
-    color: #eeeae5;
-    font-size: 1.1rem;
-    font-weight: 600;
-}
-
-.btn-login:hover,
-.btn-login:focus {
-    background: #244b83;
-    color: #ffffff;
+    --bs-btn-color: var(--color-texto-invertido);
+    --bs-btn-bg: var(--color-salvia-oscuro);
+    --bs-btn-border-color: var(--color-salvia-oscuro);
+    --bs-btn-hover-color: var(--color-texto-invertido);
+    --bs-btn-hover-bg: var(--color-salvia-hover);
+    --bs-btn-hover-border-color: var(--color-salvia-hover);
+    --bs-btn-active-color: var(--color-texto-invertido);
+    --bs-btn-active-bg: var(--color-salvia-hover);
+    --bs-btn-active-border-color: var(--color-salvia-hover);
+    min-height: 44px;
+    font-size: 0.95rem;
 }
 
 .security-note {
     display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    margin-top: 3.5rem;
-    padding-top: 2rem;
-    border-top: 1px solid #3b3d3c;
-    color: #aaa7a1;
-    font-size: 0.95rem;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-borde);
+    color: var(--color-texto-secundario);
+    font-size: 0.8125rem;
 }
 
-.security-note i {
-    font-size: 1.15rem;
+.security-note .bi {
+    color: var(--color-salvia-oscuro);
+    font-size: 1rem;
 }
 
-@media (max-width: 900px) {
+@media (min-width: 992px) {
     .login-page {
-        grid-template-columns: 1fr;
-    }
-
-    .login-brand-panel {
-        min-height: 420px;
-        padding: 2.5rem;
-    }
-
-    .brand-content h1 {
-        font-size: clamp(3rem, 10vw, 4.5rem);
+        grid-template-columns: minmax(420px, 1fr) minmax(480px, 1fr);
     }
 
     .login-form-panel {
-        padding: 3rem 1.5rem;
+        padding: 3rem 4rem;
     }
 }
 
-@media (max-width: 480px) {
-    .login-brand-panel {
-        min-height: 360px;
-        padding: 2rem 1.5rem;
-    }
-
-    .brand-name {
-        font-size: 0.72rem;
-        letter-spacing: 0.13em;
-    }
-
-    .brand-content h1 {
-        font-size: 3rem;
-    }
-
-    .eyebrow {
-        margin-bottom: 1.5rem;
-        font-size: 0.75rem;
-    }
-
-    .login-heading {
-        margin-bottom: 2.5rem;
+@media (max-width: 575.98px) {
+    .login-form-panel {
+        align-items: flex-start;
+        padding: 2.5rem 1.25rem;
     }
 }
