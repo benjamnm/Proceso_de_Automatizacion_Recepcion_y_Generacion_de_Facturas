@@ -394,10 +394,17 @@ def listado():
                         s.fecha_emision,
                         s.monto_bruto,
                         s.email_emisor,
-                        e.nombre AS estado_nombre
+                        s.concepto,
+                        e.nombre AS estado_nombre,
+                        o.nombre AS origen_nombre,
+                        u.nombre AS responsable_nombre
                     FROM solicitudes AS s
                     INNER JOIN estados_solicitud AS e
                         ON e.id = s.estado_id
+                    INNER JOIN origenes_solicitud AS o
+                        ON o.id = s.origen_id
+                    LEFT JOIN usuarios AS u
+                        ON u.id = s.emisor_id
                     {where}
                     ORDER BY s.id DESC
                     LIMIT %s OFFSET %s

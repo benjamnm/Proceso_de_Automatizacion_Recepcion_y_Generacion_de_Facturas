@@ -176,8 +176,13 @@ Solicitudes | Facturaciones SpA
                         <tr>
                             <th scope="col">RUT</th>
                             <th scope="col">Cliente</th>
+                            <th scope="col">Concepto</th>
                             <th scope="col">Monto bruto</th>
                             <th scope="col">Fecha solicitada</th>
+                            <th scope="col">Origen</th>
+                            {% if es_admin %}
+                            <th scope="col">Responsable</th>
+                            {% endif %}
                             <th scope="col">Estado</th>
                             <th scope="col">Acciones</th>
                         </tr>
@@ -190,11 +195,18 @@ Solicitudes | Facturaciones SpA
                                 {{ solicitud.rut }}
                             </td>
                             <td>{{ solicitud.nombre }}</td>
+                            <td title="{{ solicitud.concepto }}">
+                                {{ solicitud.concepto | truncate(60, True) }}
+                            </td>
                             <td class="text-nowrap">
                                 {{ "{:,.0f}".format(solicitud.monto_bruto)
                                    .replace(",", ".") }} CLP
                             </td>
                             <td>{{ solicitud.fecha_emision }}</td>
+                            <td>{{ solicitud.origen_nombre }}</td>
+                            {% if es_admin %}
+                            <td>{{ solicitud.responsable_nombre or '—' }}</td>
+                            {% endif %}
                             <td>
                                 <span class="badge text-bg-secondary">
                                     {{ solicitud.estado_nombre }}
@@ -238,7 +250,7 @@ Solicitudes | Facturaciones SpA
                         </tr>
                         {% else %}
                         <tr>
-                            <td colspan="6">
+                            <td colspan="{{ 9 if es_admin else 8 }}">
                                 No hay resultados en esta página.
                             </td>
                         </tr>
