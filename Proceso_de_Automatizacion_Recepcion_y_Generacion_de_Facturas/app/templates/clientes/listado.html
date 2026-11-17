@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_ui.html" import iniciales %}
 
 {% set migas = [('Panel', url_for('dashboard')), ('Clientes', None)] %}
 
@@ -23,7 +24,7 @@ Clientes | Facturaciones SpA
             href="{{ url_for('clientes.nuevo') }}"
             class="btn btn-primary"
         >
-            <i class="bi bi-plus-circle" aria-hidden="true"></i>
+            <i class="bi bi-building-add" aria-hidden="true"></i>
             Nuevo cliente
         </a>
     </header>
@@ -52,8 +53,13 @@ Clientes | Facturaciones SpA
                             <td class="text-nowrap">
                                 {{ cliente.rut }}
                             </td>
-                            <td>{{ cliente.razon_social }}</td>
-                            <td>{{ cliente.email_contacto }}</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="avatar avatar-sm" aria-hidden="true">{{ iniciales(cliente.razon_social) }}</span>
+                                    <span class="fw-semibold">{{ cliente.razon_social }}</span>
+                                </div>
+                            </td>
+                            <td class="text-break">{{ cliente.email_contacto }}</td>
                             <td>
                                 {% if cliente.activo %}
                                 <span class="badge text-bg-success">
@@ -73,13 +79,14 @@ Clientes | Facturaciones SpA
                                     ) }}"
                                     class="btn btn-outline-primary btn-sm"
                                 >
+                                    <i class="bi bi-pencil" aria-hidden="true"></i>
                                     Editar
                                 </a>
                             </td>
                         </tr>
                         {% else %}
                         <tr>
-                            <td colspan="5">
+                            <td colspan="5" class="text-center text-body-secondary py-4">
                                 No hay clientes registrados.
                             </td>
                         </tr>

@@ -11,8 +11,13 @@
 <span class="badge text-bg-{{ clases.get(nombre, 'secondary') }}">{{ nombre }}</span>
 {%- endmacro %}
 
+{# Hasta dos iniciales, solo de palabras que empiezan con letra o número. #}
 {% macro iniciales(nombre) -%}
-{{ (nombre or '?').split()[:2] | map('first') | join('') | upper }}
+{%- set letras = [] -%}
+{%- for palabra in (nombre or '').split() if palabra[:1].isalnum() and letras | length < 2 -%}
+{%- set _ = letras.append(palabra[0]) -%}
+{%- endfor -%}
+{{ (letras | join('') or '?') | upper }}
 {%- endmacro %}
 
 {# Tarjeta de resumen: icono, valor, etiqueta y, si se da, un enlace existente.
