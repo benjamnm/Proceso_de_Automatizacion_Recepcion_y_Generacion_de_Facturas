@@ -1,0 +1,770 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bandeja de correos | Facturaciones SpA</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="app-container">
+
+    <aside class="sidebar">
+        <div class="logo">
+            <img src="assets/logo-facturaciones.png"
+                 alt="Facturaciones SpA"
+                 class="logo-image">
+            <p>Gestión administrativa</p>
+        </div>
+
+        <nav class="navigation">
+            <p class="nav-title">MENÚ PRINCIPAL</p>
+
+            <a href="index.html" class="nav-link">
+                <i data-lucide="layout-dashboard"></i>
+                <span>Panel principal</span>
+            </a>
+
+            <a href="solicitudes.html" class="nav-link">
+                <i data-lucide="file-text"></i>
+                <span>Solicitudes</span>
+            </a>
+
+            <a href="clientes.html" class="nav-link">
+                <i data-lucide="building-2"></i>
+                <span>Clientes</span>
+            </a>
+
+            <a href="correos.html" class="nav-link active">
+                <i data-lucide="inbox"></i>
+                <span>Bandeja de correos</span>
+            </a>
+
+            <p class="nav-title">ADMINISTRACIÓN</p>
+
+            <a href="usuarios.html" class="nav-link">
+                <i data-lucide="users"></i>
+                <span>Usuarios y permisos</span>
+            </a>
+
+            <a href="historial.html" class="nav-link">
+                <i data-lucide="history"></i>
+                <span>Auditoría e historial</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <p>Facturaciones SpA</p>
+            <span>Plataforma de gestión</span>
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <h1>Bandeja de correos</h1>
+                <p>Gestiona los correos recibidos y su procesamiento.</p>
+            </div>
+
+            <div class="user-profile">
+                <div class="user-avatar">A</div>
+                <div>
+                    <strong>Administrador</strong>
+                    <span>Perfil administrador</span>
+                </div>
+            </div>
+        </header>
+
+        <section class="mail-page">
+
+            <!-- ENCABEZADO -->
+            <div class="mail-page-heading">
+                <div>
+                    <h2>Gestión de correos</h2>
+                    <p>Revisa los mensajes recibidos mediante la integración IMAP.</p>
+                </div>
+
+                <button type="button" class="mail-refresh-btn" id="refresh-mail">
+                    <i data-lucide="refresh-cw"></i>
+                    Revisar bandeja ahora
+                </button>
+            </div>
+
+            <!-- AVISO IMAP -->
+            <div class="imap-warning">
+                <i data-lucide="alert-circle"></i>
+                <div>
+                    <strong>Conexión IMAP pendiente de configuración</strong>
+                    <p>
+                        La recepción automática de correos estará disponible
+                        cuando se configure la conexión con el servidor de correo.
+                    </p>
+                </div>
+            </div>
+
+            <!-- INDICADORES -->
+            <div class="mail-stats">
+                <article class="mail-stat-card">
+                    <div class="mail-stat-icon">
+                        <i data-lucide="mail"></i>
+                    </div>
+                    <span>Correos recibidos</span>
+                    <h3 id="stat-total">5</h3>
+                    <small>Registros de ejemplo</small>
+                </article>
+
+                <article class="mail-stat-card">
+                    <div class="mail-stat-icon">
+                        <i data-lucide="clock"></i>
+                    </div>
+                    <span>Por revisar</span>
+                    <h3 id="stat-review">2</h3>
+                    <small>Requieren atención</small>
+                </article>
+
+                <article class="mail-stat-card">
+                    <div class="mail-stat-icon">
+                        <i data-lucide="check-circle"></i>
+                    </div>
+                    <span>Procesados</span>
+                    <h3 id="stat-processed">1</h3>
+                    <small>Correos vinculados</small>
+                </article>
+
+                <article class="mail-stat-card">
+                    <div class="mail-stat-icon">
+                        <i data-lucide="alert-triangle"></i>
+                    </div>
+                    <span>Con errores</span>
+                    <h3 id="stat-error">1</h3>
+                    <small>Requieren revisión</small>
+                </article>
+            </div>
+
+            <!-- BANDEJA -->
+            <section class="mail-section">
+
+                <div class="mail-section-heading">
+                    <div>
+                        <h2>Correos recibidos</h2>
+                        <p>Consulta los mensajes descargados y su estado de procesamiento.</p>
+                    </div>
+                    <span class="mail-total" id="mail-total">5 registros</span>
+                </div>
+
+                <!-- BÚSQUEDA -->
+                <div class="mail-toolbar">
+                    <div class="mail-search">
+                        <i data-lucide="search"></i>
+                        <input type="search"
+                               id="mail-search"
+                               placeholder="Buscar por remitente o asunto...">
+                    </div>
+
+                    <select class="mail-filter" id="mail-filter">
+                        <option value="">Todos los estados</option>
+                        <option value="RECIBIDO">Recibido</option>
+                        <option value="PROCESADO">Procesado</option>
+                        <option value="REQUIERE_REVISION">Requiere revisión</option>
+                        <option value="DESCARTADO">Descartado</option>
+                        <option value="ERROR">Error</option>
+                    </select>
+                </div>
+
+                <!-- CONTENIDO -->
+                <div class="mail-layout mail-layout-updated">
+
+                    <!-- CARPETAS -->
+                    <aside class="mail-categories">
+
+                        <p class="mail-category-title">ESTADOS</p>
+
+                        <button class="mail-category active" data-folder="">
+                            <i data-lucide="inbox"></i>
+                            <span>Todos los correos</span>
+                        </button>
+
+                        <button class="mail-category" data-folder="RECIBIDO">
+                            <i data-lucide="mail"></i>
+                            <span>Recibidos</span>
+                        </button>
+
+                        <button class="mail-category" data-folder="PROCESADO">
+                            <i data-lucide="check-circle"></i>
+                            <span>Procesados</span>
+                        </button>
+
+                        <button class="mail-category" data-folder="REQUIERE_REVISION">
+                            <i data-lucide="alert-circle"></i>
+                            <span>Requieren revisión</span>
+                        </button>
+
+                        <button class="mail-category" data-folder="DESCARTADO">
+                            <i data-lucide="trash-2"></i>
+                            <span>Descartados</span>
+                        </button>
+
+                        <button class="mail-category" data-folder="ERROR">
+                            <i data-lucide="alert-triangle"></i>
+                            <span>Con errores</span>
+                        </button>
+
+                        <div class="mail-category-divider"></div>
+
+                        <p class="mail-category-title">INFORMACIÓN</p>
+
+                        <div class="mail-label">
+                            <span class="mail-label-dot request"></span>
+                            Solicitudes de facturación
+                        </div>
+
+                        <div class="mail-label">
+                            <span class="mail-label-dot documents"></span>
+                            Documentación
+                        </div>
+
+                        <div class="mail-label">
+                            <span class="mail-label-dot other"></span>
+                            Otros mensajes
+                        </div>
+
+                    </aside>
+
+                    <!-- LISTADO -->
+                    <div class="mail-list">
+
+                        <div class="mail-list-heading">
+                            <strong>Mensajes</strong>
+                            <span id="mail-list-count">5 registros</span>
+                        </div>
+
+                        <div id="mail-items">
+
+                            <button type="button"
+                                    class="mail-item selected"
+                                    data-id="1"
+                                    data-status="REQUIERE_REVISION"
+                                    data-sender="María González"
+                                    data-email="maria.gonzalez@ejemplo.cl"
+                                    data-subject="Solicitud de emisión de factura"
+                                    data-date="13-11-2026 09:30"
+                                    data-preview="Solicitud de emisión de factura correspondiente a servicios prestados."
+                                    data-body="Buenos días, quisiera solicitar la emisión de una factura correspondiente a los servicios prestados durante el período actual. Adjunto los antecedentes correspondientes para su revisión."
+                                    data-attachment="antecedentes_cliente.xml"
+                                    data-category="request"
+                                    data-result="El remitente no se encuentra asociado a un cliente registrado.">
+                                <div class="mail-item-top">
+                                    <strong>María González</strong>
+                                    <span>13/11/2026</span>
+                                </div>
+                                <h3>Solicitud de emisión de factura</h3>
+                                <p>Adjunto antecedentes para solicitar la emisión de una factura...</p>
+                                <div class="mail-item-bottom">
+                                    <span class="mail-tag request">Facturación</span>
+                                    <span class="mail-status review">Requiere revisión</span>
+                                </div>
+                            </button>
+
+                            <button type="button"
+                                    class="mail-item"
+                                    data-id="2"
+                                    data-status="PROCESADO"
+                                    data-sender="Juan Pérez"
+                                    data-email="juan.perez@ejemplo.cl"
+                                    data-subject="Envío de antecedentes tributarios"
+                                    data-date="12-11-2026 11:15"
+                                    data-preview="Envío de antecedentes tributarios de la empresa."
+                                    data-body="Estimados, envío los antecedentes tributarios solicitados para continuar con el proceso de facturación. Muchas gracias."
+                                    data-attachment="antecedentes_tributarios.pdf"
+                                    data-category="documents"
+                                    data-result="Correo procesado correctamente. Solicitud asociada SOL-002.">
+                                <div class="mail-item-top">
+                                    <strong>Juan Pérez</strong>
+                                    <span>12/11/2026</span>
+                                </div>
+                                <h3>Envío de antecedentes tributarios</h3>
+                                <p>Adjunto los antecedentes correspondientes a la empresa...</p>
+                                <div class="mail-item-bottom">
+                                    <span class="mail-tag documents">Documentación</span>
+                                    <span class="mail-status associated">Procesado</span>
+                                </div>
+                            </button>
+
+                            <button type="button"
+                                    class="mail-item"
+                                    data-id="3"
+                                    data-status="RECIBIDO"
+                                    data-sender="Camila Torres"
+                                    data-email="camila.torres@ejemplo.cl"
+                                    data-subject="Consulta sobre facturación"
+                                    data-date="11-11-2026 15:20"
+                                    data-preview="Consulta sobre el estado de una solicitud anterior."
+                                    data-body="Hola, quisiera consultar si existe alguna novedad sobre mi solicitud de facturación anterior. Quedo atenta a sus comentarios."
+                                    data-attachment=""
+                                    data-category="request"
+                                    data-result="Correo recibido y pendiente de procesamiento.">
+                                <div class="mail-item-top">
+                                    <strong>Camila Torres</strong>
+                                    <span>11/11/2026</span>
+                                </div>
+                                <h3>Consulta sobre facturación</h3>
+                                <p>Quisiera consultar el estado de mi solicitud anterior...</p>
+                                <div class="mail-item-bottom">
+                                    <span class="mail-tag request">Facturación</span>
+                                    <span class="mail-status received">Recibido</span>
+                                </div>
+                            </button>
+
+                            <button type="button"
+                                    class="mail-item"
+                                    data-id="4"
+                                    data-status="ERROR"
+                                    data-sender="Empresa del Sur SpA"
+                                    data-email="contacto@empresadelsur.cl"
+                                    data-subject="Documentación complementaria"
+                                    data-date="10-11-2026 10:45"
+                                    data-preview="Documentos complementarios para el proceso de facturación."
+                                    data-body="Estimados, se adjuntan los documentos complementarios solicitados. Por favor confirmar su recepción."
+                                    data-attachment="documentacion.xml"
+                                    data-category="documents"
+                                    data-result="No fue posible completar el procesamiento del correo. Se requiere revisión.">
+                                <div class="mail-item-top">
+                                    <strong>Empresa del Sur SpA</strong>
+                                    <span>10/11/2026</span>
+                                </div>
+                                <h3>Documentación complementaria</h3>
+                                <p>Se adjuntan los documentos solicitados para el proceso...</p>
+                                <div class="mail-item-bottom">
+                                    <span class="mail-tag documents">Documentación</span>
+                                    <span class="mail-status error">Error</span>
+                                </div>
+                            </button>
+
+                            <button type="button"
+                                    class="mail-item"
+                                    data-id="5"
+                                    data-status="DESCARTADO"
+                                    data-sender="Soporte administrativo"
+                                    data-email="soporte@ejemplo.cl"
+                                    data-subject="Información general"
+                                    data-date="09-11-2026 08:20"
+                                    data-preview="Información general no relacionada con una solicitud."
+                                    data-body="Buenos días. Compartimos información general sobre nuestros servicios. Saludos cordiales."
+                                    data-attachment=""
+                                    data-category="other"
+                                    data-result="Correo descartado. Motivo: mensaje no relacionado con facturación.">
+                                <div class="mail-item-top">
+                                    <strong>Soporte administrativo</strong>
+                                    <span>09/11/2026</span>
+                                </div>
+                                <h3>Información general</h3>
+                                <p>Compartimos información relacionada con el proceso...</p>
+                                <div class="mail-item-bottom">
+                                    <span class="mail-tag other">Otros</span>
+                                    <span class="mail-status archived">Descartado</span>
+                                </div>
+                            </button>
+
+                        </div>
+
+                        <div id="mail-empty" class="mail-empty" hidden>
+                            <i data-lucide="search-x"></i>
+                            <strong>No se encontraron correos</strong>
+                            <p>Prueba con otro término o estado.</p>
+                        </div>
+
+                    </div>
+
+                    <!-- VISTA DEL CORREO -->
+                    <div class="mail-reading">
+
+                        <div class="mail-reading-header">
+                            <div>
+                                <span class="mail-tag request" id="reading-category">
+                                    Solicitud de facturación
+                                </span>
+                                <h2 id="reading-subject">Solicitud de emisión de factura</h2>
+                            </div>
+
+                            <span class="mail-status review" id="reading-status">
+                                Requiere revisión
+                            </span>
+                        </div>
+
+                        <div class="mail-sender">
+                            <div class="mail-sender-avatar" id="reading-avatar">MG</div>
+
+                            <div class="mail-sender-info">
+                                <strong id="reading-sender">María González</strong>
+                                <span id="reading-email">maria.gonzalez@ejemplo.cl</span>
+                            </div>
+
+                            <span class="mail-date" id="reading-date">13/11/2026 · 09:30</span>
+                        </div>
+
+                        <div class="mail-body" id="reading-body">
+                            <p>Estimado equipo de Facturaciones SpA:</p>
+                            <p>Buenos días, quisiera solicitar la emisión de una factura correspondiente a los servicios prestados durante el período actual. Adjunto los antecedentes correspondientes para su revisión.</p>
+                            <p>Quedo atenta a cualquier información adicional que sea necesaria para completar el proceso.</p>
+                            <p>Saludos cordiales.</p>
+                        </div>
+
+                        <div class="mail-attachments" id="reading-attachments">
+                            <div class="mail-attachments-heading">
+                                <strong>Archivos adjuntos</strong>
+                                <span>1 archivo</span>
+                            </div>
+
+                            <div class="mail-attachment">
+                                <i data-lucide="file-code"></i>
+                                <div>
+                                    <strong id="reading-attachment-name">antecedentes_cliente.xml</strong>
+                                    <span>Archivo adjunto · Ejemplo</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mail-result-card">
+                            <div class="mail-associated-heading">
+                                <i data-lucide="info"></i>
+                                <strong>Resultado del procesamiento</strong>
+                            </div>
+                            <p id="reading-result">
+                                El remitente no se encuentra asociado a un cliente registrado.
+                            </p>
+                        </div>
+
+                        <div class="mail-associated-request" id="associated-request" hidden>
+                            <div class="mail-associated-heading">
+                                <i data-lucide="link"></i>
+                                <strong>Solicitud relacionada</strong>
+                            </div>
+
+                            <div class="mail-associated-info">
+                                <div>
+                                    <strong id="associated-id">SOL-002</strong>
+                                    <span>Solicitud de facturación</span>
+                                </div>
+                                <span class="mail-status associated">Procesado</span>
+                            </div>
+
+                            <a href="detalle-solicitud.html" class="mail-request-link">
+                                Consultar solicitud
+                                <i data-lucide="arrow-up-right"></i>
+                            </a>
+                        </div>
+
+                        <div class="mail-action-panel">
+                            <button type="button"
+                                    class="mail-secondary-button"
+                                    id="download-email">
+                                <i data-lucide="download"></i>
+                                Descargar .eml
+                            </button>
+
+                            <button type="button"
+                                    class="mail-primary-button"
+                                    id="reprocess-email">
+                                <i data-lucide="refresh-cw"></i>
+                                Reprocesar
+                            </button>
+
+                            <button type="button"
+                                    class="mail-discard-button"
+                                    id="discard-email">
+                                <i data-lucide="trash-2"></i>
+                                Descartar
+                            </button>
+                        </div>
+
+                        <p class="mail-action-note">
+                            Las acciones del prototipo no modifican registros reales del backend.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </section>
+
+    </main>
+</div>
+
+<!-- MODAL PARA DESCARTAR -->
+<div class="mail-modal" id="discard-modal" hidden>
+    <div class="mail-modal-content">
+        <div class="mail-modal-heading">
+            <h3>Descartar correo</h3>
+            <button type="button" id="close-modal" aria-label="Cerrar">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+
+        <p>Indica el motivo por el que deseas descartar este correo.</p>
+
+        <label for="discard-reason">Motivo del descarte</label>
+        <textarea id="discard-reason"
+                  rows="4"
+                  minlength="5"
+                  maxlength="300"
+                  placeholder="Escribe el motivo (entre 5 y 300 caracteres)..."></textarea>
+
+        <div class="mail-modal-actions">
+            <button type="button" class="mail-secondary-button" id="cancel-discard">
+                Cancelar
+            </button>
+            <button type="button" class="mail-discard-button" id="confirm-discard">
+                Confirmar descarte
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="mail-toast" id="mail-toast" role="status" aria-live="polite"></div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<script>
+    lucide.createIcons();
+
+    const items = Array.from(document.querySelectorAll('.mail-item'));
+    const search = document.getElementById('mail-search');
+    const filter = document.getElementById('mail-filter');
+    const folders = document.querySelectorAll('.mail-category');
+
+    let selectedItem = items[0];
+    let activeFolder = '';
+
+    const statusNames = {
+        RECIBIDO: 'Recibido',
+        PROCESADO: 'Procesado',
+        REQUIERE_REVISION: 'Requiere revisión',
+        DESCARTADO: 'Descartado',
+        ERROR: 'Error'
+    };
+
+    const statusClasses = {
+        RECIBIDO: 'received',
+        PROCESADO: 'associated',
+        REQUIERE_REVISION: 'review',
+        DESCARTADO: 'archived',
+        ERROR: 'error'
+    };
+
+    function showToast(message) {
+        const toast = document.getElementById('mail-toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+
+        setTimeout(() => toast.classList.remove('show'), 3200);
+    }
+
+    function getStatusBadge(status) {
+        return `<span class="mail-status ${statusClasses[status]}">${statusNames[status]}</span>`;
+    }
+
+    function updateStats() {
+        const count = status => items.filter(item => item.dataset.status === status).length;
+
+        document.getElementById('stat-total').textContent = items.length;
+        document.getElementById('stat-review').textContent =
+            count('REQUIERE_REVISION') + count('RECIBIDO');
+        document.getElementById('stat-processed').textContent = count('PROCESADO');
+        document.getElementById('stat-error').textContent = count('ERROR');
+    }
+
+    function renderItems() {
+        const term = search.value.toLowerCase().trim();
+        const status = filter.value;
+
+        let visible = 0;
+
+        items.forEach(item => {
+            const matchesText = item.textContent.toLowerCase().includes(term);
+            const matchesStatus = !status || item.dataset.status === status;
+            const matchesFolder = !activeFolder || item.dataset.status === activeFolder;
+
+            const show = matchesText && matchesStatus && matchesFolder;
+            item.hidden = !show;
+
+            if (show) visible++;
+        });
+
+        document.getElementById('mail-empty').hidden = visible !== 0;
+        document.getElementById('mail-total').textContent = `${visible} registros`;
+        document.getElementById('mail-list-count').textContent = `${visible} mensajes`;
+    }
+
+    function selectMail(item) {
+        selectedItem = item;
+
+        items.forEach(mail => mail.classList.toggle('selected', mail === item));
+
+        const data = item.dataset;
+
+        document.getElementById('reading-subject').textContent = data.subject;
+        document.getElementById('reading-sender').textContent = data.sender;
+        document.getElementById('reading-email').textContent = data.email;
+        document.getElementById('reading-date').textContent = data.date;
+        document.getElementById('reading-avatar').textContent =
+            data.sender.split(' ').map(part => part[0]).slice(0, 2).join('').toUpperCase();
+
+        document.getElementById('reading-body').innerHTML = `
+            <p>Estimado equipo de Facturaciones SpA:</p>
+            <p>${data.body}</p>
+            <p>Quedo atento/a a cualquier información adicional.</p>
+            <p>Saludos cordiales.</p>
+        `;
+
+        const category = document.getElementById('reading-category');
+        category.className = `mail-tag ${data.category}`;
+        category.textContent =
+            data.category === 'request' ? 'Solicitud de facturación' :
+            data.category === 'documents' ? 'Documentación' : 'Otros mensajes';
+
+        const status = document.getElementById('reading-status');
+        status.className = `mail-status ${statusClasses[data.status]}`;
+        status.textContent = statusNames[data.status];
+
+        document.getElementById('reading-result').textContent = data.result;
+
+        const attachments = document.getElementById('reading-attachments');
+        attachments.hidden = !data.attachment;
+
+        if (data.attachment) {
+            document.getElementById('reading-attachment-name').textContent = data.attachment;
+        }
+
+        const associated = document.getElementById('associated-request');
+        associated.hidden = data.status !== 'PROCESADO';
+
+        if (data.status === 'PROCESADO') {
+            document.getElementById('associated-id').textContent = 'SOL-002';
+        }
+
+        document.getElementById('reprocess-email').disabled =
+            !['REQUIERE_REVISION', 'ERROR'].includes(data.status);
+
+        document.getElementById('discard-email').disabled =
+            !['RECIBIDO', 'REQUIERE_REVISION', 'ERROR'].includes(data.status);
+
+        document.getElementById('reprocess-email').title =
+            document.getElementById('reprocess-email').disabled
+                ? 'No disponible para este estado'
+                : 'Reprocesar correo';
+
+        document.getElementById('discard-email').title =
+            document.getElementById('discard-email').disabled
+                ? 'No disponible para este estado'
+                : 'Descartar correo';
+    }
+
+    items.forEach(item => {
+        item.addEventListener('click', () => selectMail(item));
+    });
+
+    search.addEventListener('input', renderItems);
+    filter.addEventListener('change', renderItems);
+
+    folders.forEach(folder => {
+        folder.addEventListener('click', () => {
+            activeFolder = folder.dataset.folder;
+
+            folders.forEach(button => button.classList.remove('active'));
+            folder.classList.add('active');
+
+            filter.value = '';
+            renderItems();
+        });
+    });
+
+    document.getElementById('refresh-mail').addEventListener('click', () => {
+        showToast('IMAP no está configurado. No se pueden descargar nuevos correos.');
+    });
+
+    document.getElementById('reprocess-email').addEventListener('click', () => {
+        if (!selectedItem ||
+            !['REQUIERE_REVISION', 'ERROR'].includes(selectedItem.dataset.status)) return;
+
+        showToast('Demostración: el correo está listo para reprocesarse.');
+    });
+
+    document.getElementById('download-email').addEventListener('click', () => {
+        if (!selectedItem) return;
+
+        const d = selectedItem.dataset;
+        const content =
+`From: ${d.email}
+To: facturacion@facturaciones.cl
+Subject: ${d.subject}
+Date: ${d.date}
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+
+${d.body}`;
+
+        const blob = new Blob([content], {type: 'message/rfc822'});
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+
+        link.href = url;
+        link.download = `correo-ejemplo-${d.id}.eml`;
+        link.click();
+
+        URL.revokeObjectURL(url);
+        showToast('Se descargó un archivo .eml de demostración.');
+    });
+
+    const modal = document.getElementById('discard-modal');
+
+    function closeModal() {
+        modal.hidden = true;
+        document.getElementById('discard-reason').value = '';
+    }
+
+    document.getElementById('discard-email').addEventListener('click', () => {
+        if (!selectedItem ||
+            !['RECIBIDO', 'REQUIERE_REVISION', 'ERROR'].includes(selectedItem.dataset.status)) return;
+
+        modal.hidden = false;
+    });
+
+    document.getElementById('close-modal').addEventListener('click', closeModal);
+    document.getElementById('cancel-discard').addEventListener('click', closeModal);
+
+    document.getElementById('confirm-discard').addEventListener('click', () => {
+        const reason = document.getElementById('discard-reason').value.trim();
+
+        if (reason.length < 5 || reason.length > 300) {
+            showToast('El motivo debe tener entre 5 y 300 caracteres.');
+            return;
+        }
+
+        selectedItem.dataset.status = 'DESCARTADO';
+
+        const badge = selectedItem.querySelector('.mail-status');
+        badge.className = 'mail-status archived';
+        badge.textContent = 'Descartado';
+
+        selectedItem.dataset.result = `Correo descartado. Motivo: ${reason}`;
+        selectMail(selectedItem);
+
+        closeModal();
+        updateStats();
+        renderItems();
+
+        showToast('Descarte de demostración realizado.');
+    });
+
+    updateStats();
+    renderItems();
+    selectMail(selectedItem);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios y permisos | Facturaciones SpA</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <aside class="sidebar">
+        <div class="logo">
+            <img src="assets/logo-facturaciones.png"
+                 alt="Facturaciones SpA"
+                 class="logo-image">
+            <p>Gestión administrativa</p>
+        </div>
+
+        <nav class="navigation">
+            <p class="nav-title">MENÚ PRINCIPAL</p>
+
+            <a href="index.html" class="nav-link">
+                <i data-lucide="layout-dashboard"></i>
+                <span>Panel principal</span>
+            </a>
+
+            <a href="solicitudes.html" class="nav-link">
+                <i data-lucide="file-text"></i>
+                <span>Solicitudes</span>
+            </a>
+
+            <a href="clientes.html" class="nav-link">
+                <i data-lucide="building-2"></i>
+                <span>Clientes</span>
+            </a>
+
+            <a href="correos.html" class="nav-link">
+                <i data-lucide="inbox"></i>
+                <span>Bandeja de correos</span>
+            </a>
+
+            <p class="nav-title">ADMINISTRACIÓN</p>
+
+            <a href="usuarios.html" class="nav-link active">
+                <i data-lucide="users"></i>
+                <span>Usuarios y permisos</span>
+            </a>
+
+            <a href="historial.html" class="nav-link">
+                <i data-lucide="history"></i>
+                <span>Auditoría e historial</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <p>Facturaciones SpA</p>
+            <span>Plataforma de gestión</span>
+        </div>
+    </aside>
+
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <h1>Usuarios y permisos</h1>
+                <p>Administra las cuentas y perfiles de acceso al sistema.</p>
+            </div>
+
+            <div class="user-profile">
+                <div class="user-avatar">A</div>
+                <div>
+                    <strong>María González</strong>
+                    <span>Administrador</span>
+                </div>
+            </div>
+        </header>
+
+
+        <section class="users-header">
+            <div>
+                <h2>Gestión de usuarios</h2>
+                <p>Crea cuentas, administra sus estados y consulta sus perfiles de acceso.</p>
+            </div>
+
+            <a href="historial.html" class="users-audit-button">
+                <i data-lucide="clipboard-list"></i>
+                Ver auditoría
+            </a>
+        </section>
+
+
+        <!-- INDICADORES -->
+        <section class="users-stats-grid">
+
+            <article class="users-stat-card">
+                <div class="users-stat-icon">
+                    <i data-lucide="users"></i>
+                </div>
+                <div>
+                    <span>Total de usuarios</span>
+                    <strong id="total-users">5</strong>
+                </div>
+            </article>
+
+            <article class="users-stat-card">
+                <div class="users-stat-icon">
+                    <i data-lucide="user-check"></i>
+                </div>
+                <div>
+                    <span>Usuarios activos</span>
+                    <strong id="active-users">4</strong>
+                </div>
+            </article>
+
+            <article class="users-stat-card">
+                <div class="users-stat-icon">
+                    <i data-lucide="user-x"></i>
+                </div>
+                <div>
+                    <span>Usuarios inactivos</span>
+                    <strong id="inactive-users">1</strong>
+                </div>
+            </article>
+
+        </section>
+
+
+        <!-- FORMULARIO Y LISTADO -->
+        <section class="users-management-layout">
+
+            <!-- CREAR USUARIO -->
+            <article class="user-create-card">
+
+                <div class="user-card-heading">
+                    <div class="users-section-icon">
+                        <i data-lucide="user-plus"></i>
+                    </div>
+                    <h2>Crear usuario</h2>
+                    <p>Completa los datos para registrar una nueva cuenta.</p>
+                </div>
+
+                <form id="create-user-form">
+
+                    <div class="user-form-field">
+                        <label for="new-user-name">Nombre completo</label>
+                        <input
+                            type="text"
+                            id="new-user-name"
+                            placeholder="Ej. María González"
+                            maxlength="150"
+                            required>
+                    </div>
+
+                    <div class="user-form-field">
+                        <label for="new-user-email">Correo electrónico</label>
+                        <input
+                            type="email"
+                            id="new-user-email"
+                            placeholder="nombre@facturaciones.cl"
+                            maxlength="150"
+                            required>
+                    </div>
+
+                    <div class="user-form-field">
+                        <label for="new-user-role">Rol de usuario</label>
+                        <select id="new-user-role" required>
+                            <option value="">Seleccione un rol</option>
+                            <option value="Administrador">Administrador</option>
+                            <option value="Emisor">Emisor</option>
+                            <option value="Lector">Lector</option>
+                        </select>
+                    </div>
+
+                    <div class="user-form-field">
+                        <label for="new-user-password">Contraseña inicial</label>
+
+                        <div class="user-password-wrapper">
+                            <input
+                                type="password"
+                                id="new-user-password"
+                                placeholder="Ingresa una contraseña"
+                                minlength="12"
+                                maxlength="128"
+                                required>
+
+                            <button type="button"
+                                    class="password-toggle"
+                                    data-target="new-user-password"
+                                    aria-label="Mostrar contraseña">
+                                <i data-lucide="eye"></i>
+                            </button>
+                        </div>
+
+                        <small>Debe contener entre 12 y 128 caracteres.</small>
+                    </div>
+
+                    <div class="user-form-field">
+                        <label for="confirm-user-password">Confirmar contraseña</label>
+
+                        <div class="user-password-wrapper">
+                            <input
+                                type="password"
+                                id="confirm-user-password"
+                                placeholder="Repite la contraseña"
+                                minlength="12"
+                                maxlength="128"
+                                required>
+
+                            <button type="button"
+                                    class="password-toggle"
+                                    data-target="confirm-user-password"
+                                    aria-label="Mostrar contraseña">
+                                <i data-lucide="eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <p id="create-user-message" class="user-form-message"></p>
+
+                    <button type="submit" class="user-create-submit">
+                        <i data-lucide="user-plus"></i>
+                        Crear usuario
+                    </button>
+
+                </form>
+
+            </article>
+
+
+            <!-- LISTADO DE USUARIOS -->
+            <article class="user-list-card">
+
+                <div class="user-card-heading user-list-heading">
+                    <div>
+                        <h2>Usuarios registrados</h2>
+                        <p>Consulta y administra las cuentas existentes.</p>
+                    </div>
+
+                    <span class="users-count" id="users-count">5 usuarios</span>
+                </div>
+
+
+                <div class="users-toolbar">
+                    <div class="users-search">
+                        <i data-lucide="search"></i>
+                        <input type="search"
+                               id="user-search"
+                               placeholder="Buscar por nombre o correo...">
+                    </div>
+
+                    <select id="user-status-filter" aria-label="Filtrar por estado">
+                        <option value="all">Todos los estados</option>
+                        <option value="active">Activos</option>
+                        <option value="inactive">Inactivos</option>
+                    </select>
+                </div>
+
+
+                <div class="users-table-container">
+                    <table class="users-table users-reference-table">
+
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Correo electrónico</th>
+                                <th>Rol</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="users-table-body">
+
+                            <tr data-id="1" data-status="active">
+                                <td>
+                                    <div class="registered-user">
+                                        <div class="registered-user-avatar">MG</div>
+                                        <div>
+                                            <strong>María González</strong>
+                                            <small>Usuario actual</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>maria@facturaciones.cl</td>
+                                <td><span class="role-badge admin">Administrador</span></td>
+                                <td><span class="user-state active">Activo</span></td>
+                                <td>
+                                    <div class="user-table-actions">
+                                        <a href="editar-usuario.html?id=1"
+                                           class="user-edit-action">Editar</a>
+                                        <button type="button"
+                                                class="user-state-action"
+                                                disabled
+                                                title="No puedes desactivar tu propia cuenta">
+                                            Cuenta actual
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr data-id="2" data-status="active">
+                                <td>
+                                    <div class="registered-user">
+                                        <div class="registered-user-avatar">JP</div>
+                                        <strong>Juan Pérez</strong>
+                                    </div>
+                                </td>
+                                <td>juan@facturaciones.cl</td>
+                                <td><span class="role-badge issuer">Emisor</span></td>
+                                <td><span class="user-state active">Activo</span></td>
+                                <td>
+                                    <div class="user-table-actions">
+                                        <a href="editar-usuario.html?id=2" class="user-edit-action">Editar</a>
+                                        <button type="button" class="user-state-action deactivate">Desactivar</button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr data-id="3" data-status="active">
+                                <td>
+                                    <div class="registered-user">
+                                        <div class="registered-user-avatar">CT</div>
+                                        <strong>Camila Torres</strong>
+                                    </div>
+                                </td>
+                                <td>camila@facturaciones.cl</td>
+                                <td><span class="role-badge reader">Lector</span></td>
+                                <td><span class="user-state active">Activo</span></td>
+                                <td>
+                                    <div class="user-table-actions">
+                                        <a href="editar-usuario.html?id=3" class="user-edit-action">Editar</a>
+                                        <button type="button" class="user-state-action deactivate">Desactivar</button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr data-id="4" data-status="inactive">
+                                <td>
+                                    <div class="registered-user">
+                                        <div class="registered-user-avatar">FR</div>
+                                        <strong>Felipe Ramírez</strong>
+                                    </div>
+                                </td>
+                                <td>felipe@facturaciones.cl</td>
+                                <td><span class="role-badge issuer">Emisor</span></td>
+                                <td><span class="user-state inactive">Inactivo</span></td>
+                                <td>
+                                    <div class="user-table-actions">
+                                        <a href="editar-usuario.html?id=4" class="user-edit-action">Editar</a>
+                                        <button type="button" class="user-state-action reactivate">Reactivar</button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr data-id="5" data-status="active">
+                                <td>
+                                    <div class="registered-user">
+                                        <div class="registered-user-avatar">VL</div>
+                                        <strong>Valentina López</strong>
+                                    </div>
+                                </td>
+                                <td>valentina@facturaciones.cl</td>
+                                <td><span class="role-badge reader">Lector</span></td>
+                                <td><span class="user-state active">Activo</span></td>
+                                <td>
+                                    <div class="user-table-actions">
+                                        <a href="editar-usuario.html?id=5" class="user-edit-action">Editar</a>
+                                        <button type="button" class="user-state-action deactivate">Desactivar</button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                    <div id="users-empty-state" class="users-empty-state" hidden>
+                        <i data-lucide="users"></i>
+                        <strong>No se encontraron usuarios</strong>
+                        <p>Intenta modificar los filtros de búsqueda.</p>
+                    </div>
+                </div>
+
+                <p class="users-demo-notice">
+                    <i data-lucide="info"></i>
+                    Información ficticia utilizada para demostración del frontend.
+                </p>
+
+            </article>
+
+        </section>
+
+
+        <!-- PERFILES Y PERMISOS -->
+        <section class="permissions-section">
+
+            <div class="permissions-heading">
+                <div>
+                    <h2>Perfiles y permisos</h2>
+                    <p>Resumen de los perfiles disponibles en la plataforma.</p>
+                </div>
+            </div>
+
+            <div class="permissions-grid">
+
+                <article class="permission-card">
+                    <div class="permission-card-heading">
+                        <div class="permission-icon">
+                            <i data-lucide="shield-check"></i>
+                        </div>
+                        <span class="role-badge admin">Administrador</span>
+                    </div>
+
+                    <h3>Acceso administrativo</h3>
+                    <p>Gestiona las cuentas y supervisa la administración del sistema.</p>
+                    <ul>
+                        <li>Administrar usuarios y permisos</li>
+                        <li>Gestionar clientes y solicitudes</li>
+                        <li>Consultar el historial de actividad</li>
+                    </ul>
+                </article>
+
+
+                <article class="permission-card">
+                    <div class="permission-card-heading">
+                        <div class="permission-icon">
+                            <i data-lucide="file-pen-line"></i>
+                        </div>
+                        <span class="role-badge issuer">Emisor</span>
+                    </div>
+
+                    <h3>Gestión de facturación</h3>
+                    <p>Participa en el procesamiento y gestión de solicitudes de facturación.</p>
+                    <ul>
+                        <li>Consultar solicitudes</li>
+                        <li>Gestionar antecedentes de facturación</li>
+                        <li>Trabajar con información de clientes</li>
+                    </ul>
+                </article>
+
+
+                <article class="permission-card">
+                    <div class="permission-card-heading">
+                        <div class="permission-icon">
+                            <i data-lucide="eye"></i>
+                        </div>
+                        <span class="role-badge reader">Lector</span>
+                    </div>
+
+                    <h3>Acceso de consulta</h3>
+                    <p>Perfil orientado a la consulta de información disponible.</p>
+                    <ul>
+                        <li>Consultar información autorizada</li>
+                        <li>Visualizar registros disponibles</li>
+                        <li>Sin acciones de modificación</li>
+                    </ul>
+                </article>
+
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    lucide.createIcons();
+
+    const currentUserId = "1";
+
+    const form = document.getElementById("create-user-form");
+    const message = document.getElementById("create-user-message");
+    const tableBody = document.getElementById("users-table-body");
+
+    const searchInput = document.getElementById("user-search");
+    const statusFilter = document.getElementById("user-status-filter");
+
+    let nextUserId = 6;
+
+
+    // Mostrar y ocultar contraseñas
+    document.querySelectorAll(".password-toggle").forEach(button => {
+        button.addEventListener("click", () => {
+            const input = document.getElementById(button.dataset.target);
+            const isPassword = input.type === "password";
+
+            input.type = isPassword ? "text" : "password";
+
+            button.innerHTML = isPassword
+                ? '<i data-lucide="eye-off"></i>'
+                : '<i data-lucide="eye"></i>';
+
+            button.setAttribute(
+                "aria-label",
+                isPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+            );
+
+            lucide.createIcons();
+        });
+    });
+
+
+    // Crear usuario
+    form.addEventListener("submit", event => {
+        event.preventDefault();
+
+        const name = document.getElementById("new-user-name").value.trim();
+        const email = document.getElementById("new-user-email").value.trim().toLowerCase();
+        const role = document.getElementById("new-user-role").value;
+        const password = document.getElementById("new-user-password").value;
+        const confirmPassword = document.getElementById("confirm-user-password").value;
+
+        const existingEmails = [...tableBody.querySelectorAll("tr")]
+            .map(row => row.cells[1].textContent.trim().toLowerCase());
+
+        if (existingEmails.includes(email)) {
+            showMessage("Este correo ya se encuentra registrado.", "error");
+            return;
+        }
+
+        if (password.length < 12 || password.length > 128) {
+            showMessage("La contraseña debe tener entre 12 y 128 caracteres.", "error");
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            showMessage("Las contraseñas no coinciden.", "error");
+            return;
+        }
+
+        const initials = name
+            .split(/\s+/)
+            .slice(0, 2)
+            .map(part => part.charAt(0).toUpperCase())
+            .join("");
+
+        const roleClass = {
+            "Administrador": "admin",
+            "Emisor": "issuer",
+            "Lector": "reader"
+        }[role];
+
+        const row = document.createElement("tr");
+
+        row.dataset.id = String(nextUserId++);
+        row.dataset.status = "active";
+
+        const userCell = document.createElement("td");
+        const userContainer = document.createElement("div");
+        userContainer.className = "registered-user";
+
+        const avatar = document.createElement("div");
+        avatar.className = "registered-user-avatar";
+        avatar.textContent = initials;
+
+        const userName = document.createElement("strong");
+        userName.textContent = name;
+
+        userContainer.append(avatar, userName);
+        userCell.append(userContainer);
+
+        const emailCell = document.createElement("td");
+        emailCell.textContent = email;
+
+        const roleCell = document.createElement("td");
+        const roleBadge = document.createElement("span");
+        roleBadge.className = `role-badge ${roleClass}`;
+        roleBadge.textContent = role;
+        roleCell.append(roleBadge);
+
+        const statusCell = document.createElement("td");
+        const statusBadge = document.createElement("span");
+        statusBadge.className = "user-state active";
+        statusBadge.textContent = "Activo";
+        statusCell.append(statusBadge);
+
+        const actionsCell = document.createElement("td");
+        const actions = document.createElement("div");
+        actions.className = "user-table-actions";
+
+        const editLink = document.createElement("a");
+        editLink.href = `editar-usuario.html?id=${row.dataset.id}`;
+        editLink.className = "user-edit-action";
+        editLink.textContent = "Editar";
+
+        const stateButton = document.createElement("button");
+        stateButton.type = "button";
+        stateButton.className = "user-state-action deactivate";
+        stateButton.textContent = "Desactivar";
+
+        actions.append(editLink, stateButton);
+        actionsCell.append(actions);
+
+        row.append(userCell, emailCell, roleCell, statusCell, actionsCell);
+
+        tableBody.append(row);
+
+        form.reset();
+        showMessage("Usuario agregado a la demostración correctamente.", "success");
+
+        updateCounters();
+        filterUsers();
+    });
+
+
+    function showMessage(text, type) {
+        message.textContent = text;
+        message.className = `user-form-message ${type}`;
+    }
+
+
+    // Desactivar y reactivar cuentas
+    tableBody.addEventListener("click", event => {
+
+        const button = event.target.closest(".user-state-action");
+
+        if (!button || button.disabled) return;
+
+        const row = button.closest("tr");
+
+        if (row.dataset.id === currentUserId) return;
+
+        const state = row.querySelector(".user-state");
+
+        if (row.dataset.status === "active") {
+            row.dataset.status = "inactive";
+            state.textContent = "Inactivo";
+            state.className = "user-state inactive";
+
+            button.textContent = "Reactivar";
+            button.className = "user-state-action reactivate";
+
+        } else {
+            row.dataset.status = "active";
+            state.textContent = "Activo";
+            state.className = "user-state active";
+
+            button.textContent = "Desactivar";
+            button.className = "user-state-action deactivate";
+        }
+
+        updateCounters();
+        filterUsers();
+    });
+
+
+    // Búsqueda y filtro
+    function filterUsers() {
+
+        const search = searchInput.value.trim().toLowerCase();
+        const status = statusFilter.value;
+
+        const rows = [...tableBody.querySelectorAll("tr")];
+
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+
+            const matchesSearch = row.textContent.toLowerCase().includes(search);
+
+            const matchesStatus =
+                status === "all" || row.dataset.status === status;
+
+            const visible = matchesSearch && matchesStatus;
+
+            row.hidden = !visible;
+
+            if (visible) visibleCount++;
+        });
+
+        document.getElementById("users-empty-state").hidden = visibleCount > 0;
+    }
+
+    searchInput.addEventListener("input", filterUsers);
+    statusFilter.addEventListener("change", filterUsers);
+
+
+    // Actualizar indicadores
+    function updateCounters() {
+
+        const rows = [...tableBody.querySelectorAll("tr")];
+
+        const active = rows.filter(row => row.dataset.status === "active").length;
+        const inactive = rows.filter(row => row.dataset.status === "inactive").length;
+
+        document.getElementById("total-users").textContent = rows.length;
+        document.getElementById("active-users").textContent = active;
+        document.getElementById("inactive-users").textContent = inactive;
+
+        document.getElementById("users-count").textContent =
+            `${rows.length} ${rows.length === 1 ? "usuario" : "usuarios"}`;
+    }
+
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,381 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de cliente | Facturaciones SpA</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- BARRA LATERAL -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <img src="assets/logo-facturaciones.png"
+                 alt="Facturaciones SpA"
+                 class="logo-image">
+            <p>Gestión administrativa</p>
+        </div>
+
+        <nav class="navigation">
+            <p class="nav-title">MENÚ PRINCIPAL</p>
+
+            <a href="index.html" class="nav-link">
+                <i data-lucide="layout-dashboard"></i>
+                <span>Panel principal</span>
+            </a>
+
+            <a href="solicitudes.html" class="nav-link">
+                <i data-lucide="file-text"></i>
+                <span>Solicitudes</span>
+            </a>
+
+            <a href="clientes.html" class="nav-link active">
+                <i data-lucide="building-2"></i>
+                <span>Clientes</span>
+            </a>
+
+            <a href="correos.html" class="nav-link">
+                <i data-lucide="inbox"></i>
+                <span>Bandeja de correos</span>
+            </a>
+
+            <p class="nav-title">ADMINISTRACIÓN</p>
+
+            <a href="usuarios.html" class="nav-link">
+                <i data-lucide="users"></i>
+                <span>Usuarios y permisos</span>
+            </a>
+
+            <a href="historial.html" class="nav-link">
+                <i data-lucide="history"></i>
+                <span>Auditoría e historial</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <p>Facturaciones SpA</p>
+            <span>Plataforma de gestión</span>
+        </div>
+
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <h1>Gestión de clientes</h1>
+                <p>Registra y administra los antecedentes de tus clientes.</p>
+            </div>
+
+            <div class="user-profile">
+                <div class="user-avatar">A</div>
+                <div>
+                    <strong>Administrador</strong>
+                    <span>Perfil administrador</span>
+                </div>
+            </div>
+        </header>
+
+        <section class="client-form-section">
+
+            <!-- ENCABEZADO -->
+            <div class="client-form-heading">
+                <div>
+                    <a href="clientes.html" class="back-link">
+                        ← Volver a clientes
+                    </a>
+
+                    <h2 id="form-title">Registrar nuevo cliente</h2>
+
+                    <p id="form-description">
+                        Completa los siguientes antecedentes para registrar un cliente.
+                    </p>
+                </div>
+            </div>
+
+            <!-- FORMULARIO -->
+            <div class="client-form-card">
+
+                <div class="client-form-card-heading">
+                    <div class="client-form-icon">
+                        <i data-lucide="building-2"></i>
+                    </div>
+
+                    <div>
+                        <h3>Información del cliente</h3>
+                        <p>Los campos marcados con * son obligatorios.</p>
+                    </div>
+                </div>
+
+                <form id="client-form" novalidate>
+
+                    <div class="client-form-grid">
+
+                        <!-- RUT -->
+                        <div class="client-form-field">
+                            <label for="client-rut">
+                                RUT <span>*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="client-rut"
+                                name="rut"
+                                placeholder="Ej. 76.123.456-7"
+                                maxlength="12"
+                                required
+                            >
+
+                            <small>Ingresa el RUT del cliente.</small>
+                        </div>
+
+                        <!-- RAZÓN SOCIAL -->
+                        <div class="client-form-field">
+                            <label for="client-name">
+                                Razón social <span>*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="client-name"
+                                name="razon_social"
+                                placeholder="Ej. Empresa del Sur SpA"
+                                maxlength="150"
+                                required
+                            >
+
+                            <small>Máximo 150 caracteres.</small>
+                        </div>
+
+                        <!-- GIRO -->
+                        <div class="client-form-field">
+                            <label for="client-business">
+                                Giro comercial <span>*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="client-business"
+                                name="giro"
+                                placeholder="Ej. Servicios de construcción"
+                                maxlength="150"
+                                required
+                            >
+
+                            <small>Máximo 150 caracteres.</small>
+                        </div>
+
+                        <!-- DIRECCIÓN -->
+                        <div class="client-form-field">
+                            <label for="client-address">
+                                Dirección <span>*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="client-address"
+                                name="direccion"
+                                placeholder="Ej. Av. Providencia 1234, Santiago"
+                                maxlength="200"
+                                required
+                            >
+
+                            <small>Máximo 200 caracteres.</small>
+                        </div>
+
+                        <!-- CORREO -->
+                        <div class="client-form-field full-width">
+                            <label for="client-email">
+                                Correo electrónico de contacto <span>*</span>
+                            </label>
+
+                            <input
+                                type="email"
+                                id="client-email"
+                                name="correo"
+                                placeholder="Ej. contacto@empresa.cl"
+                                maxlength="150"
+                                required
+                            >
+
+                            <small>
+                                Se utilizará para enviar los documentos de facturación al cliente.
+                            </small>
+                        </div>
+
+                    </div>
+
+                    <!-- AVISO -->
+                    <div class="client-form-notice">
+                        <i data-lucide="info"></i>
+                        <p>
+                            Verifica que los antecedentes sean correctos antes de guardar.
+                            El correo registrado será utilizado para las comunicaciones de facturación.
+                        </p>
+                    </div>
+
+                    <!-- ACCIONES -->
+                    <div class="client-form-actions">
+
+                        <a href="clientes.html" class="client-cancel-btn">
+                            Cancelar
+                        </a>
+
+                        <button type="submit" class="client-save-btn">
+                            <i data-lucide="save"></i>
+                            <span id="save-button-text">Registrar cliente</span>
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <p class="client-form-demo">
+                Formulario de demostración del prototipo frontend.
+            </p>
+
+        </section>
+
+    </main>
+
+</div>
+
+<!-- NOTIFICACIÓN -->
+<div id="client-toast" class="client-toast" role="status" aria-live="polite">
+    <i data-lucide="check-circle"></i>
+    <span id="toast-message"></span>
+</div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<script>
+    lucide.createIcons();
+
+    const params = new URLSearchParams(window.location.search);
+    const editMode = params.get('modo') === 'editar';
+    const clientId = params.get('id');
+
+    const form = document.getElementById('client-form');
+    const rutInput = document.getElementById('client-rut');
+
+    const formTitle = document.getElementById('form-title');
+    const formDescription = document.getElementById('form-description');
+    const saveButtonText = document.getElementById('save-button-text');
+
+    // Datos ficticios para demostrar el modo edición.
+    const demoClients = {
+        1: {
+            rut: '76.123.456-7',
+            name: 'Empresa del Sur SpA',
+            business: 'Servicios empresariales',
+            address: 'Av. Providencia 1234, Santiago',
+            email: 'contacto@empresadelsur.cl'
+        },
+        2: {
+            rut: '77.234.567-8',
+            name: 'Comercial Andes Ltda.',
+            business: 'Comercio al por mayor',
+            address: 'Av. Apoquindo 2500, Las Condes',
+            email: 'administracion@comercialandes.cl'
+        },
+        3: {
+            rut: '78.345.678-9',
+            name: 'Servicios Integrales SpA',
+            business: 'Servicios integrales',
+            address: 'Calle Los Olmos 450, Santiago',
+            email: 'contacto@serviciosintegrales.cl'
+        },
+        4: {
+            rut: '79.456.789-0',
+            name: 'Transportes Cordillera Ltda.',
+            business: 'Transporte de carga',
+            address: 'Camino Industrial 500, Quilicura',
+            email: 'facturacion@transportescordillera.cl'
+        },
+        5: {
+            rut: '80.567.890-1',
+            name: 'Grupo Norte SpA',
+            business: 'Servicios comerciales',
+            address: 'Av. Independencia 850, Santiago',
+            email: 'administracion@gruponorte.cl'
+        }
+    };
+
+    // Configuración del formulario según el modo.
+    if (editMode) {
+        formTitle.textContent = 'Editar cliente';
+        formDescription.textContent =
+            'Modifica los antecedentes del cliente seleccionado.';
+
+        saveButtonText.textContent = 'Guardar cambios';
+
+        const client = demoClients[clientId];
+
+        if (client) {
+            document.getElementById('client-rut').value = client.rut;
+            document.getElementById('client-name').value = client.name;
+            document.getElementById('client-business').value = client.business;
+            document.getElementById('client-address').value = client.address;
+            document.getElementById('client-email').value = client.email;
+
+            rutInput.readOnly = true;
+            rutInput.classList.add('field-readonly');
+        } else {
+            formDescription.textContent =
+                'No se encontró el cliente de demostración solicitado.';
+            form.querySelector('button[type="submit"]').disabled = true;
+        }
+    }
+
+    // Notificación visual.
+    function showToast(message) {
+        const toast = document.getElementById('client-toast');
+
+        document.getElementById('toast-message').textContent = message;
+
+        toast.classList.add('show');
+
+        window.setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3500);
+    }
+
+    // Validación y demostración de guardado.
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        const rut = rutInput.value.trim();
+
+        if (!/^[0-9]{1,2}\.?[0-9]{3}\.?[0-9]{3}-[0-9kK]$/.test(rut)) {
+            rutInput.setCustomValidity('Ingresa un RUT con formato válido, por ejemplo 76.123.456-7.');
+            rutInput.reportValidity();
+            rutInput.setCustomValidity('');
+            return;
+        }
+
+        const message = editMode
+            ? 'Demostración: los cambios están listos para guardar.'
+            : 'Demostración: el cliente está listo para registrar.';
+
+        showToast(message);
+
+        // No se envían datos ni se modifican registros reales.
+    });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,997 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de solicitud | Facturaciones SpA</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+<div class="app-container">
+
+    <!-- MENÚ LATERAL -->
+    <aside class="sidebar">
+        <div class="logo">
+            <img src="assets/logo-facturaciones.png" alt="Facturaciones SpA" class="logo-image">
+            <p>Gestión administrativa</p>
+        </div>
+
+        <nav class="navigation">
+            <p class="nav-title">MENÚ PRINCIPAL</p>
+
+            <a href="index.html" class="nav-link">
+                <i data-lucide="layout-dashboard"></i>
+                <span>Panel principal</span>
+            </a>
+
+            <a href="solicitudes.html" class="nav-link active">
+                <i data-lucide="file-text"></i>
+                <span>Solicitudes</span>
+            </a>
+
+            <a href="clientes.html" class="nav-link">
+                <i data-lucide="building-2"></i>
+                <span>Clientes</span>
+            </a>
+
+            <a href="correos.html" class="nav-link">
+                <i data-lucide="inbox"></i>
+                <span>Bandeja de correos</span>
+            </a>
+
+            <p class="nav-title">ADMINISTRACIÓN</p>
+
+            <a href="usuarios.html" class="nav-link">
+                <i data-lucide="users"></i>
+                <span>Usuarios y permisos</span>
+            </a>
+
+            <a href="historial.html" class="nav-link">
+                <i data-lucide="history"></i>
+                <span>Auditoría e historial</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <p>Facturaciones SpA</p>
+            <span>Plataforma de gestión</span>
+        </div>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <h1>Detalle de solicitud</h1>
+                <p>Consulta la información y gestiona el proceso de facturación.</p>
+            </div>
+
+            <div class="user-profile">
+                <div class="user-avatar">A</div>
+                <div>
+                    <strong>Administrador</strong>
+                    <span>Perfil administrador</span>
+                </div>
+            </div>
+        </header>
+
+        <section class="detail-section">
+
+            <!-- ENCABEZADO -->
+            <div class="detail-heading">
+                <div>
+                    <a href="solicitudes.html" class="back-link">
+                        ← Volver a solicitudes
+                    </a>
+
+                    <h1>Solicitud SOL-001</h1>
+                    <p>Información general y seguimiento de la solicitud.</p>
+                </div>
+
+                <div class="detail-header-meta">
+                    <span class="request-id">SOL-001</span>
+                    <span class="status-badge status-review" id="header-status">En revisión</span>
+                </div>
+            </div>
+
+            <!-- ESTADO GENERAL -->
+            <div class="detail-status-card">
+                <div>
+                    <span class="detail-label">Estado actual</span>
+                    <span class="status-badge status-review" id="main-status">En revisión</span>
+                </div>
+                <p id="status-description">
+                    La solicitud se encuentra en proceso de revisión de factura.
+                </p>
+            </div>
+
+            <!-- PESTAÑAS -->
+            <div class="detail-tabs" role="tablist" aria-label="Secciones de la solicitud">
+                <button class="detail-tab active" type="button"
+                        data-tab="solicitud" role="tab" aria-selected="true">
+                    <i data-lucide="file-text"></i>
+                    Solicitud
+                </button>
+
+                <button class="detail-tab" type="button"
+                        data-tab="factura" role="tab" aria-selected="false">
+                    <i data-lucide="file-check"></i>
+                    Factura
+                </button>
+
+                <button class="detail-tab" type="button"
+                        data-tab="editar" role="tab" aria-selected="false">
+                    <i data-lucide="pencil"></i>
+                    Editar datos
+                </button>
+            </div>
+
+            <!-- ======================================
+                 PESTAÑA SOLICITUD
+            ======================================= -->
+            <div class="detail-tab-content active" id="tab-solicitud" role="tabpanel">
+
+                <div class="detail-card">
+                    <h2>Información del destinatario</h2>
+
+                    <div class="detail-grid">
+                        <div class="detail-field">
+                            <span>Razón social</span>
+                            <strong>Constructora Los Andes Ltda.</strong>
+                        </div>
+
+                        <div class="detail-field">
+                            <span>RUT</span>
+                            <strong>76.482.115-3</strong>
+                        </div>
+
+                        <div class="detail-field">
+                            <span>Giro</span>
+                            <strong>Construcción y obras civiles</strong>
+                        </div>
+
+                        <div class="detail-field">
+                            <span>Dirección</span>
+                            <strong>Av. Providencia 1234, Santiago</strong>
+                        </div>
+
+                        <div class="detail-field">
+                            <span>Correo de contacto</span>
+                            <strong>contacto@losandes.cl</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <h2>Datos de facturación solicitados</h2>
+
+                    <div class="detail-grid">
+                        <div class="detail-field">
+                            <span>Concepto</span>
+                            <strong>Servicios de construcción</strong>
+                        </div>
+
+                        <div class="detail-field">
+                            <span>Monto bruto solicitado</span>
+                            <strong>$1.190.000</strong>
+                        </div>
+
+                        <div class="detail-field">
+                            <span>Fecha de emisión solicitada</span>
+                            <strong>10-11-2026</strong>
+                        </div>
+
+                        <div class="detail-field">
+                            <span>Tipo de afectación</span>
+                            <strong>Afecta</strong>
+                        </div>
+
+                        <div class="detail-field">
+                            <span>Orden de compra</span>
+                            <strong>OC-2026-001</strong>
+                        </div>
+
+                        <div class="detail-field">
+                            <span>Origen de la solicitud</span>
+                            <strong>Correo electrónico</strong>
+                        </div>
+
+                        <div class="detail-field">
+                            <span>Correo remitente</span>
+                            <strong>contacto@losandes.cl</strong>
+                        </div>
+
+                        <div class="detail-field">
+                            <span>Versión de solicitud</span>
+                            <strong>Versión 1</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DOCUMENTO XML -->
+                <div class="detail-card">
+                    <div class="detail-card-heading">
+                        <div>
+                            <h2>Documento XML</h2>
+                            <p>Archivo asociado a la solicitud.</p>
+                        </div>
+                        <span class="status-badge status-approved">Disponible</span>
+                    </div>
+
+                    <div class="xml-file">
+                        <div class="xml-file-icon">
+                            <i data-lucide="file-code"></i>
+                        </div>
+
+                        <div class="xml-file-info">
+                            <strong>solicitud_facturacion.xml</strong>
+                            <span>Archivo XML · 24 KB</span>
+                        </div>
+
+                        <button type="button" class="detail-secondary-btn" id="download-request-xml">
+                            <i data-lucide="download"></i>
+                            Descargar
+                        </button>
+                    </div>
+
+                    <div class="detail-grid xml-metadata">
+                        <div class="detail-field">
+                            <span>Fecha de carga</span>
+                            <strong>10-11-2026 09:30</strong>
+                        </div>
+
+                        <div class="detail-field">
+                            <span>SHA-256</span>
+                            <strong class="hash-value">a1b2c3d4e5f6...7890</strong>
+                        </div>
+                    </div>
+
+                    <div class="upload-xml">
+                        <label for="xml-upload">Cargar o reemplazar XML</label>
+                        <input type="file" id="xml-upload" accept=".xml">
+                        <p class="detail-helper">
+                            La carga o reemplazo está disponible según el estado de la solicitud.
+                            En esta demostración solo se visualizará el archivo seleccionado.
+                        </p>
+                        <div id="xml-upload-message" class="detail-inline-message" aria-live="polite"></div>
+                    </div>
+                </div>
+
+                <!-- ENVÍO DE DOCUMENTACIÓN -->
+                <div class="detail-card">
+                    <h2>Envío de documentación</h2>
+
+                    <div class="detail-grid">
+                        <div class="detail-field">
+                            <span>Destinatario</span>
+                            <strong>contacto@losandes.cl</strong>
+                        </div>
+
+                        <div class="detail-field">
+                            <span>Documento adjunto</span>
+                            <strong>solicitud_facturacion.xml</strong>
+                        </div>
+                    </div>
+
+                    <div class="send-xml-actions">
+                        <button type="button" class="detail-primary-btn" id="send-xml-button">
+                            <i data-lucide="send"></i>
+                            Enviar XML al cliente
+                        </button>
+                    </div>
+
+                    <p class="detail-helper">
+                        Simulación visual. El envío real requiere conexión con el backend y servicio de correo.
+                    </p>
+
+                    <h3 class="subsection-title">Historial de envíos</h3>
+
+                    <div class="history-table-wrapper">
+                        <table class="detail-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Destinatario</th>
+                                    <th>Estado</th>
+                                    <th>Responsable</th>
+                                </tr>
+                            </thead>
+                            <tbody id="send-history-body">
+                                <tr>
+                                    <td>10-11-2026 10:15</td>
+                                    <td>contacto@losandes.cl</td>
+                                    <td><span class="status-badge status-approved">Enviado</span></td>
+                                    <td>Administrador</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ======================================
+                 PESTAÑA FACTURA
+            ======================================= -->
+            <div class="detail-tab-content" id="tab-factura" role="tabpanel" hidden>
+
+                <div class="detail-card">
+                    <div class="detail-card-heading">
+                        <div>
+                            <h2>Información de la factura</h2>
+                            <p>Documento generado a partir de la solicitud.</p>
+                        </div>
+
+                        <span class="status-badge status-review" id="invoice-status">En revisión</span>
+                    </div>
+
+                    <div class="detail-grid">
+                        <div class="detail-field">
+                            <span>Tipo de DTE</span>
+                            <strong>33 - Factura electrónica afecta</strong>
+                        </div>
+
+                        <div class="detail-field">
+                            <span>Versión de factura</span>
+                            <strong id="invoice-version">Versión 1</strong>
+                        </div>
+
+                        <div class="detail-field">
+                            <span>Fecha de generación</span>
+                            <strong>10-11-2026</strong>
+                        </div>
+
+                        <div class="detail-field">
+                            <span>Generada por</span>
+                            <strong>Administrador</strong>
+                        </div>
+
+                        <div class="detail-field">
+                            <span>Destinatario</span>
+                            <strong>Constructora Los Andes Ltda.</strong>
+                        </div>
+
+                        <div class="detail-field">
+                            <span>RUT destinatario</span>
+                            <strong>76.482.115-3</strong>
+                        </div>
+
+                        <div class="detail-field">
+                            <span>Fecha del documento</span>
+                            <strong>10-11-2026</strong>
+                        </div>
+
+                        <div class="detail-field">
+                            <span>Orden de compra</span>
+                            <strong>OC-2026-001</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <h2>Detalle de montos</h2>
+
+                    <div class="invoice-concept">
+                        <span>Concepto</span>
+                        <strong>Servicios de construcción</strong>
+                    </div>
+
+                    <div class="invoice-totals">
+                        <div>
+                            <span>Monto neto</span>
+                            <strong>$1.000.000</strong>
+                        </div>
+
+                        <div>
+                            <span>IVA (19%)</span>
+                            <strong>$190.000</strong>
+                        </div>
+
+                        <div class="invoice-grand-total">
+                            <span>Total</span>
+                            <strong>$1.190.000</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VALIDACIÓN -->
+                <div class="detail-card">
+                    <h2>Validación de factura</h2>
+
+                    <div class="review-info">
+                        <span class="detail-label">Estado de revisión</span>
+                        <span class="status-badge status-review" id="review-status">En revisión</span>
+                    </div>
+
+                    <div class="review-observations">
+                        <label for="observacion-factura">
+                            Observación del administrador
+                        </label>
+
+                        <textarea
+                            id="observacion-factura"
+                            rows="4"
+                            minlength="5"
+                            maxlength="500"
+                            placeholder="Escribe el motivo si necesitas devolver la factura para corrección..."
+                        ></textarea>
+
+                        <p class="field-help">
+                            Para devolver a corrección, la observación es obligatoria y debe tener entre 5 y 500 caracteres.
+                        </p>
+                    </div>
+
+                    <div class="review-actions">
+                        <button type="button" class="correction-btn" id="return-correction">
+                            <i data-lucide="undo-2"></i>
+                            Devolver a corrección
+                        </button>
+
+                        <button type="button" class="approve-btn" id="approve-invoice">
+                            <i data-lucide="check-circle"></i>
+                            Aprobar factura
+                        </button>
+                    </div>
+
+                    <div id="review-message" class="detail-inline-message" aria-live="polite"></div>
+
+                    <p class="detail-helper">
+                        Acciones simuladas para el prototipo. La aprobación real requiere permisos de administrador y validación del backend.
+                    </p>
+                </div>
+
+                <!-- ARCHIVO TRIBUTARIO -->
+                <div class="detail-card">
+                    <h2>Archivo tributario</h2>
+
+                    <div class="xml-file">
+                        <div class="xml-file-icon">
+                            <i data-lucide="file-code"></i>
+                        </div>
+
+                        <div class="xml-file-info">
+                            <strong id="invoice-file-name">factura_electronica.xml</strong>
+                            <span>Archivo XML de demostración</span>
+                        </div>
+
+                        <span class="status-badge status-pending" id="tax-file-status">Pendiente</span>
+                    </div>
+
+                    <p class="detail-helper">
+                        La generación de un archivo no implica su envío ni aceptación por el SII.
+                        El documento definitivo requiere los elementos tributarios correspondientes,
+                        como certificado digital y CAF.
+                    </p>
+                </div>
+
+                <!-- HISTORIAL DE VERSIONES -->
+                <div class="detail-card">
+                    <h2>Historial de versiones</h2>
+
+                    <div class="history-table-wrapper">
+                        <table class="detail-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Versión</th>
+                                    <th>Estado</th>
+                                    <th>Generación</th>
+                                    <th>Responsable</th>
+                                    <th>Observación</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="version-history-body">
+                                <tr>
+                                    <td>1</td>
+                                    <td><span class="status-badge status-review">En revisión</span></td>
+                                    <td>10-11-2026</td>
+                                    <td>Administrador</td>
+                                    <td>Primera versión</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ======================================
+                 PESTAÑA EDITAR
+            ======================================= -->
+            <div class="detail-tab-content" id="tab-editar" role="tabpanel" hidden>
+
+                <div class="detail-card" id="edit-locked-panel">
+                    <div class="edit-locked-content">
+                        <div class="edit-locked-icon">
+                            <i data-lucide="lock"></i>
+                        </div>
+
+                        <h2>Edición no disponible</h2>
+
+                        <p>
+                            Esta solicitud se encuentra <strong>En revisión</strong>.
+                            Según las reglas del sistema, solo se pueden editar solicitudes
+                            en estado Pendiente o En corrección.
+                        </p>
+
+                        <span class="status-badge status-review">En revisión</span>
+
+                        <p class="detail-helper">
+                            Si la factura es devuelta a corrección, podrás modificar los datos permitidos de la solicitud.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="detail-card" id="edit-enabled-panel" hidden>
+                    <h2>Editar datos de la solicitud</h2>
+
+                    <p class="detail-helper">
+                        Los datos históricos del destinatario se mantienen sin modificaciones.
+                        Solo puedes editar los datos de facturación permitidos.
+                    </p>
+
+                    <form id="edit-request-form" novalidate>
+                        <div class="detail-form-grid">
+
+                            <div class="detail-field">
+                                <label for="edit-client-name">Razón social</label>
+                                <input type="text" id="edit-client-name"
+                                       value="Constructora Los Andes Ltda." disabled>
+                            </div>
+
+                            <div class="detail-field">
+                                <label for="edit-client-rut">RUT</label>
+                                <input type="text" id="edit-client-rut"
+                                       value="76.482.115-3" disabled>
+                            </div>
+
+                            <div class="detail-field">
+                                <label for="edit-address">Dirección</label>
+                                <input type="text" id="edit-address"
+                                       value="Av. Providencia 1234, Santiago" disabled>
+                            </div>
+
+                            <div class="detail-field">
+                                <label for="edit-business">Giro</label>
+                                <input type="text" id="edit-business"
+                                       value="Construcción y obras civiles" disabled>
+                            </div>
+
+                            <div class="detail-field">
+                                <label for="edit-email">Correo de contacto</label>
+                                <input type="email" id="edit-email"
+                                       value="contacto@losandes.cl" disabled>
+                            </div>
+
+                            <div class="detail-field">
+                                <label for="edit-concept">Concepto</label>
+                                <textarea id="edit-concept" maxlength="500" required>Servicios de construcción</textarea>
+                            </div>
+
+                            <div class="detail-field">
+                                <label for="edit-amount">Monto bruto (CLP)</label>
+                                <input type="number" id="edit-amount"
+                                       min="1" max="99999999999999" step="1"
+                                       value="1190000" required>
+                            </div>
+
+                            <div class="detail-field">
+                                <label for="edit-date">Fecha de emisión solicitada</label>
+                                <input type="date" id="edit-date"
+                                       value="2026-11-10" required>
+                            </div>
+
+                            <div class="detail-field">
+                                <label for="edit-tax">Tipo de afectación</label>
+                                <select id="edit-tax" required>
+                                    <option value="afecta" selected>Afecta</option>
+                                    <option value="exenta">Exenta</option>
+                                </select>
+                            </div>
+
+                            <div class="detail-field">
+                                <label for="edit-po">Orden de compra (opcional)</label>
+                                <input type="text" id="edit-po"
+                                       maxlength="40" value="OC-2026-001">
+                            </div>
+                        </div>
+
+                        <div class="detail-form-actions">
+                            <button type="reset" class="detail-secondary-btn" id="reset-edit">
+                                <i data-lucide="rotate-ccw"></i>
+                                Restaurar datos
+                            </button>
+
+                            <button type="submit" class="detail-primary-btn">
+                                <i data-lucide="save"></i>
+                                Guardar cambios
+                            </button>
+                        </div>
+
+                        <div id="edit-message" class="detail-inline-message" aria-live="polite"></div>
+
+                        <p class="detail-helper">
+                            Esta es una simulación local. Los cambios no se guardan en el backend.
+                        </p>
+                    </form>
+                </div>
+
+            </div>
+
+            <p class="demo-notice">
+                Información ficticia utilizada para la construcción del prototipo.
+                Las acciones de esta pantalla son demostrativas.
+            </p>
+
+        </section>
+    </main>
+</div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    lucide.createIcons();
+
+    // ======================================
+    // NAVEGACIÓN ENTRE PESTAÑAS
+    // ======================================
+
+    const tabs = document.querySelectorAll(".detail-tab");
+    const panels = document.querySelectorAll(".detail-tab-content");
+
+    function activateTab(target) {
+        tabs.forEach(tab => {
+            const active = tab.dataset.tab === target;
+            tab.classList.toggle("active", active);
+            tab.setAttribute("aria-selected", active ? "true" : "false");
+        });
+
+        panels.forEach(panel => {
+            const active = panel.id === `tab-${target}`;
+            panel.classList.toggle("active", active);
+            panel.hidden = !active;
+        });
+
+        history.replaceState(null, "", `#${target}`);
+    }
+
+    tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+            activateTab(tab.dataset.tab);
+        });
+    });
+
+    const initialTab = location.hash.replace("#", "");
+    if (["solicitud", "factura", "editar"].includes(initialTab)) {
+        activateTab(initialTab);
+    }
+
+
+    // ======================================
+    // ESTADO DE LA SOLICITUD
+    // ======================================
+
+    let requestStatus = "review";
+    let invoiceStatus = "review";
+    let invoiceVersion = 1;
+
+    const headerStatus = document.getElementById("header-status");
+    const mainStatus = document.getElementById("main-status");
+    const statusDescription = document.getElementById("status-description");
+    const invoiceStatusBadge = document.getElementById("invoice-status");
+    const reviewStatusBadge = document.getElementById("review-status");
+
+    function updateStatusBadge(element, status, label) {
+        element.className = `status-badge status-${status}`;
+        element.textContent = label;
+    }
+
+    function updateRequestStatus(status) {
+        requestStatus = status;
+
+        const labels = {
+            pending: "Pendiente",
+            review: "En revisión",
+            correction: "En corrección",
+            approved: "Aprobada",
+            rejected: "Rechazada"
+        };
+
+        const descriptions = {
+            pending: "La solicitud está pendiente de revisión.",
+            review: "La solicitud se encuentra en proceso de revisión de factura.",
+            correction: "La solicitud fue devuelta para realizar correcciones.",
+            approved: "La factura fue aprobada en esta demostración.",
+            rejected: "La solicitud fue rechazada."
+        };
+
+        updateStatusBadge(headerStatus, status, labels[status]);
+        updateStatusBadge(mainStatus, status, labels[status]);
+        statusDescription.textContent = descriptions[status];
+
+        const canEdit = status === "pending" || status === "correction";
+
+        document.getElementById("edit-locked-panel").hidden = canEdit;
+        document.getElementById("edit-enabled-panel").hidden = !canEdit;
+
+        const xmlUpload = document.getElementById("xml-upload");
+        xmlUpload.disabled = !(status === "pending" || status === "review");
+
+        if (!canEdit && location.hash === "#editar") {
+            activateTab("solicitud");
+        }
+    }
+
+
+    // ======================================
+    // CARGA VISUAL DE XML
+    // ======================================
+
+    const xmlUpload = document.getElementById("xml-upload");
+    const xmlUploadMessage = document.getElementById("xml-upload-message");
+
+    xmlUpload.addEventListener("change", function () {
+        const file = xmlUpload.files[0];
+
+        if (!file) {
+            xmlUploadMessage.textContent = "";
+            return;
+        }
+
+        if (!file.name.toLowerCase().endsWith(".xml")) {
+            xmlUploadMessage.textContent = "Selecciona un archivo con extensión XML.";
+            xmlUpload.value = "";
+            return;
+        }
+
+        xmlUploadMessage.textContent =
+            `Archivo seleccionado: ${file.name}. La carga real requiere conexión con el backend.`;
+    });
+
+
+    // ======================================
+    // DESCARGA DE ARCHIVO DEMOSTRATIVO
+    // ======================================
+
+    document.getElementById("download-request-xml").addEventListener("click", function () {
+        const xmlDemo = `<?xml version="1.0" encoding="UTF-8"?>
+<solicitud>
+    <identificador>SOL-001</identificador>
+    <cliente>Constructora Los Andes Ltda.</cliente>
+    <rut>76.482.115-3</rut>
+    <concepto>Servicios de construcción</concepto>
+    <montoBruto>1190000</montoBruto>
+    <estado>En revisión</estado>
+</solicitud>`;
+
+        const blob = new Blob([xmlDemo], { type: "application/xml" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = "solicitud_facturacion_demo.xml";
+        link.click();
+
+        URL.revokeObjectURL(url);
+    });
+
+
+    // ======================================
+    // SIMULACIÓN DE ENVÍO DE XML
+    // ======================================
+
+    document.getElementById("send-xml-button").addEventListener("click", function () {
+        const tbody = document.getElementById("send-history-body");
+        const row = document.createElement("tr");
+
+        const values = [
+            new Date().toLocaleString("es-CL"),
+            "contacto@losandes.cl",
+            "Simulación",
+            "Administrador"
+        ];
+
+        values.forEach(value => {
+            const cell = document.createElement("td");
+            cell.textContent = value;
+            row.appendChild(cell);
+        });
+
+        const statusCell = row.children[2];
+        statusCell.innerHTML = '<span class="status-badge status-pending">Demo</span>';
+
+        tbody.prepend(row);
+
+        document.getElementById("send-xml-button").disabled = true;
+        document.getElementById("send-xml-button").textContent = "Envío simulado";
+
+    });
+
+
+    // ======================================
+    // DEVOLVER FACTURA A CORRECCIÓN
+    // ======================================
+
+    const observationField = document.getElementById("observacion-factura");
+    const reviewMessage = document.getElementById("review-message");
+
+    document.getElementById("return-correction").addEventListener("click", function () {
+        const observation = observationField.value.trim();
+
+        if (observation.length < 5 || observation.length > 500) {
+            reviewMessage.className = "detail-inline-message error";
+            reviewMessage.textContent =
+                "La observación es obligatoria y debe tener entre 5 y 500 caracteres.";
+            observationField.focus();
+            return;
+        }
+
+        invoiceStatus = "correction";
+
+        updateStatusBadge(invoiceStatusBadge, "correction", "En corrección");
+        updateStatusBadge(reviewStatusBadge, "correction", "En corrección");
+        updateRequestStatus("correction");
+
+        reviewMessage.className = "detail-inline-message success";
+        reviewMessage.textContent =
+            "La factura fue devuelta a corrección en esta demostración.";
+
+        addVersionHistory("En corrección", observation);
+    });
+
+
+    // ======================================
+    // APROBAR FACTURA
+    // ======================================
+
+    document.getElementById("approve-invoice").addEventListener("click", function () {
+        const confirmed = confirm(
+            "¿Estás seguro de que deseas aprobar esta factura en la demostración?"
+        );
+
+        if (!confirmed) return;
+
+        invoiceStatus = "approved";
+
+        updateStatusBadge(invoiceStatusBadge, "approved", "Aprobada");
+        updateStatusBadge(reviewStatusBadge, "approved", "Aprobada");
+        updateStatusBadge(
+            document.getElementById("tax-file-status"),
+            "approved",
+            "Aprobada (demo)"
+        );
+
+        updateRequestStatus("approved");
+
+        reviewMessage.className = "detail-inline-message success";
+        reviewMessage.textContent =
+            "Factura aprobada en la demostración. Esto no significa que haya sido enviada ni aceptada por el SII.";
+
+        document.getElementById("approve-invoice").disabled = true;
+        document.getElementById("return-correction").disabled = true;
+
+        addVersionHistory("Aprobada", "Aprobación de demostración");
+    });
+
+
+    // ======================================
+    // HISTORIAL DE VERSIONES
+    // ======================================
+
+    function addVersionHistory(status, observation) {
+        invoiceVersion++;
+
+        document.getElementById("invoice-version").textContent =
+            `Versión ${invoiceVersion}`;
+
+        const tbody = document.getElementById("version-history-body");
+        const row = document.createElement("tr");
+
+        const values = [
+            invoiceVersion,
+            status,
+            new Date().toLocaleDateString("es-CL"),
+            "Administrador",
+            observation
+        ];
+
+        values.forEach((value, index) => {
+            const cell = document.createElement("td");
+
+            if (index === 1) {
+                const badge = document.createElement("span");
+                badge.className = `status-badge status-${status === "Aprobada" ? "approved" : "correction"}`;
+                badge.textContent = value;
+                cell.appendChild(badge);
+            } else {
+                cell.textContent = value;
+            }
+
+            row.appendChild(cell);
+        });
+
+        tbody.prepend(row);
+    }
+
+
+    // ======================================
+    // EDICIÓN DE DATOS
+    // ======================================
+
+    const editForm = document.getElementById("edit-request-form");
+    const editMessage = document.getElementById("edit-message");
+
+    const originalEditValues = {
+        concept: "Servicios de construcción",
+        amount: "1190000",
+        date: "2026-11-10",
+        tax: "afecta",
+        po: "OC-2026-001"
+    };
+
+    document.getElementById("reset-edit").addEventListener("click", function () {
+        setTimeout(() => {
+            editMessage.textContent = "";
+            editMessage.className = "detail-inline-message";
+        }, 0);
+    });
+
+    editForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        if (requestStatus !== "pending" && requestStatus !== "correction") {
+            editMessage.className = "detail-inline-message error";
+            editMessage.textContent = "No puedes editar una solicitud en su estado actual.";
+            return;
+        }
+
+        const concept = document.getElementById("edit-concept").value.trim();
+        const amountText = document.getElementById("edit-amount").value;
+        const amount = Number(amountText);
+        const date = document.getElementById("edit-date").value;
+        const tax = document.getElementById("edit-tax").value;
+        const po = document.getElementById("edit-po").value;
+
+        if (!concept || concept.length > 500) {
+            editMessage.className = "detail-inline-message error";
+            editMessage.textContent = "El concepto es obligatorio y admite hasta 500 caracteres.";
+            return;
+        }
+
+        if (
+            amountText === "" ||
+            !Number.isSafeInteger(amount) ||
+            amount < 1 ||
+            amountText.length > 14
+        ) {
+            editMessage.className = "detail-inline-message error";
+            editMessage.textContent = "Ingresa un monto bruto válido de hasta 14 dígitos.";
+            return;
+        }
+
+        if (!date || !["afecta", "exenta"].includes(tax)) {
+            editMessage.className = "detail-inline-message error";
+            editMessage.textContent = "Completa la fecha y el tipo de afectación.";
+            return;
+        }
+
+        if (po.length > 40) {
+            editMessage.className = "detail-inline-message error";
+            editMessage.textContent = "La orden de compra admite hasta 40 caracteres.";
+            return;
+        }
+
+        editMessage.className = "detail-inline-message success";
+        editMessage.textContent =
+            "Los datos son válidos. Esta demostración no guarda los cambios en el sistema.";
+    });
+
+
+    // Estado inicial
+    updateRequestStatus("review");
+</script>
+
+</body>
+</html>

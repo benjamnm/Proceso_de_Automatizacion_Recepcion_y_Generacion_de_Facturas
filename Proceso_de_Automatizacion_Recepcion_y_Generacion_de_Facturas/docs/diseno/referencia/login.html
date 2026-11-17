@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión | Facturaciones SpA</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="login-body">
+
+<main class="login-layout">
+
+    <!-- PANEL IZQUIERDO: IDENTIDAD VISUAL -->
+    <section class="login-brand-panel">
+
+        <div class="login-brand-header">
+            <img
+                src="assets/logo-facturaciones.png"
+                alt="Facturaciones SpA"
+            >
+        </div>
+
+        <div class="login-illustration">
+            <img
+                src="assets/login-illustration-facturaciones.png"
+                alt="Notebook con un documento de facturación validado"
+            >
+        </div>
+
+    </section>
+
+    <!-- PANEL DERECHO: FORMULARIO -->
+    <section class="login-form-panel">
+
+        <div class="login-form-container">
+
+            <div class="login-heading">
+                <h1>Iniciar sesión</h1>
+                <p>Ingresa con tu correo electrónico para acceder al sistema.</p>
+            </div>
+
+            <form id="login-form">
+
+                <div class="login-field">
+                    <label for="login-email">Correo electrónico</label>
+                    <input
+                        type="email"
+                        id="login-email"
+                        placeholder="nombre@facturaciones.cl"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
+
+                <div class="login-field">
+                    <label for="login-password">Contraseña</label>
+
+                    <div class="password-wrapper">
+                        <input
+                            type="password"
+                            id="login-password"
+                            placeholder="Tu contraseña"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            id="toggle-password"
+                            class="password-toggle"
+                            aria-label="Mostrar contraseña"
+                        >
+                            <i data-lucide="eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="login-options">
+
+                    <label class="remember-option">
+                        <input type="checkbox" id="remember-me">
+                        <span>Recordarme</span>
+                    </label>
+
+                    <a href="#" class="forgot-password">
+                        ¿Olvidaste tu contraseña?
+                    </a>
+
+                </div>
+
+                <p
+                    id="login-message"
+                    class="login-message"
+                    role="status"
+                    aria-live="polite"
+                ></p>
+
+                <button type="submit" class="login-button">
+                    Iniciar sesión
+                </button>
+
+            </form>
+
+            <div class="login-security-notice">
+                <i data-lucide="lock"></i>
+
+                <p>
+                    Por seguridad, el acceso puede bloquearse temporalmente
+                    después de varios intentos fallidos.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<script>
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+
+    const passwordInput = document.getElementById("login-password");
+    const togglePassword = document.getElementById("toggle-password");
+    const loginForm = document.getElementById("login-form");
+    const loginMessage = document.getElementById("login-message");
+
+    togglePassword.addEventListener("click", function () {
+
+        const showing = passwordInput.type === "text";
+
+        passwordInput.type = showing ? "password" : "text";
+
+        togglePassword.setAttribute(
+            "aria-label",
+            showing ? "Mostrar contraseña" : "Ocultar contraseña"
+        );
+
+        togglePassword.innerHTML = showing
+            ? '<i data-lucide="eye"></i>'
+            : '<i data-lucide="eye-off"></i>';
+
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    });
+
+    
+loginForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    // Comprueba que los campos cumplan las validaciones HTML.
+    if (!loginForm.checkValidity()) {
+        loginForm.reportValidity();
+        return;
+    }
+
+    // Acceso de demostración: redirige al panel principal.
+    window.location.href = "index.html";
+});
+
+</script>
+
+</body>
+</html>
