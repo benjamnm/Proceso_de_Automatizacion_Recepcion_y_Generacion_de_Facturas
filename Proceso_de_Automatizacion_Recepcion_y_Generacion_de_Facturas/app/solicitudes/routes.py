@@ -83,7 +83,11 @@ CAMPOS_FILTRO = (
     "monto",
     "estado_id",
     "emisor_id",
+    "q",
+    "cliente_id",
 )
+
+ERROR_BUSQUEDA = "La búsqueda debe tener entre 2 y 100 caracteres."
 
 
 def leer_formulario():
@@ -110,6 +114,36 @@ def obtener_clientes_activos():
 
     finally:
         connection.close()
+
+
+def obtener_clientes_filtro(cursor, es_admin):
+    """Clientes para el selector del listado.
+
+    El Administrador ve todos (activos e inactivos, por las solicitudes
+    históricas); el Emisor solo los clientes de sus propias solicitudes.
+    """
+    if es_admin:
+        cursor.execute(
+            """
+            SELECT id, rut, razon_social
+            FROM clientes
+            ORDER BY razon_social
+            """
+        )
+    else:
+        cursor.execute(
+            """
+            SELECT DISTINCT c.id, c.rut, c.razon_social
+            FROM solicitudes AS s
+            INNER JOIN clientes AS c
+                ON c.id = s.cliente_id
+            WHERE s.emisor_id = %s
+            ORDER BY c.razon_social
+            """,
+            (int(current_user.id),),
+        )
+
+    return cursor.fetchall()
 
 
 def obtener_solicitud_autorizada(public_id):
@@ -226,9 +260,31 @@ def construir_filtros():
             condiciones.append("s.monto_bruto = %s")
             parametros.append(Decimal(filtros["monto"]))
 
+    if filtros["q"]:
+        q = filtros["q"]
+
+        if (
+            not 2 <= len(q) <= 100
+            or re.search(r"[\x00-\x1f\x7f]", q)
+        ):
+            errores.append(ERROR_BUSQUEDA)
+        else:
+            patron = (
+                "%"
+                + q.replace("\\", "\\\\")
+                .replace("%", "\\%")
+                .replace("_", "\\_")
+                + "%"
+            )
+            condiciones.append(
+                "(s.nombre LIKE %s OR s.concepto LIKE %s)"
+            )
+            parametros.extend([patron, patron])
+
     for campo, columna in (
         ("estado_id", "s.estado_id"),
         ("emisor_id", "s.emisor_id"),
+        ("cliente_id", "s.cliente_id"),
     ):
         valor = filtros[campo]
 
@@ -371,6 +427,8 @@ def listado():
                 )
                 responsables = cursor.fetchall()
 
+            clientes = obtener_clientes_filtro(cursor, es_admin)
+
             solicitudes = []
             total = 0
 
@@ -429,6 +487,7 @@ def listado():
         errores=errores,
         estados=estados,
         responsables=responsables,
+        clientes=clientes,
         es_admin=es_admin,
         total=total,
         pagina=pagina,

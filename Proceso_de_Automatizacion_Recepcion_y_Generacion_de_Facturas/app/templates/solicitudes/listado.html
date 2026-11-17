@@ -48,6 +48,44 @@ Solicitudes | Facturaciones SpA
             >
                 <div class="row g-3">
                     <div class="col-md-4">
+                        <label for="q" class="form-label">
+                            Cliente o concepto
+                        </label>
+                        <input
+                            id="q"
+                            name="q"
+                            type="search"
+                            class="form-control"
+                            value="{{ filtros.q }}"
+                            maxlength="100"
+                        >
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="cliente_id" class="form-label">
+                            Cliente
+                        </label>
+                        <select
+                            id="cliente_id"
+                            name="cliente_id"
+                            class="form-select"
+                        >
+                            <option value="">Todos los clientes</option>
+
+                            {% for cliente in clientes %}
+                            <option
+                                value="{{ cliente.id }}"
+                                {% if filtros.cliente_id == cliente.id|string %}
+                                selected
+                                {% endif %}
+                            >
+                                {{ cliente.razon_social }} ({{ cliente.rut }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
                         <label for="rut" class="form-label">
                             RUT receptor
                         </label>
