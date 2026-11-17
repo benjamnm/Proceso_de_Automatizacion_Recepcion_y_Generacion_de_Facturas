@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_ui.html" import iniciales, metrica %}
 
 {% set migas = [('Panel', url_for('dashboard')), ('Usuarios', None)] %}
 
@@ -7,6 +8,13 @@ Usuarios | Facturaciones SpA
 {% endblock %}
 
 {% block content %}
+{% set total_usuarios = usuarios | length %}
+{% set usuarios_activos = usuarios | selectattr('activo') | list | length %}
+{% set iconos_perfil = {
+    'Administrador': 'bi-shield-lock',
+    'Emisor': 'bi-file-earmark-text',
+    'Lector': 'bi-eye',
+} %}
 <main class="container pt-3 pb-5">
     <header class="mb-4">
         <h1 class="h2 mb-1">Gestión de usuarios</h1>
@@ -15,11 +23,22 @@ Usuarios | Facturaciones SpA
         </p>
     </header>
 
+    <div class="metricas">
+        {{ metrica(total_usuarios, 'Usuarios registrados', 'bi-people') }}
+        {{ metrica(usuarios_activos, 'Activos', 'bi-person-check') }}
+        {{ metrica(total_usuarios - usuarios_activos, 'Inactivos', 'bi-person-dash') }}
+    </div>
+
     <div class="row g-4">
         <section class="col-12 col-xl-4">
             <div class="card">
                 <div class="card-body p-4">
-                    <h2 class="h5 mb-3">Crear usuario</h2>
+                    <h2 class="h5 d-flex align-items-center gap-2 mb-3">
+                        <span class="icono-recuadro" aria-hidden="true">
+                            <i class="bi bi-person-plus"></i>
+                        </span>
+                        Crear usuario
+                    </h2>
 
                     {% if errors %}
                     <div class="alert alert-danger" role="alert">
@@ -141,6 +160,7 @@ Usuarios | Facturaciones SpA
                             type="submit"
                             class="btn btn-primary w-100"
                         >
+                            <i class="bi bi-person-plus" aria-hidden="true"></i>
                             Crear usuario
                         </button>
                     </form>
@@ -170,9 +190,16 @@ Usuarios | Facturaciones SpA
                             <tbody>
                                 {% for usuario in usuarios %}
                                 <tr>
-                                    <td>{{ usuario.nombre }}</td>
-                                    <td>{{ usuario.email }}</td>
-                                    <td>{{ usuario.rol_nombre }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="avatar avatar-sm" aria-hidden="true">{{ iniciales(usuario.nombre) }}</span>
+                                            <span class="fw-semibold">{{ usuario.nombre }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-break">{{ usuario.email }}</td>
+                                    <td>
+                                        <span class="badge text-bg-secondary">{{ usuario.rol_nombre }}</span>
+                                    </td>
                                     <td>
                                         {% if usuario.activo %}
                                         <span class="badge text-bg-success">
@@ -193,6 +220,7 @@ Usuarios | Facturaciones SpA
                                                 ) }}"
                                                 class="btn btn-outline-primary btn-sm"
                                             >
+                                                <i class="bi bi-pencil" aria-hidden="true"></i>
                                                 Editar
                                             </a>
 
@@ -233,7 +261,7 @@ Usuarios | Facturaciones SpA
                                 </tr>
                                 {% else %}
                                 <tr>
-                                    <td colspan="5">
+                                    <td colspan="5" class="text-center text-body-secondary py-4">
                                         No hay usuarios registrados.
                                     </td>
                                 </tr>
@@ -256,20 +284,24 @@ Usuarios | Facturaciones SpA
         <div class="row g-3 mb-4">
             {% for perfil in perfiles %}
             <div class="col-md-4">
-                <div class="card h-100">
-                    <div class="card-body">
+                <article class="tarjeta-perfil">
+                    <span class="tarjeta-perfil-icono" aria-hidden="true">
+                        <i class="bi {{ iconos_perfil.get(perfil.nombre, 'bi-person-badge') }}"></i>
+                    </span>
+
+                    <div>
                         <h3 class="h6 mb-1">{{ perfil.nombre }}</h3>
                         <p class="text-body-secondary small mb-2">
                             {{ perfil.descripcion or 'Sin descripción.' }}
                         </p>
-                        <p class="mb-0">
+                        <p class="small mb-0">
                             <span class="badge text-bg-primary">
                                 {{ perfil.usuarios_activos }}
                             </span>
                             usuario(s) activo(s)
                         </p>
                     </div>
-                </div>
+                </article>
             </div>
             {% endfor %}
         </div>
@@ -277,7 +309,7 @@ Usuarios | Facturaciones SpA
         <div class="card">
             <div class="card-body p-4">
                 <div class="table-responsive">
-                    <table class="table align-middle mb-0">
+                    <table class="table align-middle mb-0 matriz-permisos">
                         <caption>Capacidades por perfil.</caption>
                         <thead>
                             <tr>
@@ -294,7 +326,7 @@ Usuarios | Facturaciones SpA
                                 {% for perfil in perfiles %}
                                 <td class="text-center">
                                     {% if perfil.nombre in permitidos %}
-                                    <i class="bi bi-check-lg text-success" role="img"
+                                    <i class="bi bi-check-lg" role="img"
                                        aria-label="Permitido"></i>
                                     {% else %}
                                     <span aria-hidden="true">—</span>
