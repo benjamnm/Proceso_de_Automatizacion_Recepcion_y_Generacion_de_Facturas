@@ -30,8 +30,8 @@ Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/adjun
 uploads/
 
 # Repositorios de correos y DTE configurados fuera de app/ (datos sensibles)
-Registros_Correo/
-Registros_SII/
+C:\Github\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Registros_Correo
+C:\Github\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Registros_SII
 *.eml
 
 # Certificados digitales / claves (firma electrónica SII, CAF, TLS)
