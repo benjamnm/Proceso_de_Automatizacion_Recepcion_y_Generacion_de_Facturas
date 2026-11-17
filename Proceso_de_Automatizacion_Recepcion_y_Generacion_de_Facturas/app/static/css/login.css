@@ -30,9 +30,10 @@
     margin-block: auto;
 }
 
+/* Sobre el degradado salvia: salvia-hover (≥ 5,4:1) en lugar del secundario. */
 .eyebrow {
     margin-bottom: 1rem;
-    color: var(--color-texto-secundario);
+    color: var(--color-salvia-hover);
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.2em;
@@ -58,7 +59,7 @@
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    color: var(--color-texto-secundario);
+    color: var(--color-salvia-hover);
     font-size: 0.875rem;
 }
 

@@ -422,11 +422,6 @@ a:focus-visible,
     font-size: 0.9rem;
 }
 
-.form-control::placeholder {
-    color: var(--color-texto-secundario);
-    opacity: 1;
-}
-
 .form-control:focus,
 .form-select:focus {
     background-color: var(--color-superficie);
@@ -453,11 +448,6 @@ a:focus-visible,
 .form-check-input:focus {
     border-color: var(--color-salvia);
     box-shadow: var(--anillo-foco);
-}
-
-.input-group-text {
-    background-color: var(--color-superficie-suave);
-    border-color: var(--color-borde);
 }
 
 /* 6.4 Tablas */
@@ -570,10 +560,6 @@ a:focus-visible,
     color: var(--color-texto-secundario);
 }
 
-.pasos-proceso .badge {
-    --bs-badge-font-size: 0.8rem;
-}
-
 /* 6.9 Paginación */
 .pagination {
     --bs-pagination-color: var(--color-grafito);
@@ -611,9 +597,10 @@ a:focus-visible,
     margin-bottom: 0.25rem;
 }
 
+/* Sobre el degradado salvia el secundario no llega a 4,5:1; salvia-hover sí (5,4:1). */
 .bienvenida p {
     margin-bottom: 0;
-    color: var(--color-texto-secundario);
+    color: var(--color-salvia-hover);
 }
 
 /* 7.2 Encabezado de sección */
@@ -1080,8 +1067,20 @@ a.metrica-etiqueta:hover {
     .sidebar,
     .topbar,
     .flash-container,
+    .offcanvas-backdrop,
     nav[aria-label="Ruta de navegación"] {
         display: none;
+    }
+
+    .app-shell {
+        display: block;
+    }
+
+    .app-main > .container,
+    .app-main > main > .container,
+    .app-main > main.container {
+        max-width: none;
+        padding-inline: 0;
     }
 
     body,
