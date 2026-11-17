@@ -1,13 +1,99 @@
+/* =====================================================================
+   Facturaciones SpA — tema claro salvia/grafito
+   Plan: docs/diseno/PLAN_REDISENO_PLATAFORMA.md (v2)
+
+   Bloques numerados según la Fase 1 del plan.
+
+   Reglas: fuera de los bloques 2 y 3 solo se usan tokens (var(--…)).
+   El único !important está en el bloque de .badge (6.5).
+   ===================================================================== */
+
+
+/* 1. @font-face -------------------------------------------------------
+   No se declara: app/static/fonts/inter/ no existe. --fuente cae a
+   system-ui. Para activar Inter, agregar aquí los @font-face con
+   font-display: swap cuando estén los .woff2 y OFL.txt. */
+
+
+/* 2. Tokens ---------------------------------------------------------- */
 :root {
-    --navy: #192f58;
-    --dark: #171812;
-    --input: #1a1b1b;
-    --border: #3a3d40;
-    --text: #eee9e4;
-    --muted: #a39f9a;
-    --mint: #8fd0bb;
+    /* Superficies */
+    --color-fondo: #F5F6F3;
+    --color-superficie: #FFFFFF;
+    --color-superficie-suave: #F8F9F7;   /* cabeceras de tabla, hover de filas */
+    --color-borde: #E2E5E0;
+    --color-borde-fuerte: #C9D1C6;
+
+    /* Marca */
+    --color-salvia: #748273;             /* SOLO decorativo: bordes de foco, íconos grandes. No usar con texto */
+    --color-salvia-oscuro: #626F61;      /* botón primario. Blanco sobre él: 5,3:1 (el #748273 original da 4,05) */
+    --color-salvia-hover: #4E5A4D;       /* hover/activo del primario: 7,3:1 */
+    --color-salvia-claro: #D9E1D5;       /* ítem activo del menú, recuadro de íconos */
+    --color-salvia-tenue: #EDF0EB;       /* hover de menú y botones secundarios */
+    --color-verde-enlace: #287B5C;       /* enlaces: 5,15:1 sobre blanco */
+    --color-verde-enlace-hover: #1F5F47;
+    --color-grafito: #303633;            /* texto principal: 12,3:1 */
+
+    /* Texto */
+    --color-texto: #303633;
+    --color-texto-secundario: #687068;   /* 5,1:1 sobre blanco (el #858D83 original da 3,4) */
+    --color-texto-invertido: #FFFFFF;    /* texto sobre el primario */
+
+    /* Estados: fondo / texto (todos ≥ 4,9:1) */
+    --estado-neutro-bg: #ECEEF0;  --estado-neutro-tx: #3E4650;
+    --estado-info-bg:   #E3ECFB;  --estado-info-tx:   #1E4FA8;
+    --estado-aviso-bg:  #FCEFD6;  --estado-aviso-tx:  #8A5300;
+    --estado-ok-bg:     #DDF3E5;  --estado-ok-tx:     #15633E;
+    --estado-error-bg:  #FCE8E6;  --estado-error-tx:  #A94442;
+
+    /* Forma */
+    --radio-sm: 8px;
+    --radio-md: 12px;
+    --radio-lg: 14px;
+    --sombra-tarjeta: 0 2px 8px rgba(48, 54, 51, 0.04);
+    --sombra-hover: 0 6px 16px rgba(48, 54, 51, 0.08);
+    --anillo-foco: 0 0 0 3px rgba(98, 111, 97, 0.25);
+
+    /* Layout y tipografía */
+    --ancho-sidebar: 250px;
+    --ancho-contenido: 1200px;
+    --fuente: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
+
+/* 3. Re-tema de Bootstrap ------------------------------------------- */
+:root,
+[data-bs-theme="light"] {
+    --bs-body-font-family: var(--fuente);
+    --bs-body-font-size: 0.9375rem;
+    --bs-body-bg: var(--color-fondo);
+    --bs-body-color: var(--color-texto);
+    --bs-emphasis-color: var(--color-grafito);
+    --bs-heading-color: var(--color-grafito);
+    --bs-secondary-color: var(--color-texto-secundario);
+    --bs-secondary-bg: var(--color-salvia-tenue);
+    --bs-tertiary-bg: var(--color-superficie-suave);
+    --bs-border-color: var(--color-borde);
+    --bs-border-radius: var(--radio-sm);
+    --bs-border-radius-lg: var(--radio-md);
+    --bs-border-radius-xl: var(--radio-lg);
+
+    --bs-link-color: var(--color-verde-enlace);
+    --bs-link-color-rgb: 40, 123, 92;
+    --bs-link-hover-color: var(--color-verde-enlace-hover);
+    --bs-link-hover-color-rgb: 31, 95, 71;
+
+    --bs-primary: #626F61;
+    --bs-primary-rgb: 98, 111, 97;
+    --bs-primary-text-emphasis: #3F4A3E;
+    --bs-primary-bg-subtle: #EDF0EB;
+    --bs-primary-border-subtle: #D9E1D5;
+
+    --bs-focus-ring-color: rgba(98, 111, 97, 0.25);
+}
+
+
+/* 4. Base ------------------------------------------------------------ */
 html,
 body {
     min-height: 100%;
@@ -15,31 +101,476 @@ body {
 
 body {
     margin: 0;
-    background: var(--dark);
-    color: var(--text);
-    font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    font-family: var(--fuente);
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, .h1,
+h2, .h2 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--color-grafito);
+}
+
+h3, .h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+h4, .h4 {
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+h5, .h5,
+.card-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--color-grafito);
+}
+
+h6, .h6 {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+a {
+    text-underline-offset: 0.15em;
+}
+
+:focus-visible {
+    outline: 2px solid var(--color-salvia);
+    outline-offset: 2px;
+}
+
+a:focus-visible,
+.btn:focus-visible,
+.nav-link:focus-visible,
+.form-control:focus-visible,
+.form-select:focus-visible,
+.form-check-input:focus-visible {
+    outline: 0;
+    box-shadow: var(--anillo-foco);
+}
+
+code {
+    color: var(--color-grafito);
+}
+
+
+/* 5. Shell ----------------------------------------------------------- */
+.app-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Bootstrap fuerza background-color: transparent !important en
+   .offcanvas-lg (≥ 992 px); el fondo blanco va como imagen. */
+.sidebar {
+    --bs-offcanvas-width: var(--ancho-sidebar);
+    --bs-offcanvas-bg: var(--color-superficie);
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 var(--ancho-sidebar);
+    background-image: linear-gradient(var(--color-superficie), var(--color-superficie));
+    border-right: 1px solid var(--color-borde);
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 1.25rem 1.25rem 1rem;
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.sidebar-logo img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 1rem 0.75rem 1.5rem;
+    overflow-y: auto;
+}
+
+.sidebar-nav .seccion-titulo {
+    margin: 1rem 0.7rem 0.5rem;
+}
+
+.sidebar-nav .seccion-titulo:first-child {
+    margin-top: 0.25rem;
+}
+
+.sidebar .nav {
+    gap: 0.15rem;
+}
+
+.sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.6rem 0.7rem;
+    border-radius: var(--radio-sm);
+    color: var(--color-texto-secundario);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.sidebar .nav-link .bi {
+    font-size: 1.05rem;
+}
+
+.sidebar .nav-link:hover {
+    background-color: var(--color-salvia-tenue);
+    color: var(--color-grafito);
+}
+
+.sidebar .nav-link.active {
+    background-color: var(--color-salvia-claro);
+    color: var(--color-grafito);
+    font-weight: 600;
+}
+
+.sidebar .nav-link.active .bi {
+    color: var(--color-salvia-oscuro);
+}
+
+.app-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 64px;
+    padding: 0.75rem 2.5rem;
+    background-color: var(--color-superficie);
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.topbar-usuario {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.topbar-usuario-texto {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.topbar-usuario-texto strong {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-grafito);
+}
+
+.topbar-usuario-texto span {
+    font-size: 0.78rem;
+    color: var(--color-texto-secundario);
+}
+
+/* Dentro del shell, los container de cada página quedan alineados
+   a la izquierda con ancho máximo. */
+.app-main > .container,
+.app-main > main > .container,
+.app-main > main.container {
+    max-width: var(--ancho-contenido);
+    margin-inline: 0;
+    padding-inline: 2.5rem;
 }
 
 .flash-container {
     position: fixed;
-    top: 4.5rem;
+    top: 1rem;
     right: 1rem;
-    z-index: 1050;
+    z-index: 1060;
     width: min(420px, calc(100% - 2rem));
 }
 
-.barra-principal {
-    background: var(--navy);
+.flash-container .alert {
+    box-shadow: var(--sombra-hover);
 }
 
-.texto-preformateado {
-    white-space: pre-wrap;
+/* Migas */
+.breadcrumb {
+    --bs-breadcrumb-divider: "›";
+    --bs-breadcrumb-divider-color: var(--color-texto-secundario);
+    --bs-breadcrumb-item-active-color: var(--color-texto-secundario);
+    font-size: 0.85rem;
 }
 
-.ancho-limitado {
-    max-width: 420px;
+.breadcrumb a {
+    color: var(--color-texto-secundario);
+    text-decoration: none;
 }
 
+.breadcrumb a:hover {
+    color: var(--color-verde-enlace);
+    text-decoration: underline;
+}
+
+
+/* 6. Componentes de Bootstrap --------------------------------------- */
+
+/* 6.1 Botones */
+.btn {
+    --bs-btn-border-radius: var(--radio-sm);
+    --bs-btn-font-weight: 600;
+    --bs-btn-padding-x: 1rem;
+    --bs-btn-font-size: 0.875rem;
+    --bs-btn-focus-box-shadow: var(--anillo-foco);
+}
+
+.btn-sm {
+    --bs-btn-padding-x: 0.65rem;
+    --bs-btn-font-size: 0.8125rem;
+}
+
+.btn-primary {
+    --bs-btn-color: var(--color-texto-invertido);
+    --bs-btn-bg: var(--color-salvia-oscuro);
+    --bs-btn-border-color: var(--color-salvia-oscuro);
+    --bs-btn-hover-color: var(--color-texto-invertido);
+    --bs-btn-hover-bg: var(--color-salvia-hover);
+    --bs-btn-hover-border-color: var(--color-salvia-hover);
+    --bs-btn-active-color: var(--color-texto-invertido);
+    --bs-btn-active-bg: var(--color-salvia-hover);
+    --bs-btn-active-border-color: var(--color-salvia-hover);
+    --bs-btn-disabled-color: var(--color-texto-invertido);
+    --bs-btn-disabled-bg: var(--color-salvia-oscuro);
+    --bs-btn-disabled-border-color: var(--color-salvia-oscuro);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--color-salvia-oscuro);
+    --bs-btn-border-color: var(--color-salvia-oscuro);
+    --bs-btn-hover-color: var(--color-salvia-hover);
+    --bs-btn-hover-bg: var(--color-salvia-tenue);
+    --bs-btn-hover-border-color: var(--color-salvia-hover);
+    --bs-btn-active-color: var(--color-salvia-hover);
+    --bs-btn-active-bg: var(--color-salvia-claro);
+    --bs-btn-active-border-color: var(--color-salvia-hover);
+    --bs-btn-disabled-color: var(--color-salvia-oscuro);
+    --bs-btn-disabled-border-color: var(--color-salvia-oscuro);
+}
+
+.btn-outline-secondary {
+    --bs-btn-color: var(--color-grafito);
+    --bs-btn-bg: var(--color-superficie);
+    --bs-btn-border-color: var(--color-borde-fuerte);
+    --bs-btn-hover-color: var(--color-grafito);
+    --bs-btn-hover-bg: var(--color-salvia-tenue);
+    --bs-btn-hover-border-color: var(--color-borde-fuerte);
+    --bs-btn-active-color: var(--color-grafito);
+    --bs-btn-active-bg: var(--color-salvia-claro);
+    --bs-btn-active-border-color: var(--color-borde-fuerte);
+    --bs-btn-disabled-color: var(--color-texto-secundario);
+    --bs-btn-disabled-border-color: var(--color-borde);
+}
+
+/* .btn-success, .btn-warning, .btn-danger y sus outline conservan la
+   semántica de Bootstrap; solo heredan radio y peso de .btn. */
+
+/* 6.2 Tarjetas */
+.card {
+    --bs-card-bg: var(--color-superficie);
+    --bs-card-border-color: var(--color-borde);
+    --bs-card-border-radius: var(--radio-md);
+    --bs-card-inner-border-radius: calc(var(--radio-md) - 1px);
+    --bs-card-cap-bg: var(--color-superficie-suave);
+    --bs-card-color: var(--color-texto);
+    box-shadow: var(--sombra-tarjeta);
+}
+
+.card.border-primary {
+    border-color: var(--color-borde);
+    border-left: 4px solid var(--color-salvia-oscuro);
+}
+
+.card.border-success {
+    border-color: var(--color-borde);
+    border-left: 4px solid var(--estado-ok-tx);
+}
+
+.card-title .bi {
+    margin-right: 0.4rem;
+    color: var(--color-salvia-oscuro);
+}
+
+.card-text {
+    color: var(--color-texto-secundario);
+}
+
+/* 6.3 Formularios */
+.form-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-grafito);
+    margin-bottom: 0.35rem;
+}
+
+.form-control,
+.form-select {
+    background-color: var(--color-superficie);
+    border-color: var(--color-borde);
+    border-radius: var(--radio-sm);
+    color: var(--color-texto);
+    font-size: 0.9rem;
+}
+
+.form-control::placeholder {
+    color: var(--color-texto-secundario);
+    opacity: 1;
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: var(--color-superficie);
+    border-color: var(--color-salvia);
+    box-shadow: var(--anillo-foco);
+    color: var(--color-texto);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+    background-color: var(--color-superficie-suave);
+}
+
+.form-text {
+    color: var(--color-texto-secundario);
+    font-size: 0.8125rem;
+}
+
+.form-check-input:checked {
+    background-color: var(--color-salvia-oscuro);
+    border-color: var(--color-salvia-oscuro);
+}
+
+.form-check-input:focus {
+    border-color: var(--color-salvia);
+    box-shadow: var(--anillo-foco);
+}
+
+.input-group-text {
+    background-color: var(--color-superficie-suave);
+    border-color: var(--color-borde);
+}
+
+/* 6.4 Tablas */
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--color-texto);
+    --bs-table-border-color: var(--color-borde);
+    --bs-table-hover-bg: var(--color-superficie-suave);
+    --bs-table-hover-color: var(--color-texto);
+    --bs-table-striped-bg: var(--color-superficie-suave);
+    font-size: 0.875rem;
+}
+
+.table > :not(caption) > * > * {
+    padding: 0.75rem 0.75rem;
+}
+
+.table thead th {
+    background-color: var(--color-superficie-suave);
+    color: var(--color-texto-secundario);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.table tbody tr {
+    transition: background-color 0.12s ease;
+}
+
+.table tbody tr:hover > * {
+    background-color: var(--color-superficie-suave);
+}
+
+.table caption {
+    color: var(--color-texto-secundario);
+    font-size: 0.8125rem;
+}
+
+/* 6.5 Etiquetas de estado */
+.badge {
+    --bs-badge-padding-x: 0.7em;
+    --bs-badge-padding-y: 0.45em;
+    --bs-badge-font-size: 0.75rem;
+    --bs-badge-font-weight: 600;
+    --bs-badge-border-radius: 999px;
+}
+
+/* Bootstrap declara .text-bg-* con !important; solo aquí se permite !important para ganarle. */
+.badge.text-bg-primary,
+.badge.text-bg-info      { background-color: var(--estado-info-bg) !important;   color: var(--estado-info-tx) !important; }
+.badge.text-bg-secondary,
+.badge.text-bg-dark      { background-color: var(--estado-neutro-bg) !important; color: var(--estado-neutro-tx) !important; }
+.badge.text-bg-success   { background-color: var(--estado-ok-bg) !important;     color: var(--estado-ok-tx) !important; }
+.badge.text-bg-warning   { background-color: var(--estado-aviso-bg) !important;  color: var(--estado-aviso-tx) !important; }
+.badge.text-bg-danger    { background-color: var(--estado-error-bg) !important;  color: var(--estado-error-tx) !important; }
+
+/* 6.6 Alertas */
+.alert {
+    --bs-alert-border-radius: var(--radio-md);
+    --bs-alert-padding-y: 0.85rem;
+    font-size: 0.9rem;
+}
+
+/* 6.7 Pestañas (_proceso.html) */
+.nav-tabs {
+    --bs-nav-tabs-border-color: var(--color-borde);
+    --bs-nav-tabs-border-width: 1px;
+    --bs-nav-tabs-border-radius: 0;
+    --bs-nav-tabs-link-hover-border-color: transparent;
+    --bs-nav-tabs-link-active-color: var(--color-grafito);
+    --bs-nav-tabs-link-active-bg: transparent;
+    --bs-nav-tabs-link-active-border-color: transparent;
+    --bs-nav-link-color: var(--color-texto-secundario);
+    --bs-nav-link-hover-color: var(--color-grafito);
+    gap: 0.5rem;
+}
+
+.nav-tabs .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 0.25rem;
+    margin-right: 1rem;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.nav-tabs .nav-link:hover {
+    border-bottom-color: var(--color-borde-fuerte);
+}
+
+.nav-tabs .nav-link.active {
+    font-weight: 600;
+    border-bottom-color: var(--color-salvia-oscuro);
+}
+
+/* 6.8 Pasos del proceso (_proceso.html) */
 .pasos-proceso {
     display: flex;
     flex-wrap: wrap;
@@ -53,52 +584,510 @@ body {
 .pasos-proceso li + li::before {
     content: "\2192";
     margin-right: 0.5rem;
-    color: var(--muted);
+    color: var(--color-texto-secundario);
 }
 
-.card {
-    background: #1a1b1b;
-    border: 1px solid var(--border);
-    color: var(--text);
+.pasos-proceso .badge {
+    --bs-badge-font-size: 0.8rem;
 }
 
-.card-title {
-    color: var(--text);
+/* 6.9 Paginación */
+.pagination {
+    --bs-pagination-color: var(--color-grafito);
+    --bs-pagination-bg: var(--color-superficie);
+    --bs-pagination-border-color: var(--color-borde);
+    --bs-pagination-hover-color: var(--color-grafito);
+    --bs-pagination-hover-bg: var(--color-salvia-tenue);
+    --bs-pagination-hover-border-color: var(--color-borde);
+    --bs-pagination-focus-box-shadow: var(--anillo-foco);
+    --bs-pagination-active-color: var(--color-texto-invertido);
+    --bs-pagination-active-bg: var(--color-salvia-oscuro);
+    --bs-pagination-active-border-color: var(--color-salvia-oscuro);
+    --bs-pagination-disabled-color: var(--color-texto-secundario);
+    --bs-pagination-disabled-bg: var(--color-superficie-suave);
+    --bs-pagination-border-radius: var(--radio-sm);
+}
+
+
+/* 7. Componentes de la maqueta -------------------------------------- */
+
+/* 7.1 Banda de bienvenida del panel */
+.bienvenida {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border-radius: var(--radio-lg);
+    background: linear-gradient(120deg, var(--color-salvia-claro), var(--color-salvia-tenue));
+}
+
+.bienvenida h1 {
+    margin-bottom: 0.25rem;
+}
+
+.bienvenida p {
+    margin-bottom: 0;
+    color: var(--color-texto-secundario);
+}
+
+/* 7.2 Encabezado de sección */
+.seccion-titulo {
+    margin: 0 0 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-texto-secundario);
+}
+
+/* 7.3 Métricas */
+.metricas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.metrica {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 1.1rem 1.2rem;
+    background-color: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-md);
+    box-shadow: var(--sombra-tarjeta);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.metrica:has(.stretched-link):hover {
+    box-shadow: var(--sombra-hover);
+    transform: translateY(-2px);
+}
+
+.metrica-texto {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.metrica-valor {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--color-grafito);
+}
+
+.metrica-etiqueta {
+    font-size: 0.8125rem;
+    color: var(--color-texto-secundario);
+    text-decoration: none;
+}
+
+a.metrica-etiqueta:hover {
+    color: var(--color-verde-enlace);
+}
+
+/* 7.4 Accesos rápidos */
+.accesos-rapidos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.acceso-rapido {
+    position: relative;
+    display: flex;
+    gap: 0.9rem;
+    padding: 1.1rem 1.2rem;
+    background-color: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-md);
+    box-shadow: var(--sombra-tarjeta);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.acceso-rapido:hover {
+    box-shadow: var(--sombra-hover);
+    transform: translateY(-2px);
+}
+
+.acceso-rapido--destacado {
+    border-left: 4px solid var(--color-salvia-oscuro);
+}
+
+.acceso-rapido-titulo {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
     font-weight: 600;
-    margin-bottom: 0.75rem;
+    color: var(--color-grafito);
 }
 
-.card-title i {
-    margin-right: 0.5rem;
-    color: var(--mint);
+.acceso-rapido-titulo a {
+    color: inherit;
+    text-decoration: none;
 }
 
-.card-text {
-    color: var(--muted);
+.acceso-rapido p {
+    margin-bottom: 0;
+    font-size: 0.8125rem;
+    color: var(--color-texto-secundario);
+}
+
+.acceso-rapido .bi-arrow-right {
+    margin-left: auto;
+    align-self: center;
+    color: var(--color-texto-secundario);
+}
+
+/* 7.5 Chips de estado */
+.chips-estado {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
     margin-bottom: 1.25rem;
 }
 
-.btn-primary {
-    background: #193867;
-    border-color: #193867;
-    color: #eeeae5;
+.chip-estado {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--color-borde);
+    border-radius: 999px;
+    background-color: var(--color-superficie);
+    color: var(--color-grafito);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
 }
 
-.btn-primary:hover,
-.btn-primary:focus {
-    background: #244b83;
-    border-color: #244b83;
-    color: #ffffff;
+.chip-estado:hover {
+    background-color: var(--color-salvia-tenue);
+    color: var(--color-grafito);
 }
 
-.btn-outline-primary {
-    border-color: var(--mint);
-    color: var(--mint);
+.chip-estado.active {
+    background-color: var(--color-salvia-claro);
+    border-color: var(--color-salvia-claro);
+    font-weight: 600;
 }
 
-.btn-outline-primary:hover,
-.btn-outline-primary:focus {
-    background: var(--mint);
-    border-color: var(--mint);
-    color: var(--dark);
+/* 7.6 Panel de filtros */
+.panel-filtros .form-label {
+    font-size: 0.8125rem;
+}
+
+/* 7.7 Banner de estado del detalle */
+.banner-estado {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    background-color: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-left: 4px solid var(--estado-neutro-tx);
+    border-radius: var(--radio-md);
+    box-shadow: var(--sombra-tarjeta);
+}
+
+.banner-estado--info   { border-left-color: var(--estado-info-tx); }
+.banner-estado--aviso  { border-left-color: var(--estado-aviso-tx); }
+.banner-estado--ok     { border-left-color: var(--estado-ok-tx); }
+.banner-estado--error  { border-left-color: var(--estado-error-tx); }
+
+/* 7.8 Rejilla etiqueta/valor */
+.detalle-rejilla {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem 1.5rem;
+    margin-bottom: 0;
+}
+
+.detalle-rejilla dt {
+    margin-bottom: 0.2rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-texto-secundario);
+}
+
+.detalle-rejilla dd {
+    margin-bottom: 0;
+    font-weight: 500;
+    color: var(--color-grafito);
+    overflow-wrap: anywhere;
+}
+
+.detalle-rejilla .detalle-ancho {
+    grid-column: 1 / -1;
+}
+
+.valor-destacado {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-grafito);
+}
+
+/* 7.9 Filas de archivo */
+.fila-archivo {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.fila-archivo:last-child {
+    border-bottom: 0;
+}
+
+.fila-archivo-texto {
+    flex: 1;
+    min-width: 0;
+}
+
+.fila-archivo-nombre {
+    display: block;
+    font-weight: 600;
+    color: var(--color-grafito);
+    overflow-wrap: anywhere;
+}
+
+.fila-archivo-meta {
+    font-size: 0.8125rem;
+    color: var(--color-texto-secundario);
+}
+
+/* 7.10 Secciones numeradas de formulario */
+.seccion-formulario {
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.seccion-formulario:last-of-type {
+    border-bottom: 0;
+    margin-bottom: 0.5rem;
+}
+
+.seccion-formulario-titulo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-grafito);
+}
+
+.seccion-formulario-numero {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: var(--color-salvia-claro);
+    color: var(--color-grafito);
+    font-size: 0.8125rem;
+    font-weight: 700;
+}
+
+/* 7.11 Ayudas de campo y contador */
+.ayuda-campo {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.35rem;
+    font-size: 0.8125rem;
+    color: var(--color-texto-secundario);
+}
+
+.ayuda-campo .contador {
+    margin-left: auto;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+/* 7.12 Avatar de iniciales */
+.avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--color-salvia-claro);
+    color: var(--color-grafito);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.avatar-sm {
+    flex-basis: 32px;
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+}
+
+/* 7.13 Perfiles y permisos */
+.tarjeta-perfil {
+    display: flex;
+    gap: 0.9rem;
+    height: 100%;
+    padding: 1.1rem 1.2rem;
+    background-color: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-md);
+    box-shadow: var(--sombra-tarjeta);
+}
+
+.matriz-permisos td {
+    text-align: center;
+}
+
+.matriz-permisos .bi-check-lg {
+    color: var(--estado-ok-tx);
+    font-size: 1.1rem;
+}
+
+.matriz-permisos td > [aria-hidden="true"] {
+    color: var(--color-borde-fuerte);
+}
+
+/* 7.14 Recuadros de ícono (métricas, archivos, perfiles, encabezados) */
+.icono-recuadro,
+.metrica-icono,
+.fila-archivo-icono,
+.tarjeta-perfil-icono {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radio-sm);
+    background-color: var(--color-salvia-claro);
+    color: var(--color-salvia-hover);
+    font-size: 1.15rem;
+}
+
+.fila-archivo-icono {
+    background-color: var(--color-salvia-tenue);
+}
+
+
+/* 8. Utilidades ------------------------------------------------------ */
+.texto-preformateado {
+    white-space: pre-wrap;
+}
+
+.ancho-limitado {
+    max-width: 420px;
+}
+
+
+/* 9. Responsive ------------------------------------------------------ */
+@media (max-width: 991.98px) {
+    .sidebar {
+        border-right: 0;
+    }
+
+    .topbar {
+        padding: 0.75rem 1.5rem;
+    }
+
+    .app-main > .container,
+    .app-main > main > .container,
+    .app-main > main.container {
+        padding-inline: 1.5rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .topbar {
+        padding: 0.6rem 1rem;
+    }
+
+    .topbar-usuario-texto {
+        display: none;
+    }
+
+    .app-main > .container,
+    .app-main > main > .container,
+    .app-main > main.container {
+        padding-inline: 1rem;
+    }
+
+    .metricas {
+        grid-template-columns: 1fr;
+    }
+
+    .chips-estado {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 0.25rem;
+    }
+
+    .bienvenida {
+        padding: 1.1rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .metrica,
+    .acceso-rapido,
+    .sidebar .nav-link,
+    .table tbody tr {
+        transition: none;
+    }
+
+    .metrica:has(.stretched-link):hover,
+    .acceso-rapido:hover {
+        transform: none;
+    }
+}
+
+
+/* 10. Impresión ------------------------------------------------------ */
+@media print {
+    .sidebar,
+    .topbar,
+    .flash-container,
+    nav[aria-label="Ruta de navegación"] {
+        display: none;
+    }
+
+    body,
+    .app-main {
+        background: none;
+    }
+
+    .card,
+    .metrica,
+    .banner-estado {
+        box-shadow: none;
+    }
 }
