@@ -862,7 +862,7 @@ a.metrica-etiqueta:hover {
     border-bottom: 1px solid var(--color-borde);
 }
 
-.seccion-formulario:last-of-type {
+.seccion-formulario:last-child {
     border-bottom: 0;
     margin-bottom: 0.5rem;
 }

@@ -12,16 +12,24 @@ Nueva solicitud | Facturaciones SpA
 
 {% block content %}
 <main class="container pt-3 pb-5">
-    <div class="row justify-content-center">
-        <section class="col-12 col-lg-9">
+    <div class="row">
+        <section class="col-12 col-xl-10">
             <div class="card">
                 <div class="card-body p-4">
-                    <h1 class="h3 mb-2">Nueva solicitud de facturación</h1>
+                    <header class="d-flex align-items-start gap-3 mb-4">
+                        <span class="icono-recuadro" aria-hidden="true">
+                            <i class="bi bi-file-earmark-plus"></i>
+                        </span>
 
-                    <p class="text-body-secondary">
-                        La solicitud se registrará como Pendiente.
-                        Este proceso no emite una factura tributaria.
-                    </p>
+                        <div>
+                            <h1 class="h3 mb-1">Nueva solicitud de facturación</h1>
+
+                            <p class="text-body-secondary mb-0">
+                                La solicitud se registrará como Pendiente.
+                                Este proceso no emite una factura tributaria.
+                            </p>
+                        </div>
+                    </header>
 
                     {% if errores %}
                     <div class="alert alert-danger" role="alert">
@@ -53,145 +61,170 @@ Nueva solicitud | Facturaciones SpA
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="token_envio" value="{{ token_envio }}">
 
-                        <div class="mb-3">
-                            <label for="cliente_id" class="form-label">
-                                Cliente receptor
-                            </label>
+                        <section class="seccion-formulario" aria-labelledby="seccion-cliente">
+                            <h2 id="seccion-cliente" class="seccion-formulario-titulo">
+                                <span class="seccion-formulario-numero" aria-hidden="true">1</span>
+                                Cliente y concepto
+                            </h2>
 
-                            <select
-                                id="cliente_id"
-                                name="cliente_id"
-                                class="form-select"
-                                required
-                            >
-                                <option value="">
-                                    Seleccione un cliente
-                                </option>
-
-                                {% for cliente in clientes %}
-                                <option
-                                    value="{{ cliente.id }}"
-                                    {% if values.cliente_id == cliente.id|string %}
-                                    selected
-                                    {% endif %}
-                                >
-                                    {{ cliente.razon_social }}
-                                    — {{ cliente.rut }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="concepto" class="form-label">
-                                Concepto de facturación
-                            </label>
-
-                            <textarea
-                                id="concepto"
-                                name="concepto"
-                                class="form-control"
-                                rows="4"
-                                maxlength="500"
-                                required
-                            >{{ values.concepto }}</textarea>
-                        </div>
-
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="monto_bruto" class="form-label">
-                                    Monto bruto — CLP
-                                </label>
-
-                                <input
-                                    id="monto_bruto"
-                                    name="monto_bruto"
-                                    type="text"
-                                    inputmode="numeric"
-                                    pattern="[0-9]{1,14}"
-                                    maxlength="14"
-                                    class="form-control"
-                                    value="{{ values.monto_bruto }}"
-                                    required
-                                >
-
-                                <div class="form-text">
-                                    Pesos enteros, sin puntos ni comas.
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="fecha_emision" class="form-label">
-                                    Fecha de emisión solicitada
-                                </label>
-
-                                <input
-                                    id="fecha_emision"
-                                    name="fecha_emision"
-                                    type="date"
-                                    class="form-control"
-                                    value="{{ values.fecha_emision }}"
-                                    required
-                                >
-                            </div>
-
-                            <div class="col-md-6">
-                                <label
-                                    for="tipo_afectacion"
-                                    class="form-label"
-                                >
-                                    Afectación tributaria
+                            <div class="mb-3">
+                                <label for="cliente_id" class="form-label">
+                                    Cliente receptor
                                 </label>
 
                                 <select
-                                    id="tipo_afectacion"
-                                    name="tipo_afectacion"
+                                    id="cliente_id"
+                                    name="cliente_id"
                                     class="form-select"
                                     required
                                 >
                                     <option value="">
-                                        Seleccione una opción
+                                        Seleccione un cliente
                                     </option>
 
+                                    {% for cliente in clientes %}
                                     <option
-                                        value="AFECTA"
-                                        {% if values.tipo_afectacion == 'AFECTA' %}
+                                        value="{{ cliente.id }}"
+                                        {% if values.cliente_id == cliente.id|string %}
                                         selected
                                         {% endif %}
                                     >
-                                        Afecta
+                                        {{ cliente.razon_social }}
+                                        — {{ cliente.rut }}
                                     </option>
-
-                                    <option
-                                        value="EXENTA"
-                                        {% if values.tipo_afectacion == 'EXENTA' %}
-                                        selected
-                                        {% endif %}
-                                    >
-                                        Exenta
-                                    </option>
+                                    {% endfor %}
                                 </select>
                             </div>
 
-                            <div class="col-md-6">
-                                <label
-                                    for="nro_orden_compra"
-                                    class="form-label"
-                                >
-                                    Orden de compra — opcional
+                            <div>
+                                <label for="concepto" class="form-label">
+                                    Concepto de facturación
                                 </label>
 
-                                <input
-                                    id="nro_orden_compra"
-                                    name="nro_orden_compra"
+                                <textarea
+                                    id="concepto"
+                                    name="concepto"
                                     class="form-control"
-                                    maxlength="40"
-                                    value="{{ values.nro_orden_compra }}"
-                                >
-                            </div>
-                        </div>
+                                    rows="4"
+                                    maxlength="500"
+                                    aria-describedby="ayuda-concepto"
+                                    required
+                                >{{ values.concepto }}</textarea>
 
-                        <div class="mt-3">
+                                <div id="ayuda-concepto" class="ayuda-campo">
+                                    <span>Describa el servicio o producto a facturar.</span>
+                                    <span id="contador-concepto" class="contador">{{ values.concepto|length }} / 500</span>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="seccion-formulario" aria-labelledby="seccion-facturacion">
+                            <h2 id="seccion-facturacion" class="seccion-formulario-titulo">
+                                <span class="seccion-formulario-numero" aria-hidden="true">2</span>
+                                Datos de facturación
+                            </h2>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="monto_bruto" class="form-label">
+                                        Monto bruto — CLP
+                                    </label>
+
+                                    <input
+                                        id="monto_bruto"
+                                        name="monto_bruto"
+                                        type="text"
+                                        inputmode="numeric"
+                                        pattern="[0-9]{1,14}"
+                                        maxlength="14"
+                                        class="form-control"
+                                        value="{{ values.monto_bruto }}"
+                                        required
+                                    >
+
+                                    <div class="form-text">
+                                        Pesos enteros, sin puntos ni comas.
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="fecha_emision" class="form-label">
+                                        Fecha de emisión solicitada
+                                    </label>
+
+                                    <input
+                                        id="fecha_emision"
+                                        name="fecha_emision"
+                                        type="date"
+                                        class="form-control"
+                                        value="{{ values.fecha_emision }}"
+                                        required
+                                    >
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label
+                                        for="tipo_afectacion"
+                                        class="form-label"
+                                    >
+                                        Afectación tributaria
+                                    </label>
+
+                                    <select
+                                        id="tipo_afectacion"
+                                        name="tipo_afectacion"
+                                        class="form-select"
+                                        required
+                                    >
+                                        <option value="">
+                                            Seleccione una opción
+                                        </option>
+
+                                        <option
+                                            value="AFECTA"
+                                            {% if values.tipo_afectacion == 'AFECTA' %}
+                                            selected
+                                            {% endif %}
+                                        >
+                                            Afecta
+                                        </option>
+
+                                        <option
+                                            value="EXENTA"
+                                            {% if values.tipo_afectacion == 'EXENTA' %}
+                                            selected
+                                            {% endif %}
+                                        >
+                                            Exenta
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label
+                                        for="nro_orden_compra"
+                                        class="form-label"
+                                    >
+                                        Orden de compra — opcional
+                                    </label>
+
+                                    <input
+                                        id="nro_orden_compra"
+                                        name="nro_orden_compra"
+                                        class="form-control"
+                                        maxlength="40"
+                                        value="{{ values.nro_orden_compra }}"
+                                    >
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="seccion-formulario" aria-labelledby="seccion-adjuntos">
+                            <h2 id="seccion-adjuntos" class="seccion-formulario-titulo">
+                                <span class="seccion-formulario-numero" aria-hidden="true">3</span>
+                                Documentos adjuntos
+                            </h2>
+
                             <label for="adjuntos" class="form-label">
                                 Documentos adjuntos — opcional
                             </label>
@@ -215,16 +248,15 @@ Nueva solicitud | Facturaciones SpA
                             <div id="adjuntos-help" class="form-text">
                                 Opcional. PDF, PNG o JPG; hasta 3 archivos de 5 MB.
                             </div>
-                        </div>
+                        </section>
 
-                        <div class="d-flex flex-wrap gap-2 mt-4">
-                            <button
-                                type="submit"
-                                class="btn btn-primary"
-                                {% if not clientes %}disabled{% endif %}
+                        <div class="d-flex flex-wrap justify-content-end gap-2 mt-4">
+                            <a
+                                href="{{ url_for('solicitudes.nueva') }}"
+                                class="btn btn-outline-secondary"
                             >
-                                Registrar solicitud
-                            </button>
+                                Abrir formulario nuevo
+                            </a>
 
                             <a
                                 href="{{ url_for('solicitudes.listado') }}"
@@ -233,12 +265,14 @@ Nueva solicitud | Facturaciones SpA
                                 Cancelar
                             </a>
 
-                            <a
-                                href="{{ url_for('solicitudes.nueva') }}"
-                                class="btn btn-outline-secondary"
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                                {% if not clientes %}disabled{% endif %}
                             >
-                                Abrir formulario nuevo
-                            </a>
+                                <i class="bi bi-check-lg" aria-hidden="true"></i>
+                                Registrar solicitud
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -246,4 +280,8 @@ Nueva solicitud | Facturaciones SpA
         </section>
     </div>
 </main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/ui.js') }}"></script>
 {% endblock %}
