@@ -73,6 +73,7 @@
     --bs-secondary-color: var(--color-texto-secundario);
     --bs-secondary-bg: var(--color-salvia-tenue);
     --bs-tertiary-bg: var(--color-superficie-suave);
+    --bs-code-color: var(--color-grafito);
     --bs-border-color: var(--color-borde);
     --bs-border-radius: var(--radio-sm);
     --bs-border-radius-lg: var(--radio-md);

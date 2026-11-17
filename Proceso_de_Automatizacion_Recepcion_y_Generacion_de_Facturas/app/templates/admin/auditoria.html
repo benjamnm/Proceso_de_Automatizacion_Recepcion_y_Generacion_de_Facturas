@@ -9,16 +9,16 @@ Auditoría | Facturaciones SpA
 {% block content %}
 <main class="container pt-3 pb-5">
     <header class="mb-4">
-        <h1 class="h3 mb-1">Auditoría administrativa</h1>
+        <h1 class="h2 mb-1">Auditoría administrativa</h1>
         <p class="text-body-secondary mb-0">
             Últimos 100 eventos registrados.
         </p>
     </header>
 
     <div class="card">
-        <div class="card-body">
+        <div class="card-body p-4">
             <div class="table-responsive">
-                <table class="table align-middle">
+                <table class="table align-middle mb-0">
                     <thead>
                         <tr>
                             <th scope="col">Fecha</th>
@@ -33,11 +33,11 @@ Auditoría | Facturaciones SpA
                     <tbody>
                         {% for evento in eventos %}
                         <tr>
-                            <td>{{ evento.creado_en }}</td>
-                            <td>
+                            <td class="small text-body-secondary text-nowrap">{{ evento.creado_en }}</td>
+                            <td class="fw-semibold">
                                 {{ evento.usuario_nombre or 'Usuario no disponible' }}
                             </td>
-                            <td>{{ evento.accion }}</td>
+                            <td><code class="small">{{ evento.accion }}</code></td>
                             <td>
                                 {% if evento.detalle.get('solicitud_afectada_id') %}
                                     Solicitud #{{ evento.detalle['solicitud_afectada_id'] }}
@@ -64,14 +64,14 @@ Auditoría | Facturaciones SpA
                             </td>
                             <td>
                                 <details>
-                                    <summary>Ver detalle</summary>
+                                    <summary class="small">Ver detalle</summary>
                                     <pre class="small mt-2 mb-0">{{ evento.detalle | tojson(indent=2) }}</pre>
                                 </details>
                             </td>
                         </tr>
                         {% else %}
                         <tr>
-                            <td colspan="6">
+                            <td colspan="6" class="text-center text-body-secondary py-4">
                                 Todavía no hay eventos.
                             </td>
                         </tr>
