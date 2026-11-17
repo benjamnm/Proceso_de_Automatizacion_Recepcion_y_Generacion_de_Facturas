@@ -245,5 +245,70 @@ Usuarios | Facturaciones SpA
             </div>
         </section>
     </div>
+
+    <section class="mt-5" aria-labelledby="titulo-perfiles">
+        <h2 id="titulo-perfiles" class="h4 mb-1">Perfiles y permisos</h2>
+        <p class="text-body-secondary mb-3">
+            Permisos vigentes de cada perfil. Esta sección es informativa y
+            no permite modificarlos.
+        </p>
+
+        <div class="row g-3 mb-4">
+            {% for perfil in perfiles %}
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="h6 mb-1">{{ perfil.nombre }}</h3>
+                        <p class="text-body-secondary small mb-2">
+                            {{ perfil.descripcion or 'Sin descripción.' }}
+                        </p>
+                        <p class="mb-0">
+                            <span class="badge text-bg-primary">
+                                {{ perfil.usuarios_activos }}
+                            </span>
+                            usuario(s) activo(s)
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="card">
+            <div class="card-body p-4">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <caption>Capacidades por perfil.</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Capacidad</th>
+                                {% for perfil in perfiles %}
+                                <th scope="col" class="text-center">{{ perfil.nombre }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for texto, permitidos, _ruta in capacidades %}
+                            <tr>
+                                <th scope="row" class="fw-normal">{{ texto }}</th>
+                                {% for perfil in perfiles %}
+                                <td class="text-center">
+                                    {% if perfil.nombre in permitidos %}
+                                    <i class="bi bi-check-lg text-success" role="img"
+                                       aria-label="Permitido"></i>
+                                    {% else %}
+                                    <span aria-hidden="true">—</span>
+                                    <span class="visually-hidden">No permitido</span>
+                                    {% endif %}
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
 </main>
 {% endblock %}

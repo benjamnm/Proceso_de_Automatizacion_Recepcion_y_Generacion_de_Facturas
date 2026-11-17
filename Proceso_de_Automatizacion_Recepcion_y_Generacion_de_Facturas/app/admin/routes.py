@@ -34,6 +34,7 @@ from ..services.correo_entrante import (
 from . import admin_bp
 from ..auditoria_acciones import ACCIONES_VISIBLES, marcadores_acciones
 from ..models import get_db_connection
+from ..permisos import CAPACIDADES
 from ..security import admin_required
 
 
@@ -197,12 +198,31 @@ def usuarios():
             )
             users = cursor.fetchall()
 
+            # Solo lectura: perfiles con su cantidad de usuarios activos.
+            cursor.execute(
+                """
+                SELECT
+                    r.id,
+                    r.nombre,
+                    r.descripcion,
+                    COUNT(u.id) AS usuarios_activos
+                FROM roles AS r
+                LEFT JOIN usuarios AS u
+                    ON u.rol_id = r.id AND u.activo = 1
+                GROUP BY r.id, r.nombre, r.descripcion
+                ORDER BY r.id
+                """
+            )
+            perfiles = cursor.fetchall()
+
         return render_template(
             "admin/usuarios.html",
             usuarios=users,
             roles=roles,
             errors=errors,
             values=values,
+            perfiles=perfiles,
+            capacidades=CAPACIDADES,
         )
 
     finally:
