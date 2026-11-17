@@ -15,12 +15,13 @@
 {{ (nombre or '?').split()[:2] | map('first') | join('') | upper }}
 {%- endmacro %}
 
-{# Tarjeta de resumen: icono, valor, etiqueta y, si se da, un enlace existente. #}
-{% macro metrica(valor, etiqueta, icono, url=None) -%}
+{# Tarjeta de resumen: icono, valor, etiqueta y, si se da, un enlace existente.
+   detalle: texto corto junto al valor (p. ej. "de 12"). #}
+{% macro metrica(valor, etiqueta, icono, url=None, detalle=None) -%}
 <div class="metrica">
     <span class="metrica-icono" aria-hidden="true"><i class="bi {{ icono }}"></i></span>
     <div class="metrica-texto">
-        <span class="metrica-valor">{{ valor }}</span>
+        <span class="metrica-valor">{{ valor }}{% if detalle %} <span class="metrica-detalle">{{ detalle }}</span>{% endif %}</span>
         {% if url %}<a class="metrica-etiqueta stretched-link" href="{{ url }}">{{ etiqueta }}</a>
         {% else %}<span class="metrica-etiqueta">{{ etiqueta }}</span>{% endif %}
     </div>

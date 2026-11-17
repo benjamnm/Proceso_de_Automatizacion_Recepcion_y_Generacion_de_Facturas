@@ -492,11 +492,6 @@ a:focus-visible,
     background-color: var(--color-superficie-suave);
 }
 
-.table caption {
-    color: var(--color-texto-secundario);
-    font-size: 0.8125rem;
-}
-
 /* 6.5 Etiquetas de estado */
 .badge {
     --bs-badge-padding-x: 0.7em;
@@ -675,6 +670,12 @@ a:focus-visible,
     text-decoration: none;
 }
 
+.metrica-detalle {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-texto-secundario);
+}
+
 a.metrica-etiqueta:hover {
     color: var(--color-verde-enlace);
 }
@@ -718,15 +719,18 @@ a.metrica-etiqueta:hover {
     color: var(--color-grafito);
 }
 
-.acceso-rapido-titulo a {
-    color: inherit;
-    text-decoration: none;
-}
-
 .acceso-rapido p {
     margin-bottom: 0;
     font-size: 0.8125rem;
     color: var(--color-texto-secundario);
+}
+
+.acceso-rapido-enlace {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-decoration: none;
 }
 
 .acceso-rapido .bi-arrow-right {
@@ -766,11 +770,6 @@ a.metrica-etiqueta:hover {
     background-color: var(--color-salvia-claro);
     border-color: var(--color-salvia-claro);
     font-weight: 600;
-}
-
-/* 7.6 Panel de filtros */
-.panel-filtros .form-label {
-    font-size: 0.8125rem;
 }
 
 /* 7.7 Banner de estado del detalle */
