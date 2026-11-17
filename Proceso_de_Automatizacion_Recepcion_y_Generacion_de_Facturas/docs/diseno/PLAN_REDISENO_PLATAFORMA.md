@@ -1,16 +1,18 @@
-# Plan de rediseño visual completo — Facturaciones SpA (con logo)
+# Plan de rediseño visual completo v2 — Facturaciones SpA (con logo)
 
 > **Para:** Claude Code, ejecutando fase por fase.
-> **Alcance:** solo diseño. Se cambia cómo se ve la plataforma completa (tema, colores, tipografía, layout, logo e imágenes). No cambia lo que hace.
-> **Referencia visual:** `docs/diseno/referencia/` (maqueta estática de 11 páginas).
-> **Recursos de marca listos para usar:** `docs/diseno/assets/` (logo, favicon e ilustración ya optimizados).
-> **Reemplaza a:** `docs/diseno/PLAN_IMPLEMENTACION_DISENO.md`. Si ambos se contradicen, manda este.
+> **Rama de trabajo:** `feat/facturaciones-v2-sec` (sección 1.4). Todo el plan se ejecuta y se compara contra esta rama; `main` no interviene.
+> **Versión:** 2. Las cinco funcionalidades de la maqueta ya existen en el backend (totales y actividad reciente, búsqueda por cliente o concepto, adjuntos al crear la solicitud, columnas Concepto/Origen/Responsable, “Perfiles y permisos”). Este plan **solo las viste**; no las vuelve a implementar.
+> **Alcance:** solo diseño. Se aplica la maqueta completa, página por página. No cambia lo que hace la plataforma.
+> **Referencia visual:** `docs/diseno/referencia/` (maqueta estática de 11 páginas). Solo se mira; no se copia su código.
+> **Recursos de marca listos:** `docs/diseno/assets/` (logo, favicon e ilustración ya optimizados).
+> **Reemplaza a:** la v1 de este archivo y a `docs/diseno/PLAN_IMPLEMENTACION_DISENO.md`. Si se contradicen, manda este.
 
 ---
 
 ## 0. Resumen en una línea
 
-Pasar de tema oscuro con barra superior azul a **tema claro salvia/grafito con barra lateral y logo**, reutilizando Bootstrap 5.3 y cambiando solo plantillas Jinja (marcado y clases), CSS e imágenes.
+Pasar de tema oscuro con barra superior azul a **tema claro salvia/grafito con barra lateral, logo y el diseño completo de la maqueta**, cambiando solo plantillas Jinja (marcado y clases), CSS, imágenes y, como máximo, un JavaScript nuevo de presentación.
 
 ---
 
@@ -20,69 +22,138 @@ Aplican a **todas** las fases. Si una tarea choca con una regla, gana la regla y
 
 ### 1.1 Archivos que se pueden modificar o crear
 
-| Ruta (relativa a la carpeta que contiene `app/`) | Permitido |
+| Ruta (relativa a la carpeta del proyecto, la que contiene `app/`) | Permitido |
 |---|---|
-| `app/templates/**/*.html` | Solo marcado, clases, envoltorios, íconos y textos decorativos ya existentes |
+| `app/templates/**/*.html` | Marcado, clases, envoltorios, íconos y textos decorativos. Se pueden **usar** variables de contexto que la plantilla ya recibe (sección 2.2) |
 | `app/templates/_ui.html` | **Crear**: macros de presentación (sección 4.4) |
 | `app/static/css/app.css` | Reescribir |
 | `app/static/css/login.css` | Reescribir |
+| `app/static/js/ui.js` | **Crear (opcional, Fase 6)**: solo presentación (contador de caracteres). Sección 4.7 |
 | `app/static/img/*` | **Crear**: copiar desde `docs/diseno/assets/` |
 | `app/static/fonts/inter/*` | **Crear**: solo si la persona dejó los archivos (Fase 0) |
 
-**Cualquier otro archivo queda prohibido**, en particular: `app/**/*.py` (incluida la CSP de `app/security.py`), `app/static/js/*.js`, `test/**`, `config.py`, `seed.py`, `requirements*.txt`, el SQL y `docs/diseno/referencia/**`.
+**Cualquier otro archivo queda prohibido**, en particular: `app/**/*.py` (incluidas `app/security.py` y la CSP, `permisos.py`, `services/panel.py`, `auditoria_acciones.py`), `app/static/js/app.js`, `app/static/js/login.js`, `migrations/**`, `test/**`, `config.py`, `seed.py`, `requirements*.txt`, el SQL y `docs/diseno/referencia/**`.
 
 ### 1.2 Prohibido en las plantillas
 
 1. Crear, quitar o renombrar rutas, endpoints, formularios, campos o valores enviados.
-2. Agregar funcionalidad que hoy no existe: botones, enlaces, filtros, buscadores, contadores, modales, columnas, paginación, “Recordarme”, “¿Olvidaste tu contraseña?”, tarjetas de estadísticas, “Actividad reciente”.
-3. Copiar JavaScript de la maqueta (`js/solicitudes.js`, `js/nueva-solicitud.js` o scripts en línea).
+2. Pedir al backend datos que hoy no entrega (nuevas consultas, nuevas variables de contexto, nuevos parámetros GET). Si un elemento de la maqueta los necesita, **no se aplica** (tabla 2.3).
+3. Copiar JavaScript de la maqueta (`js/solicitudes.js`, `js/nueva-solicitud.js`, `js/usuarios.js` o scripts en línea). Sus filtros, validaciones y datos son simulados.
 4. Escribir `style="..."`, `onclick=`, `onsubmit=` o `<script>` en línea. **`test/test_seguridad.py::test_plantillas_sin_javascript_ni_estilos_en_linea` lo verifica.**
 5. Cargar Lucide (`unpkg.com`) o Google Fonts. La CSP solo permite `'self'` y `https://cdn.jsdelivr.net`, e imágenes `'self' data:`.
-6. Mostrar datos de ejemplo de la maqueta (nombres, montos, “Datos de demostración”, “SOL-001”).
+6. Mostrar datos de ejemplo de la maqueta (nombres, montos, “Datos de demostración”, “SOL-001”, avisos de demo).
 7. Copiar `docs/diseno/referencia/css/styles.css`. Tiene 11.138 líneas, 419 colores y 234 `!important`. Se usa solo como referencia visual.
+8. Quitar o debilitar controles de seguridad ya presentes en el marcado: `csrf_token`, `token_envio`, `version`, `enctype`, `accept`, `maxlength`, `data-confirmar`, `data-bloquear-envio`, `novalidate`, `autocomplete`, y los `|e`/autoescape de Jinja. Nunca usar `|safe`.
 
 ### 1.3 Se preserva exactamente
 
-- **Atributos funcionales:** `name`, `id`, `for`, `action`, `method`, `enctype`, `value`, `required`, `maxlength`, `minlength`, `pattern`, `inputmode`, `accept`, `autocomplete`, `novalidate` y campos ocultos (`csrf_token`, `token_envio`, `version`, etc.). Se pueden **agregar** `id` nuevos para el layout; no se puede quitar ni renombrar ninguno.
-- **Lógica Jinja:** cada `{% if %}`, `{% for %}`, `{% set %}`, macro, `url_for(...)`, condición por rol (`current_user.role_name`) y `migas`.
-- **Hooks de JavaScript:**
+- **Atributos funcionales:** `name`, `id`, `for`, `action`, `method`, `enctype`, `value`, `required`, `maxlength`, `minlength`, `pattern`, `inputmode`, `accept`, `multiple`, `autocomplete`, `novalidate` y campos ocultos. Se pueden **agregar** `id` nuevos; no se puede quitar ni renombrar ninguno.
+- **Lógica Jinja:** cada `{% if %}`, `{% for %}`, `{% set %}`, macro, `url_for(...)`, condición por rol (`current_user.role_name`) y `migas`. Incluye las ramas `adjuntos is none` / lista / vacío del detalle y las distintas tablas de actividad de Administrador y Emisor.
+- **Filtros GET del listado:** `q`, `cliente_id`, `rut`, `desde`, `hasta`, `monto`, `estado_id`, `emisor_id` (solo Administrador), con los mismos `name` y `value`.
+- **Hooks de JavaScript existentes:**
   - `static/js/app.js`: `data-confirmar`, `data-bloquear-envio`, `button[type='submit']`.
-  - `static/js/login.js`: `.needs-validation`, `#password`, `#togglePassword`, `#passwordIcon` y las clases `bi-eye` / `bi-eye-slash` del ícono.
+  - `static/js/login.js`: `.needs-validation`, `#password`, `#togglePassword`, `#passwordIcon` y las clases `bi-eye` / `bi-eye-slash`.
 - **Cadenas que verifica `test/test_navegacion.py`:**
   - `aria-label="Ruta de navegación"`
   - `<a href="{{ ns.volver }}" class="btn btn-outline-secondary btn-sm">` (botón **Volver** de las migas): mismas clases, **mismo orden** y nada entre `href` y `class`.
   - Texto `Cerrar sesión`.
-  - En `_proceso.html`: `aria-current="step">{{ paso }}` sin espacio ni salto de línea entre `>` y el texto (también para `Rechazada`).
-  - `href` del menú: `/dashboard`, `/solicitudes/`, `/solicitudes/nueva`, `/admin/correos`, `/clientes/`, `/admin/usuarios`, `/admin/auditoria`, con las mismas condiciones de rol.
-  - El panel (`/dashboard`) **no** puede contener la palabra `Volver` en ninguna parte (barra lateral y topbar incluidas).
+  - En `_proceso.html`: `aria-current="step">{{ paso }}` sin espacio ni salto de línea entre `>` y el texto (también `Rechazada`).
+  - `href` del menú: `/dashboard`, `/solicitudes/`, `/solicitudes/nueva`, `/admin/correos`, `/clientes/`, `/admin/usuarios`, `/admin/auditoria`, con las mismas condiciones de rol. El Emisor no ve `/admin/usuarios` ni `/clientes/`; la pestaña **Editar** no aparece si la solicitud no es editable.
+  - El panel (`/dashboard`) **no** puede contener la palabra `Volver`.
   - Texto `Solicitud 1234abcd` en el encabezado de `factura.html`.
+- **Cadenas que verifican los tests de las funcionalidades ya implementadas** (existen en `feat/facturaciones-v2-sec`):
+
+  | Test | Plantilla | Debe seguir apareciendo (o no) |
+  |---|---|---|
+  | `test_panel.py` | `dashboard.html` | Administrador: `Usuarios activos`, `Clientes activos`, `Eventos registrados`, `Actividad reciente`, la etiqueta de acción (p. ej. `Factura aprobada`), `href="/solicitudes/<public_id>"` y `href="/solicitudes/?estado_id=<id>"` (los enlaces de las tarjetas por estado se generan igual que hoy) |
+  | `test_panel.py` | `dashboard.html` y `base.html` | Emisor: `Resumen`, `Actividad reciente` y el nombre de la solicitud; **no** pueden aparecer `Usuarios`, `Clientes activos` ni `href="/admin/auditoria"` en ninguna parte de la página (shell incluido) |
+  | `test_panel.py` | `dashboard.html` | Lector con `resumen` en `None`: aparece `Panel principal` y **no** `Actividad reciente` |
+  | `test_rutas_factura.py` | `dashboard.html` | Administrador sin BD: aparece `Facturas por validar` (el acceso rápido queda **fuera** de la condición de `resumen`) |
+  | `test_listado_columnas.py` | `solicitudes/listado.html` | Exactamente `<th scope="col">Concepto</th>`, `<th scope="col">Origen</th>` y `<th scope="col">Responsable</th>` (solo Administrador). **No agregar clases ni atributos a esos `<th>`**: el estilo de cabecera va por CSS (`.table thead th`). Valores escapados (`&lt;b&gt;x&lt;/b&gt;`) |
+  | `test_busqueda_solicitudes.py` | `solicitudes/listado.html` | Texto `Siguiente` en la paginación |
+  | `test_adjuntos.py` | `solicitudes/nueva.html` | `enctype="multipart/form-data"`, `name="adjuntos"`, `accept=".pdf,.png,.jpg,.jpeg"` y los mensajes `Solo se permiten adjuntos PDF, PNG o JPG.` / `vuelva a seleccionarlos` |
+  | `test_adjuntos.py` | `solicitudes/detalle.html` | `Documentos adjuntos`, `href="/solicitudes/<public_id>/adjuntos/<id>"`, nombre escapado, tamaño (`2 KB`), `Sin documentos adjuntos.`, `No se pudieron cargar los documentos adjuntos.` y `Receptor histórico` |
+  | `test_permisos.py` | `admin/usuarios.html` | `Perfiles y permisos`, descripción del perfil escapada, el texto de cada capacidad, `aria-label="Permitido"` y `No permitido` |
+  | `test_rutas_factura.py` | `solicitudes/factura.html` | `Factura correcta: generar archivo SII` (Administrador), `Historial de versiones`, `Generar factura y enviar a revisión`, `Versión 2`, `Corregido`, alertas; el Emisor no ve `generar archivo SII` |
+  | `test_rutas_factura.py` | `admin/correos.html` | Motivos de observación, `Reprocesar` y autoescape (sin `<script>` crudo) |
+
+  Regla práctica: **los textos visibles existentes no se reescriben**; se pueden envolver, mover dentro de la misma condición o cambiar de clase.
 - **Bootstrap 5.3.3 y Bootstrap Icons 1.11.3** desde jsDelivr con sus `integrity` actuales.
+- **Tests:** correr todo `test/` (21 archivos en la rama) y no modificar ninguno. Si uno falla, se revierte el marcado.
 
 ### 1.4 Forma de trabajo
 
-- Trabajar en una rama nueva (`feat/rediseno-visual`), nunca en la principal.
-- **Leer completa cada plantilla antes de editarla.**
+- **Rama:** se trabaja directamente sobre `feat/facturaciones-v2-sec`, que ya contiene las funcionalidades, sus tests, la maqueta (`docs/diseno/referencia/`) y los recursos de marca (`docs/diseno/assets/`). No se crea otra rama ni se cambia a `main`, `dev` o `QA`.
+- **Punto de partida:** en la Fase 0 se crea la etiqueta local `rediseno-base` sobre el commit inicial. Todas las comparaciones de la sección 6 usan `rediseno-base`, y deshacer el rediseño completo es `git reset --hard rediseno-base` (solo si la persona lo pide).
+- **Estructura del repositorio:** la raíz de Git es `Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/` y el proyecto está en la subcarpeta del mismo nombre. **Todos los comandos se ejecutan desde la subcarpeta** (la que contiene `app/`, `test/` y `docs/`), y los `git diff` usan `--relative`.
+- **No hacer `git push`, `rebase`, `merge` ni `stash`** salvo que la persona lo pida. El árbol de trabajo debe estar limpio antes de empezar.
+- **Leer completa cada plantilla antes de editarla** (el marcado de las cinco plantillas ampliadas es distinto del original).
 - Una fase = un commit, con `pytest -q` en verde antes de cada commit.
 - Si un test falla: **revertir el marcado, no el test**.
-- Al final de cada fase, entregar un resumen breve: archivos tocados, resultado de `pytest` y qué **no** se pudo verificar (render real en navegador, móvil).
+- Al final de cada fase, resumen breve: archivos tocados, resultado de `pytest` y qué **no** se pudo verificar (render real en navegador, móvil).
 
 ---
 
 ## 2. Diagnóstico
 
-| Aspecto | Actual | Objetivo |
+### 2.1 Diferencias visuales
+
+| Aspecto | Actual | Objetivo (maqueta) |
 |---|---|---|
 | Tema | Oscuro: `data-bs-theme="dark"`, fondo `#171812`, barra `#192f58` | Claro: fondo `#F5F6F3`, tarjetas blancas, salvia/grafito |
-| Layout | `navbar` superior colapsable | Barra lateral de 250 px con logo y topbar con usuario. En móvil, la barra lateral se abre como *offcanvas* de Bootstrap |
-| Marca | Logo falso de 4 cuadrados (`.brand-mark`) y texto | Logo real `logo-facturaciones.png` y favicon |
+| Layout | `navbar` superior colapsable | Barra lateral de 250 px con logo y grupos “Menú principal” / “Administración”; topbar con avatar de iniciales. En móvil, *offcanvas* de Bootstrap |
+| Marca | Logo falso de 4 cuadrados (`.brand-mark`) y texto | Logo real y favicon |
+| Panel | Tarjetas de acceso y tabla de actividad sin jerarquía | Banda de bienvenida, “Resumen general”, “Accesos rápidos” y “Actividad reciente” |
+| Listado | Filtros sueltos y estado siempre gris | Chips de estado, tarjeta de filtros, tabla con cabecera en mayúsculas y etiquetas de estado por color |
+| Detalle | Tarjetas apiladas | Banner de estado con borde de acento, rejillas etiqueta/valor, adjuntos y XML como filas con ícono |
+| Nueva solicitud | Formulario plano | Secciones numeradas, ayudas de campo, contador de caracteres, lista de adjuntos |
+| Usuarios | Dos columnas planas | Tarjetas de totales, formulario, tabla con avatares y “Perfiles y permisos” como tarjetas + matriz |
 | Tipografía | Arial | Inter alojada en el servidor, con respaldo `system-ui` |
-| Íconos | Bootstrap Icons | Bootstrap Icons (se mantienen; la maqueta usa Lucide y no pasa la CSP) |
-| Estados | `badge text-bg-*` sólidos | Etiquetas redondeadas de fondo suave, mismas clases |
-| CSS propio | `app.css` (1,7 KB) y `login.css` (5 KB) | `app.css` consolidado (< 900 líneas) y `login.css` nuevo |
+| Íconos | Bootstrap Icons | Bootstrap Icons (la maqueta usa Lucide y no pasa la CSP) |
 
-**Por qué el logo obliga a cambiar el tema:** el texto del logo es verde casi negro (`#0B2E11`). Sobre el fondo oscuro actual el contraste es de 1,2:1 y sobre la barra azul de 1,1:1, así que no se ve. Sobre blanco es de 14,9:1. **El logo solo se usa sobre fondos claros.**
+**Por qué el logo obliga a cambiar el tema:** su texto es verde casi negro (`#0B2E11`). Sobre el fondo oscuro el contraste es 1,2:1 y sobre la barra azul 1,1:1; sobre blanco, 14,9:1. **El logo solo va sobre fondos claros.**
 
-**Estrategia técnica:** el 90 % de la interfaz usa clases de Bootstrap (`card`, `btn`, `form-control`, `table`, `badge`, `alert`, `text-body-secondary`). Se re-tematiza Bootstrap con sus variables CSS (`--bs-*`), de modo que la mayoría de las plantillas cambian de aspecto **sin editar su marcado**. Solo se reescriben `base.html`, `auth/login.html` y `errores/error.html`, más ajustes puntuales de clases en el resto.
+**Estrategia técnica:** el 90 % de la interfaz usa clases de Bootstrap. Se re-tematiza con variables `--bs-*` y se agregan unas pocas clases propias en español (`.metrica`, `.chip-estado`, `.banner-estado`…) para lo que Bootstrap no resuelve. No se importa el CSS de la maqueta.
+
+### 2.2 Datos que ya entrega el backend (no se tocan, solo se usan)
+
+Nombres confirmados en `feat/facturaciones-v2-sec`. Aun así, leer la plantilla antes de usarlos; si alguno no está, el elemento no se aplica.
+
+| Pantalla | Variables disponibles hoy |
+|---|---|
+| `dashboard.html` | `resumen` (`estados` con `id`/`nombre`/`total`, `solicitudes_total`; Administrador además `correos_por_revisar`, `usuarios.activos/total`, `clientes.activos/total`, `eventos_total`, `actividad` con `creado_en`, `etiqueta`, `usuario_nombre`, `public_id`; Emisor: `actividad` con `public_id`, `nombre`, `actualizado_en`, `estado_nombre`). Puede ser `None` si la BD falla: se conserva esa rama |
+| `solicitudes/listado.html` | Solicitudes con RUT, cliente, concepto, monto, fecha, origen, responsable (Administrador) y estado; `estados`, `clientes`, filtros activos y paginación. El parámetro de página es **`pagina`** (`routes.py`, 20 por página); las URL Anterior/Siguiente ya llegan calculadas |
+| `solicitudes/nueva.html` | `clientes` (`id`, `rut`, `razon_social`), `values`, `errores`, `token_envio`. El campo concepto es `id="concepto"` con `maxlength="500"`; la ayuda de adjuntos dice “Opcional. PDF, PNG o JPG; hasta 3 archivos de 5 MB.” |
+| `solicitudes/detalle.html` | Solicitud, `adjuntos` (`none` / lista / vacío), XML, envíos de correo, estados para gestión |
+| `admin/usuarios.html` | `usuarios` (cada uno con `activo`), `perfiles` (con `usuarios_activos`) y la matriz de capacidades ya renderizada en la plantilla |
+| `clientes/listado.html` | `clientes` con `rut`, `razon_social`, `email_contacto` y estado |
+
+### 2.3 Qué de la maqueta se aplica y qué no
+
+| Elemento de la maqueta | ¿Se aplica? | Motivo |
+|---|---|---|
+| Barra lateral, topbar, avatar con iniciales, logo | Sí | Solo marcado y CSS |
+| Banda de bienvenida del panel | Sí | Usa `current_user.nombre` |
+| “Resumen general” (6 tarjetas) | Sí | Usa `resumen.*` existente. Las tarjetas del Administrador y del Emisor son las que hoy existen; no se inventan otras |
+| “Accesos rápidos” | Sí | Mismos enlaces y condiciones de rol de hoy |
+| “Actividad reciente” | Sí | Usa `resumen.actividad`; sin IP ni detalle completo |
+| Chips de estado en el listado | **Sí, sin conteos** | Son enlaces a `estado_id` con `estados` ya entregado. El conteo por estado no llega al listado |
+| Buscador por cliente o concepto | Sí | Es el campo `q` existente (formulario GET, no filtro en JS) |
+| Columnas Concepto, Origen, Responsable | Sí | Ya vienen en la consulta |
+| Botón “Limpiar filtros” | Sí | Enlace a `url_for('solicitudes.listado')` |
+| Secciones numeradas en “Nueva solicitud” | Sí | Solo agrupar campos contiguos; sin mover campos entre formularios |
+| Contador de caracteres del concepto | Sí (opcional) | JS nuevo mínimo (4.7); `maxlength="500"` sigue siendo la validación real |
+| Ficha de solo lectura del cliente al elegirlo | **No** | El contexto solo trae RUT y razón social dentro del `<option>`; mostrar más exige datos nuevos |
+| Adjuntos al crear | Sí (visual) | Mismo `input name="adjuntos"` múltiple, `accept` y límites; se muestran las restricciones como texto de ayuda |
+| Arrastrar y soltar archivos, vista previa | **No** | Exige JS y lógica propios |
+| Tarjetas de totales en “Usuarios” | Sí, con datos de contexto | Total `usuarios\|length`, activos `usuarios\|selectattr('activo')\|list\|length`, inactivos por diferencia |
+| Buscador y filtro de usuarios en vivo | **No** | Filtro en JS sobre datos parciales; no existe en el backend |
+| “Perfiles y permisos” (tarjetas y matriz) | Sí | Ya existe; solo se rediseña |
+| Autocompletado del RUT / cliente | **No** | Sin endpoint |
+| “Recordarme”, “¿Olvidaste tu contraseña?” | **No** | Sin backend |
+| Pestañas del detalle como en la maqueta | Parcial | Se conservan las pestañas reales (`_proceso.html`: Solicitud / Factura / Editar). No se crean pestañas JS |
+| Historial de versiones en el detalle | Solo si ya existe en `factura.html` | Se reestiliza; no se agrega |
+| Datos y avisos de demostración | **No** | Regla 1.2.6 |
 
 ---
 
@@ -236,7 +307,7 @@ Las plantillas ya usan `badge text-bg-{primary|secondary|success|warning|danger|
 ### 4.4 Macros de presentación (`app/templates/_ui.html`, nuevo)
 
 ```jinja
-{# Solo presentación: no contiene lógica de negocio. #}
+{# Solo presentación: no contiene lógica de negocio ni consulta datos. #}
 
 {% macro estado_solicitud(nombre) -%}
 {%- set clases = {
@@ -252,13 +323,25 @@ Las plantillas ya usan `badge text-bg-{primary|secondary|success|warning|danger|
 {% macro iniciales(nombre) -%}
 {{ (nombre or '?').split()[:2] | map('first') | join('') | upper }}
 {%- endmacro %}
+
+{# Tarjeta de resumen: icono, valor, etiqueta y, si se da, un enlace existente. #}
+{% macro metrica(valor, etiqueta, icono, url=None) -%}
+<div class="metrica">
+    <span class="metrica-icono" aria-hidden="true"><i class="bi {{ icono }}"></i></span>
+    <div class="metrica-texto">
+        <span class="metrica-valor">{{ valor }}</span>
+        {% if url %}<a class="metrica-etiqueta stretched-link" href="{{ url }}">{{ etiqueta }}</a>
+        {% else %}<span class="metrica-etiqueta">{{ etiqueta }}</span>{% endif %}
+    </div>
+</div>
+{%- endmacro %}
 ```
 
-Uso de `estado_solicitud`:
-- `solicitudes/listado.html` (columna Estado; hoy es siempre `text-bg-secondary`).
-- `solicitudes/detalle.html` (bloque “Gestión del estado”, `{{ solicitud.estado_nombre }}`).
-
-En ambos casos se importa con `{% from "_ui.html" import estado_solicitud %}`. El texto visible no cambia. **No usarlo en `_proceso.html`**: ahí se conserva el marcado y solo cambia el CSS.
+Uso:
+- `estado_solicitud`: columna Estado de `solicitudes/listado.html` y bloque “Gestión del estado” / banner de `solicitudes/detalle.html`. **No usarlo en `_proceso.html`** (ahí se conserva el marcado y solo cambia el CSS).
+- `iniciales`: topbar, tabla de usuarios y de clientes.
+- `metrica`: “Resumen general” del panel y tarjetas de totales de Usuarios.
+- Se importan con `{% from "_ui.html" import … %}`. Jinja escapa los valores por defecto; no usar `|safe`.
 
 ### 4.5 Tipografía
 
@@ -271,17 +354,66 @@ Inter 400/500/600/700, alojada en el servidor.
 
 Se mantienen Bootstrap Icons. Cambios opcionales en el menú para acercarse a la maqueta: Panel `bi-grid-1x2`, Solicitudes `bi-file-earmark-text`, Nueva solicitud `bi-file-earmark-plus`, Bandeja `bi-inbox`, Clientes `bi-building`, Usuarios `bi-people`, Auditoría `bi-clock-history`. Todos los íconos decorativos con `aria-hidden="true"`.
 
+### 4.7 JavaScript nuevo permitido (opcional)
+
+Un único archivo, `app/static/js/ui.js`, cargado con `<script src="{{ url_for('static', filename='js/ui.js') }}"></script>` desde el `{% block scripts %}` de `nueva.html` (nunca en línea; la CSP ya permite `'self'`). Solo presentación:
+
+```js
+(() => {
+    "use strict";
+    const campo = document.querySelector("#concepto");
+    const contador = document.querySelector("#contador-concepto");
+    if (!campo || !contador) return;
+    const max = campo.maxLength;
+    const actualizar = () => { contador.textContent = `${campo.value.length} / ${max}`; };
+    campo.addEventListener("input", actualizar);
+    actualizar();
+})();
+```
+
+Reglas: no hace `fetch`, no valida, no deshabilita nada y la página funciona igual sin él. Verificar que el `id` del campo concepto sea `concepto` (si no, usar el real). **No modificar `app.js` ni `login.js`.**
+
+### 4.8 Clases de componentes de la maqueta (`app.css`, bloque “Componentes”)
+
+Nombres propios, sin copiar `styles.css`. Cada clase usa solo tokens.
+
+| Clase | Aspecto |
+|---|---|
+| `.bienvenida` | Banda del panel: fondo `--color-salvia-claro`→`--color-salvia-tenue`, radio 14 px, padding 1,5 rem; título 1,6 rem y texto secundario |
+| `.metrica` | Tarjeta blanca (radio 12 px, borde, sombra) en rejilla `repeat(auto-fill, minmax(220px, 1fr))`; recuadro de ícono 40×40 en `--color-salvia-claro`; valor 1,6 rem peso 700; etiqueta secundaria. Hover: `--sombra-hover` y `translateY(-2px)` salvo `prefers-reduced-motion` |
+| `.acceso-rapido` | Tarjeta enlace con ícono, título, descripción y flecha `bi-arrow-right`; la de “Facturas por validar” con borde izquierdo de 4 px `--color-salvia-oscuro` |
+| `.seccion-titulo` | Encabezado de sección: 0,75 rem, mayúsculas, `letter-spacing: .08em`, peso 700, color secundario |
+| `.chip-estado` | Enlace redondeado (999 px), borde `--color-borde`, fondo blanco; activo con fondo `--color-salvia-claro` y peso 600 |
+| `.panel-filtros` | Tarjeta de filtros con rejilla `row g-3`; etiquetas de 0,8125 rem peso 600 |
+| `.banner-estado` | Tarjeta del detalle con borde izquierdo de 4 px según estado (neutro, info, aviso, ok, error) y etiqueta de estado a la derecha |
+| `.detalle-rejilla` | `dl` en 2–3 columnas: `dt` 0,8125 rem secundario, `dd` grafito peso 500 |
+| `.fila-archivo` | Fila con recuadro de ícono (`bi-file-earmark-pdf`, `bi-file-earmark-image` o `bi-file-earmark-code`), nombre, tamaño y acción existente |
+| `.seccion-formulario` | Bloque numerado (círculo 28 px con el número en `--color-salvia-claro`) con título y línea separadora |
+| `.ayuda-campo` | Texto de ayuda de 0,8125 rem en color secundario bajo el campo; con `.contador` alineado a la derecha |
+| `.avatar` | Círculo de 40 px (32 px en tablas), fondo `--color-salvia-claro`, iniciales grafito peso 600 |
+| `.tarjeta-perfil` | Tarjeta de “Perfiles y permisos” con recuadro de ícono, nombre del perfil, descripción y cantidad de activos |
+| `.matriz-permisos` | Tabla capacidades × perfiles. Se conserva el marcado actual de cada celda (`<i class="bi bi-check-lg" … aria-label="Permitido">` y `<span class="visually-hidden">No permitido</span>`); solo cambia el CSS: check en `--estado-ok-tx`, celda vacía con `—` decorativo vía CSS (`::before`) |
+
 ---
 
 ## 5. Fases
 
+Las fases 0–3 construyen la base (recursos, CSS, shell, login). Las fases 4–10 aplican la maqueta página por página.
+
 ### Fase 0 — Preparación
 
-1. Crear la rama `feat/rediseno-visual` desde la rama principal actualizada.
-2. Ejecutar `pytest -q` y anotar el resultado base. Si algo falla **antes** de tocar nada, detenerse e informar.
-3. Crear `app/static/img/` y copiar los 5 archivos de `docs/diseno/assets/` (sección 3) con los mismos nombres. `login-ilustracion.png` mantiene ese nombre.
-4. Comprobar si existen `app/static/fonts/inter/*.woff2`. **Claude Code no descarga fuentes**: si faltan, seguir con el respaldo (4.5) y avisarlo.
-5. Commit: `chore(ui): agrega logo, favicon e ilustración optimizados`.
+1. Desde la subcarpeta del proyecto:
+   ```bash
+   git switch feat/facturaciones-v2-sec
+   git status --short          # debe salir vacío; si no, detenerse e informar
+   ```
+2. Si `docs/diseno/PLAN_REDISENO_PLATAFORMA.md` aparece modificado (es esta v2), hacer primero `git add docs/diseno/PLAN_REDISENO_PLATAFORMA.md && git commit -m "docs(ui): plan de rediseño v2 sobre feat/facturaciones-v2-sec"`.
+3. Crear la etiqueta de partida: `git tag rediseno-base` (local; no se sube).
+4. Ejecutar `pytest -q` y anotar el resultado base. Si algo falla **antes** de tocar nada, detenerse e informar.
+5. Confirmar que las funcionalidades existen leyendo (sin editar) `app/__init__.py::resumen_panel`, `app/services/panel.py`, `app/permisos.py` y las plantillas ampliadas (`dashboard`, `solicitudes/listado`, `nueva`, `detalle`, `admin/usuarios`). Anotar los nombres reales de variables que se usarán (sección 2.2). Lo que no exista se marca “no aplicado”.
+6. Crear `app/static/img/` y copiar los 5 archivos de `docs/diseno/assets/` con los mismos nombres.
+7. Comprobar si existen `app/static/fonts/inter/*.woff2`. **Claude Code no descarga fuentes**: si faltan, usar el respaldo (4.5) y avisarlo.
+8. Commit: `chore(ui): agrega logo, favicon e ilustración optimizados`.
 
 > **Paso para la persona (opcional, antes de la Fase 1):** descargar Inter desde https://rsms.me/inter/ y dejar `Inter-400.woff2`, `Inter-500.woff2`, `Inter-600.woff2`, `Inter-700.woff2` y `OFL.txt` en `app/static/fonts/inter/`.
 
@@ -295,17 +427,18 @@ Reescribir `app/static/css/app.css` en este orden:
 3. Re-tema de Bootstrap ..................... 4.2
 4. Base: body, títulos, enlaces, :focus-visible con var(--anillo-foco)
 5. Shell: .app-shell, .sidebar, .topbar, .app-main, .flash-container, migas
-6. Componentes: botones, tarjetas, formularios, tablas, badges (4.3), alertas, pestañas, .pasos-proceso, avatar
-7. Utilidades existentes que se conservan: .texto-preformateado, .ancho-limitado
-8. Excepciones por página (mínimas)
+6. Componentes de Bootstrap: botones, tarjetas, formularios, tablas, badges (4.3), alertas, pestañas, .pasos-proceso
+7. Componentes de la maqueta ................. 4.8
+8. Utilidades que se conservan: .texto-preformateado, .ancho-limitado
 9. Responsive: solo dos cortes, 991.98px y 575.98px
+10. @media print
 ```
 
-- Conservar las clases que hoy usan las plantillas: `.flash-container`, `.texto-preformateado`, `.ancho-limitado`, `.pasos-proceso` (y su flecha `→` entre pasos, ahora en color secundario).
-- Eliminar las variables del tema oscuro (`--navy`, `--dark`, `--input`, `--mint`) y `.barra-principal`.
-- En `base.html`, cambiar solo `data-bs-theme="dark"` → `data-bs-theme="light"` en esta fase (el layout se cambia en la Fase 2).
-- Objetivo: menos de 900 líneas, sin colores sueltos fuera de los tokens y sin `!important` fuera de 4.3.
-- Commit: `style(ui): tema claro salvia y re-tema de Bootstrap`.
+- Conservar las clases que hoy usan las plantillas: `.flash-container`, `.texto-preformateado`, `.ancho-limitado`, `.pasos-proceso` (y su flecha `→` en color secundario).
+- Eliminar variables del tema oscuro (`--navy`, `--dark`, `--input`, `--mint`) y `.barra-principal`.
+- En `base.html`, cambiar solo `data-bs-theme="dark"` → `"light"` en esta fase.
+- Objetivo: menos de 1.100 líneas, sin colores fuera de los tokens y sin `!important` fuera de 4.3.
+- Commit: `style(ui): tema claro salvia, re-tema de Bootstrap y componentes`.
 
 ### Fase 2 — Shell de la aplicación (`base.html`) con logo
 
@@ -345,13 +478,13 @@ Estructura objetivo. Los `{% block %}` no pueden repetirse, por eso la envoltura
             </div>
 
             <nav class="sidebar-nav">
-                <p class="sidebar-grupo">Menú principal</p>
+                <p class="seccion-titulo">Menú principal</p>
                 <ul class="nav flex-column">
                     {# Panel, Solicitudes, Nueva solicitud: mismas llamadas y condiciones que hoy #}
                 </ul>
 
                 {% if current_user.role_name == 'Administrador' %}
-                <p class="sidebar-grupo">Administración</p>
+                <p class="seccion-titulo">Administración</p>
                 <ul class="nav flex-column">
                     {# Bandeja, Clientes, Usuarios, Auditoría: mismas llamadas y condiciones #}
                 </ul>
@@ -384,8 +517,7 @@ Estructura objetivo. Los `{% block %}` no pueden repetirse, por eso la envoltura
             </header>
     {% endif %}
 
-            {# flash: mismo bloque que hoy #}
-            {# migas: mismo bloque que hoy, sin tocar el <a … class="btn btn-outline-secondary btn-sm"> #}
+            {# flash y migas: mismos bloques que hoy; no tocar el <a … class="btn btn-outline-secondary btn-sm"> #}
 
             {% block content %}{% endblock %}
 
@@ -400,205 +532,248 @@ Estructura objetivo. Los `{% block %}` no pueden repetirse, por eso la envoltura
 ```
 
 Detalles:
-- **Menú:** los 7 enlaces, sus `endpoint`, sus condiciones de rol y su cálculo de `activo` quedan **idénticos**. Solo se reparten en los dos grupos. El grupo “Administración” va dentro de la condición de Administrador, así que el Emisor no lo ve.
-- **Estilo del menú** (scope `.sidebar .nav-link` para no afectar a `.nav-tabs`):
-  - enlace: texto `#687168`, 0,875 rem, padding 0,7 rem, radio 8 px, ícono a 1,1 rem;
-  - hover: fondo `--color-salvia-tenue`;
-  - activo: fondo `--color-salvia-claro`, texto grafito, peso 600 e ícono `--color-salvia-oscuro`.
-- **Títulos de grupo** (`.sidebar-grupo`): 0,6875 rem, mayúsculas, `letter-spacing: .08em`, peso 700, color secundario.
-- **Barra lateral:** fondo blanco, borde derecho `--color-borde`, ancho `--ancho-sidebar`. En ≥ 992 px es fija (`position: sticky; top: 0; height: 100vh; overflow-y: auto`). En < 992 px Bootstrap la convierte en *offcanvas*: el JS de Bootstrap ya cargado la maneja con atributos `data-bs-*`, sin JavaScript propio.
-- **`.app-shell`:** `display: flex`; **`.app-main`:** `flex: 1; min-width: 0`, padding de 2 rem a 2,5 rem en escritorio y de 1 rem en móvil.
-- **Topbar:** borde inferior `--color-borde`, padding inferior de 1 rem. Avatar circular de 40 px con fondo `--color-salvia-claro`, iniciales en grafito y peso 600. En < 576 px ocultar `.topbar-usuario-texto`.
-- **Contenido:** las páginas siguen usando `<main class="container …">`. En `.app-main`, `.container` puede quedar con `max-width: 1200px` y `margin-inline: 0`.
-- **Flash:** se mantiene en posición fija arriba a la derecha, con radio 12 px y `--sombra-hover`.
+- **Menú:** los 7 enlaces, sus `endpoint`, condiciones de rol y cálculo de `activo` quedan **idénticos**; solo se reparten en dos grupos. El Emisor no ve “Administración”. El ítem “Nueva solicitud” sigue marcándose solo en `solicitudes.nueva`.
+- **Estilo del menú** (`.sidebar .nav-link`, para no afectar `.nav-tabs`): enlace de texto `#687168`, 0,875 rem, padding 0,7 rem, radio 8 px; hover `--color-salvia-tenue`; activo `--color-salvia-claro`, grafito, peso 600 e ícono `--color-salvia-oscuro`.
+- **Barra lateral:** fondo blanco, borde derecho `--color-borde`, ancho `--ancho-sidebar`. En ≥ 992 px, `position: sticky; top: 0; height: 100vh; overflow-y: auto`. En < 992 px es *offcanvas* de Bootstrap, sin JS propio.
+- **`.app-shell`:** `display: flex`; **`.app-main`:** `flex: 1; min-width: 0`, padding 2–2,5 rem (1 rem en móvil).
+- **Topbar:** borde inferior `--color-borde`. En < 576 px se oculta `.topbar-usuario-texto`.
+- **Contenido:** las páginas conservan su `container`; dentro de `.app-main` queda con `max-width: 1200px` y `margin-inline: 0`.
+- **Flash:** posición fija arriba a la derecha, radio 12 px y `--sombra-hover`.
 - **Eliminar** `navbar`, `navbar-dark`, `text-white`, `btn-outline-light` y `.barra-principal`.
 - **La palabra “Volver” no puede aparecer en el shell.**
 - Commit: `feat(ui): barra lateral con logo, topbar y favicon`.
 
 ### Fase 3 — Login y página de error
 
-**`auth/login.html` + `static/css/login.css`.** Sigue extendiendo `base.html` (sin sesión no se dibuja el shell).
+**`auth/login.html` + `login.css`** (sigue extendiendo `base.html`; sin sesión no se dibuja el shell).
 
-- **Panel izquierdo** (`.login-brand-panel`), visible solo en ≥ 992 px. Fondo `--color-salvia-claro` con un degradado suave hacia `--color-salvia-tenue`. Contenido, de arriba abajo:
-  1. Logo `logo-facturaciones@2x.png` mostrado a 280 px de ancho (`width="280" height="81"`), `alt="Facturaciones SpA"`.
-  2. Textos **existentes** reestilizados: “SISTEMA DE GESTIÓN” (pequeño, mayúsculas, color secundario) y “Recepción y Generación de Facturas” (2,4 rem, peso 700, grafito). Bajar del tamaño actual de 5,3 rem.
-  3. `login-ilustracion.png` (`alt=""`, `width="720" height="381"`, escalada al 100 % del ancho disponible con un máximo de 460 px).
-  4. Pie existente “Conforme SII · Chile · 2026”, con el ícono cambiado de `bi-star` a `bi-shield-check`.
-- **Eliminar** `.brand-mark` (los 4 cuadrados) y `.brand-name`: los reemplaza el logo real.
-- **Panel derecho:** fondo blanco y formulario centrado con un ancho máximo de 400 px. En < 992 px, mostrar arriba del título el logo a 180 px (`<img class="login-logo-movil d-lg-none" …>`).
-- El formulario, sus campos, `invalid-feedback`, el botón de mostrar contraseña y la nota de seguridad **se conservan tal cual**. Solo cambian clases visuales.
-- `.btn-login`: mismo aspecto que `.btn-primary` (4.2), ancho completo, 44 px de alto.
-- `.password-toggle`: borde `--color-borde`, fondo blanco, ícono en color secundario.
-- `login.css` usa solo tokens de `app.css`, sin colores sueltos.
+- **Panel izquierdo** (`.login-brand-panel`, visible solo en ≥ 992 px): fondo degradado `--color-salvia-claro`→`--color-salvia-tenue`. De arriba abajo: logo `@2x` mostrado a 280 px (`width="280" height="81"`); textos **existentes** “SISTEMA DE GESTIÓN” y “Recepción y Generación de Facturas” (2,4 rem, peso 700); `login-ilustracion.png` (`alt=""`, `width="720" height="381"`, máximo 460 px); pie existente con `bi-shield-check`.
+- **Eliminar** `.brand-mark` y `.brand-name`.
+- **Panel derecho:** fondo blanco, formulario centrado de máximo 400 px. En < 992 px, logo de 180 px sobre el título (`class="login-logo-movil d-lg-none"`).
+- El formulario, sus campos, `invalid-feedback`, el botón de mostrar contraseña y la nota de seguridad **se conservan tal cual**. **No** se agrega “Recordarme” ni “¿Olvidaste tu contraseña?”.
+- `.btn-login` con el aspecto de `.btn-primary`, ancho completo, 44 px; `.password-toggle` con borde `--color-borde` e ícono secundario.
 
-**`errores/error.html`:**
-- Si **no** hay sesión: mostrar el logo (180 px) arriba del código de error. Con sesión, el logo ya está en la barra lateral.
-- El código del error va en grafito, peso 700, y el mensaje en color secundario. Los botones existentes se mantienen.
-- Agregar `aria-hidden="true"` a los íconos que no lo tienen.
+**`errores/error.html`:** sin sesión, logo de 180 px sobre el código; con sesión ya está en la barra. Código en grafito peso 700, mensaje secundario, botones existentes, íconos con `aria-hidden="true"`. Debe seguir cubriendo 403, 404 y 413.
 
 Commit: `feat(ui): login y error con logo e ilustración`.
 
 ### Fase 4 — Panel principal (`dashboard.html`)
 
-- Encabezado: “Panel principal” como título de página y “Bienvenido/a, {nombre}.” en color secundario.
-- Las tarjetas existentes se mantienen (mismo número, textos, enlaces y condiciones). Solo cambia su aspecto:
-  - el ícono del título pasa a un recuadro de 40×40 px con fondo `--color-salvia-claro`, radio 10 px e ícono `--color-salvia-oscuro`, encima del título;
-  - hover de tarjeta: `--sombra-hover` y `translateY(-2px)`, salvo si el usuario prefiere `prefers-reduced-motion: reduce`;
-  - la tarjeta `border-primary` (“Facturas por validar”) mantiene su borde de acento;
-  - los contadores existentes (`badge text-bg-primary` / `text-bg-warning`) toman el estilo de 4.3 automáticamente.
-- Quitar `<h5>` sueltos solo si se reemplazan por la misma jerarquía (`h2.h5`). No agregar tarjetas, totales ni “Actividad reciente”.
-- Commit: `style(ui): panel principal`.
+Estructura de la maqueta, con los datos y condiciones **que la plantilla ya tiene**:
 
-### Fase 5 — Solicitudes
+1. **Bienvenida** (`.bienvenida`): título `Panel principal` (texto exigido por `test_panel.py`), “Bienvenido/a, {nombre}.” y el rol; un botón “Nueva solicitud” solo para Administrador y Emisor.
+2. **Resumen general** (`.seccion-titulo` + rejilla de `metrica`):
+   - Administrador: una tarjeta por estado (`resumen.estados.values()`, con su enlace a `estado_id` si hoy lo tiene), más usuarios, clientes y eventos con los textos y números actuales.
+   - Emisor: una tarjeta por estado de **sus** solicitudes.
+   - Si `resumen` es `None` (error de BD o Lector), conservar la rama actual: sin “Resumen general” ni “Actividad reciente”.
+3. **Accesos rápidos** (`.acceso-rapido`): **fuera** de la condición de `resumen` (el Administrador sin BD debe seguir viendo “Facturas por validar”). Las tarjetas que hoy existen (nueva solicitud, ver solicitudes, facturas por validar con acento, bandeja con su contador, auditoría, usuarios, clientes), con las mismas condiciones de rol. La `alert-info` del flujo pasa a una nota con ícono al pie.
+4. **Actividad reciente:** tabla dentro de una tarjeta con enlace “Ver todas” a la ruta existente. Se conservan las **dos** variantes (Administrador: fecha, acción, usuario, solicitud; Emisor: solicitud, estado, actualización), con `estado_solicitud` en la del Emisor. Sin IP ni detalle completo. Si no hay actividad, el mensaje vacío actual.
 
-Archivos: `listado.html`, `nueva.html`, `detalle.html`, `factura.html`, `editar.html`, `_proceso.html`.
+- No agregar tarjetas, totales ni enlaces que hoy no existan. No usar la palabra “Volver”. En la vista del Emisor no puede aparecer la palabra `Usuarios` (ni en etiquetas ni en textos de ayuda).
+- Commit: `style(ui): panel con bienvenida, resumen, accesos y actividad`.
 
-- **`listado.html`:**
-  - encabezado con título y botón “Nueva solicitud” (ya existe);
-  - el panel de filtros en tarjeta queda igual, pero la etiqueta de cada filtro pasa a 0,8125 rem con peso 600;
-  - en la tabla, los montos van con `fw-semibold`;
-  - la columna Estado usa `estado_solicitud(solicitud.estado_nombre)` (4.4);
-  - las acciones quedan como hoy (enlaces/botones `btn-sm`).
-- **`nueva.html` / `editar.html`:**
-  - tarjeta con un encabezado separado por borde;
-  - **sin** agrupar campos en secciones numeradas si eso obliga a mover campos entre formularios. Solo agrupar visualmente si los campos ya son contiguos;
-  - pie de acciones alineado a la derecha.
-- **`_proceso.html`:**
-  - solo CSS: `.pasos-proceso` con etiquetas tipo píldora (4.3) y la flecha en color secundario;
-  - `.nav-tabs` subrayadas (4.2);
-  - **no tocar** el marcado `aria-current="step">{{ paso }}`.
-- **`detalle.html` / `factura.html`:**
-  - las tarjetas existentes toman el estilo global;
-  - los pares etiqueta/valor (`dl`, `row`) muestran la etiqueta en 0,8125 rem y color secundario, y el valor en grafito con `fw-medium`;
-  - en `detalle.html`, el estado de “Gestión del estado” usa `estado_solicitud`;
-  - en `factura.html`, el diccionario `colores` y sus clases no cambian;
-  - las tarjetas `border-primary` / `border-success` mantienen su borde de acento;
-  - `alert-secondary` queda como aviso neutro.
-- Commit: `style(ui): solicitudes, detalle y factura`.
+### Fase 5 — Listado de solicitudes (`solicitudes/listado.html`)
 
-### Fase 6 — Clientes
+1. Encabezado: título y botón “Nueva solicitud” existente.
+2. **Chips de estado** (`.chip-estado`): “Todas” + un chip por estado de `estados` (el mismo contexto que alimenta el `select` Estado). Cada chip es un **enlace GET** que conserva los filtros activos salvo el número de página y fija `estado_id`; el activo coincide con el valor actual. **Sin conteos.** El `select` Estado se conserva (es el campo real del formulario).
+   - El parámetro de página es `pagina`: se excluye para volver a la página 1.
+   - Construir la URL con `url_for`, nunca concatenando texto:
+     ```jinja
+     {% set filtros = request.args.to_dict() %}
+     {% set _ = filtros.pop('pagina', None) %}
+     {% set _ = filtros.pop('estado_id', None) %}
+     <a class="chip-estado{{ ' active' if not request.args.get('estado_id') }}"
+        href="{{ url_for('solicitudes.listado', **filtros) }}">Todas</a>
+     {% for estado in estados %}
+     <a class="chip-estado{{ ' active' if request.args.get('estado_id') == estado.id|string }}"
+        href="{{ url_for('solicitudes.listado', estado_id=estado.id, **filtros) }}">{{ estado.nombre }}</a>
+     {% endfor %}
+     ```
+     Ajustar `estados`, `estado.id` y `estado.nombre` a los nombres reales de la plantilla; agregar `aria-current="true"` al chip activo.
+3. **Tarjeta de filtros** (`.panel-filtros`): campos `q`, `cliente_id`, `rut`, `desde`, `hasta`, `monto`, `estado_id`, `emisor_id` (solo Administrador) con sus `name` y `value` actuales; botón Filtrar y enlace “Limpiar filtros” a `url_for('solicitudes.listado')`.
+4. **Tabla** en tarjeta con `.table-responsive`, cabecera en mayúsculas **solo por CSS** (los `<th scope="col">…</th>` no cambian): RUT, Cliente, Concepto (truncado con `title`, conservar), Monto (`fw-semibold`), Fecha, Origen, Responsable (solo Administrador), Estado con `estado_solicitud`, Acciones (Ver / Factura / Editar, mismas condiciones).
+5. Paginación Anterior/Siguiente con el estilo de `.pagination`, misma lógica y mismos textos (`Siguiente` lo verifica un test). Mensaje vacío existente.
+- Commit: `style(ui): listado de solicitudes con chips y filtros`.
 
-- **`clientes/listado.html`:**
-  - tabla en tarjeta;
-  - a la izquierda del nombre, un avatar con `iniciales(cliente.<campo de nombre existente>)` (círculo de 32 px, `aria-hidden="true"`). Verificar el nombre real del campo en la plantilla;
-  - las etiquetas activo/inactivo quedan como están (`text-bg-success` / `text-bg-secondary` → 4.3).
-- **`clientes/formulario.html`:**
-  - tarjeta con rejilla de 2 columnas en ≥ 768 px (`row g-3` + `col-md-6`) **solo reordenando columnas, no campos**;
-  - acciones Cancelar/Guardar al pie con los textos actuales.
-- Sin buscador, filtros ni indicadores nuevos.
+### Fase 6 — Nueva solicitud y edición (`nueva.html`, `editar.html`)
+
+- Tarjeta con encabezado e ícono. Mantener `enctype="multipart/form-data"`, `data-bloquear-envio`, `csrf_token`, `token_envio` y el orden de los campos.
+- **Secciones numeradas** (`.seccion-formulario`) solo con campos contiguos: 1 “Cliente y concepto” (`cliente_id`, `concepto`), 2 “Datos de facturación” (`monto_bruto`, `fecha_emision`, `tipo_afectacion`, `nro_orden_compra`), 3 “Documentos adjuntos” (`adjuntos`). No mover campos entre secciones si cambia el orden de envío.
+- **Concepto:** `.ayuda-campo` con `<span id="contador-concepto" class="contador">0 / 500</span>` (texto inicial estático; `ui.js` lo actualiza). Si se implementa 4.7, cargar `ui.js` desde `{% block scripts %}`.
+- **Adjuntos:** `input` con `.form-control`, mismas restricciones (`multiple`, `accept=".pdf,.png,.jpg,.jpeg"`); se conserva el texto de ayuda existente “Opcional. PDF, PNG o JPG; hasta 3 archivos de 5 MB.” y los mensajes de error de adjuntos.
+- **Errores de validación:** `invalid-feedback` y valores recuperados (`values`) como hoy.
+- **Botones:** conservar los tres (Registrar solicitud, Cancelar, Abrir formulario nuevo) con los mismos textos, alineados a la derecha. No hay ficha del cliente (tabla 2.3).
+- `editar.html`: mismo estilo; sin la sección de adjuntos si hoy no existe.
+- Commit: `style(ui): nueva solicitud en secciones y edición`.
+
+### Fase 7 — Detalle, factura y proceso (`detalle.html`, `factura.html`, `_proceso.html`)
+
+- **Encabezado:** “Solicitud {public_id[:8]}” (en `factura.html` debe seguir el texto `Solicitud 1234abcd`), `estado_solicitud` y las migas.
+- **`_proceso.html`:** solo CSS. `.pasos-proceso` con píldoras (4.3), `.nav-tabs` subrayadas (4.2). **No tocar** `aria-current="step">{{ paso }}`.
+- **Banner de estado** (`.banner-estado`) al inicio del detalle: borde izquierdo según estado y etiqueta; incluye el **motivo de rechazo** donde hoy se muestra.
+- **Tarjetas** (mismo contenido y condiciones):
+  - Receptor histórico y Datos de facturación en `.detalle-rejilla`; monto y concepto destacados.
+  - **Documentos adjuntos:** respetar `adjuntos is none` (aviso de que no se pudieron cargar), lista (`.fila-archivo` con ícono por extensión, nombre, tamaño y enlace/botón de descarga existente) y vacío (mensaje actual). Nombres siempre escapados.
+  - **Documento XML:** estado actual y formulario de carga (`archivo_xml`) con su `enctype`.
+  - **Envío por correo:** botón existente con `data-confirmar` y tabla de envíos en `.table-responsive`.
+  - **Gestión del estado** (Administrador): botones aprobar / devolver / rechazar con sus `data-confirmar` y campo de motivo; `btn-success` / `btn-warning` / `btn-danger` mantienen su semántica.
+- “Continuar a la factura” se mantiene.
+- `factura.html`: el diccionario `colores` y sus clases no cambian; versiones en tabla de tarjeta.
+- Commit: `style(ui): detalle de solicitud, factura y proceso`.
+
+### Fase 8 — Clientes (`clientes/listado.html`, `clientes/formulario.html`)
+
+- **Listado:** encabezado con botón “Nuevo cliente” (ya existe), tabla en tarjeta con avatar `iniciales(cliente.razon_social)` (32 px, `aria-hidden="true"`), RUT, correo de contacto y etiqueta activo/inactivo (4.3). Acciones existentes como `btn-sm`.
+- **Formulario:** tarjeta con rejilla `row g-3` + `col-md-6` **reordenando columnas, no campos**; acciones Cancelar/Guardar al pie con los textos actuales.
+- Sin buscador, filtros ni totales nuevos.
 - Commit: `style(ui): clientes`.
 
-### Fase 7 — Administración
+### Fase 9 — Usuarios, perfiles y permisos (`admin/usuarios.html`, `usuario_editar.html`)
 
-- **`admin/usuarios.html`:**
-  - se mantiene el layout de 2 columnas (crear usuario / usuarios registrados);
-  - avatar de iniciales en la tabla;
-  - etiquetas de rol y estado con 4.3 (sin cambiar sus clases);
-  - las acciones quedan como `btn-sm`.
-- **`admin/usuario_editar.html`:** tarjeta de formulario con encabezado e ícono `bi-person` en recuadro salvia y acciones al pie.
-- **`admin/correos.html`:**
-  - botón “Revisar bandeja” existente como primario;
-  - aviso IMAP (`alert-warning`) con el estilo global;
-  - selector de estado (`form-select`) re-tematizado;
-  - tabla en tarjeta;
-  - **el diccionario `colores` no cambia** (`'dark'` ya se ve neutro gracias a 4.3).
-- **`admin/auditoria.html`:** tabla en tarjeta y fechas en `small` con color secundario.
-- Commit: `style(ui): administración`.
+- **Encabezado** “Gestión de usuarios”.
+- **Totales** (`metrica`): total, activos e inactivos calculados en la plantilla desde `usuarios` y `usuario.activo` (tabla 2.3).
+- **Crear usuario** (columna izquierda): `form` con sus campos, ícono en recuadro salvia y botón primario. Si hay botón de mostrar contraseña, **no** reutilizar los ids de `login.js` (`#password`, `#togglePassword`) ni agregar JS.
+- **Usuarios registrados** (derecha): tabla en tarjeta con avatar de iniciales, nombre, correo, etiqueta de rol y estado, y acciones Editar / Desactivar–Reactivar con sus `data-confirmar`. Mensaje vacío existente. **Sin buscador.**
+- **Perfiles y permisos:**
+  - una `.tarjeta-perfil` por perfil de `perfiles` (nombre, descripción si existe, `usuarios_activos`);
+  - `.matriz-permisos` capacidades × perfiles dentro de `.table-responsive`, **con el marcado actual de cada celda** (`aria-label="Permitido"` / `visually-hidden` “No permitido”).
+- `usuario_editar.html`: tarjeta con encabezado, `bi-person` en recuadro salvia y acciones al pie.
+- Commit: `style(ui): usuarios, perfiles y permisos`.
 
-### Fase 8 — Responsive, accesibilidad y revisión final
+### Fase 10 — Bandeja de correos y auditoría (`admin/correos.html`, `admin/auditoria.html`)
 
-- **Responsive:**
-  - 1280 px: barra lateral visible y contenido con aire;
-  - 992 px: la barra lateral pasa a *offcanvas* y aparece el botón ☰;
-  - 576 px: topbar compacta, tablas dentro de `.table-responsive` (ya existe en 7 lugares) y botones de acción que bajan de línea sin superponerse.
-- **Accesibilidad:**
-  - `:focus-visible` visible en enlaces, botones, campos y elementos del menú;
-  - orden de tabulación: botón de menú → menú → contenido;
-  - el *offcanvas* se cierra con Escape (Bootstrap) y devuelve el foco;
-  - todos los íconos decorativos con `aria-hidden="true"`.
-- Comprobar que ninguna combinación de texto/fondo baje de 4,5:1. Los pares de la sección 4 ya están medidos; si se introduce otro, medirlo.
-- `@media print`: ocultar `.sidebar`, `.topbar`, `.flash-container` y las migas.
+- **Correos:** botón “Revisar bandeja” como primario, aviso IMAP (`alert-warning`), selector de estado re-tematizado, tabla en tarjeta. El diccionario `colores` no cambia (`'dark'` se ve neutro por 4.3).
+- **Auditoría:** tabla en tarjeta, fechas en `small` secundario, etiquetas de acción como badges neutros si ya son `badge`. No mostrar IP ni detalles que hoy no se muestren.
+- Commit: `style(ui): bandeja de correos y auditoría`.
+
+### Fase 11 — Responsive, accesibilidad y revisión final
+
+- **Responsive:** 1280 px (barra visible), 992 px (*offcanvas* y botón ☰), 576 px (topbar compacta, tablas en `.table-responsive`, rejilla de métricas a 1 columna, chips con scroll horizontal, botones que bajan de línea).
+- **Accesibilidad:** `:focus-visible` en enlaces, botones, campos y menú; orden de tabulación botón → menú → contenido; Escape cierra el *offcanvas*; íconos decorativos con `aria-hidden="true"`; chips con `aria-current="true"` en el activo; tarjetas-enlace con un único enlace (`stretched-link`).
+- **Contraste:** ningún par texto/fondo bajo 4,5:1; medir cualquier par nuevo.
+- **Impresión:** ocultar `.sidebar`, `.topbar`, `.flash-container` y migas.
 - Commit: `style(ui): responsive, foco y estilos de impresión`.
 
 ---
 
 ## 6. Verificación
 
-Ejecutar desde la carpeta que contiene `app/`.
+Ejecutar desde la subcarpeta del proyecto (la que contiene `app/`), en la rama `feat/facturaciones-v2-sec`. La base de comparación es la etiqueta `rediseno-base` (Fase 0):
+
+```bash
+BASE=rediseno-base
+git rev-parse --abbrev-ref HEAD   # debe imprimir feat/facturaciones-v2-sec
+```
 
 ### 6.1 Automática (obligatoria antes de cada commit)
 
 ```bash
-# 1. Tests
+BASE=rediseno-base   # etiqueta creada en la Fase 0
+
+# 1. Tests (todos los existentes, incluidos los de las funcionalidades nuevas)
 pytest -q
 
 # 2. Nada fuera del alcance (debe salir vacío)
-git diff --name-only main... | grep -vE '^(.*/)?app/(templates/|static/(css|img|fonts)/)' | grep -v 'docs/diseno/'
+git diff --name-only --relative "$BASE" \
+  | grep -vE '^app/(templates/|static/(css|img|fonts)/|static/js/ui\.js$)' \
+  | grep -v '^docs/diseno/'
 
 # 3. Restos del tema oscuro o dependencias bloqueadas (debe salir vacío)
 grep -rnE 'data-bs-theme="dark"|navbar-dark|text-white|btn-outline-light|unpkg\.com|fonts\.googleapis|lucide|barra-principal|--navy|--mint' app/templates app/static/css
 
-# 4. Estilos o JS en línea (debe salir vacío)
-grep -rnE 'style=|onclick=|onsubmit=|<script>' app/templates
+# 4. Estilos o JS en línea, y |safe (debe salir vacío)
+grep -rnE 'style=|onclick=|onsubmit=|<script>|\|\s*safe' app/templates
 
 # 5. !important solo en el bloque de .badge (revisar cada coincidencia)
 grep -n '!important' app/static/css/*.css
 
-# 6. Ningún atributo funcional ni lógica Jinja eliminados (debe imprimir solo "OK …")
-patron='(name|id|for|action|method|enctype|value|required|maxlength|minlength|pattern|accept|data-[a-z-]+)="[^"]*"|url_for\([^)]*\)|\{%-? *(if|elif|for|set|from|import|macro|call)[^%]*%\}'
-for f in $(git diff --name-only --relative main... -- app/templates); do
+# 6. Ningún JS existente modificado (debe salir vacío)
+git diff --name-only --relative "$BASE" -- app/static/js/app.js app/static/js/login.js
+
+# 7. Ningún atributo funcional ni lógica Jinja eliminados (debe imprimir solo "OK …")
+patron='(name|id|for|action|method|enctype|accept|value|required|maxlength|minlength|pattern|multiple|novalidate|autocomplete|data-[a-z-]+)="[^"]*"|url_for\([^)]*\)|\{%-? *(if|elif|else|for|set|from|import|macro|call)[^%]*%\}'
+for f in $(git diff --name-only --relative "$BASE" -- app/templates); do
   [ -f "$f" ] || continue
-  git cat-file -e "main:./$f" 2>/dev/null || { echo "NUEVO $f"; continue; }
-  faltan=$(comm -23 <(git show "main:./$f" | grep -oE "$patron" | sort -u) <(grep -oE "$patron" "$f" | sort -u))
+  git cat-file -e "$BASE:./$f" 2>/dev/null || { echo "NUEVO $f"; continue; }
+  faltan=$(comm -23 <(git show "$BASE:./$f" | grep -oE "$patron" | sort -u) <(grep -oE "$patron" "$f" | sort -u))
   [ -z "$faltan" ] && echo "OK $f" || { echo "REVISAR $f"; echo "$faltan"; }
+done
+
+# 8. Cadenas que exigen los tests de navegación (cada una debe aparecer)
+grep -c 'aria-label="Ruta de navegación"' app/templates/base.html
+grep -c 'class="btn btn-outline-secondary btn-sm"' app/templates/base.html
+grep -c 'aria-current="step">{{ paso }}' app/templates/solicitudes/_proceso.html
+grep -c '<th scope="col">Concepto</th>' app/templates/solicitudes/listado.html
+grep -c 'aria-label="Permitido"' app/templates/admin/usuarios.html
+
+# 9. Ningún texto visible protegido por tests desapareció (debe salir vacío)
+for s in "Panel principal" "Facturas por validar" "Actividad reciente" "Usuarios activos" \
+         "Clientes activos" "Eventos registrados" "Siguiente" "Documentos adjuntos" \
+         "Sin documentos adjuntos." "No se pudieron cargar los documentos adjuntos." \
+         "Receptor histórico" "Perfiles y permisos" "No permitido" "Reprocesar" \
+         "Historial de versiones" "Cerrar sesión"; do
+  grep -rqF "$s" app/templates || echo "FALTA: $s"
 done
 ```
 
-> En la verificación 6 solo es aceptable que falte algo si se movió a `_ui.html` o a `base.html` sin cambiar su comportamiento. Si aparece, explicarlo en el resumen de la fase.
+> En la verificación 7 solo es aceptable que falte algo si se movió a `_ui.html` o a `base.html` sin cambiar su comportamiento; explicarlo en el resumen. La base es siempre `rediseno-base`, nunca `main` (puede no tener las funcionalidades ni sus tests).
 
 ### 6.2 Manual (la hace la persona en el navegador)
 
-Para **Administrador** y **Emisor**:
+Para **Administrador** y **Emisor** (y **Lector** para el panel y el error 403):
 
-1. **Login:** el logo y la ilustración se ven sin bordes extraños; mostrar/ocultar la contraseña funciona; los errores de validación aparecen.
-2. **Favicon** visible en la pestaña.
-3. **Barra lateral:** el logo se ve nítido; el ítem activo coincide con la página; el Emisor no ve “Administración”.
-4. **Pantalla < 992 px:** el botón ☰ abre y cierra el menú y Escape lo cierra.
-5. **Solicitudes:** filtros, paginación (si existe), nueva, detalle, factura, editar, aprobar/devolver (confirmación `data-confirmar`) y envío por correo funcionan como antes.
-6. **Estados:** cada estado tiene su color; los pasos del proceso y las pestañas se ven bien.
-7. **Clientes, Usuarios, Bandeja de correos y Auditoría:** los formularios guardan y las tablas se leen.
-8. **Página de error:** abrir una ruta inexistente con y sin sesión.
-9. **Consola del navegador:** sin errores de CSP ni 404 de recursos.
+1. **Login:** logo e ilustración sin bordes extraños; mostrar/ocultar contraseña y errores de validación funcionan.
+2. **Favicon** visible; sin 404 ni errores de CSP en la consola.
+3. **Barra lateral:** ítem activo correcto; el Emisor no ve “Administración”; ☰ y Escape funcionan bajo 992 px.
+4. **Panel:** los totales coinciden con los de antes del rediseño; la actividad muestra lo mismo; el Emisor solo ve lo suyo.
+5. **Listado:** buscar por `q` (cliente o concepto), filtrar por cliente y por estado, chips de estado, paginación con filtros conservados, columnas Concepto/Origen/Responsable.
+6. **Nueva solicitud:** crear con 0, 1 y varios adjuntos; archivo de tipo o tamaño no permitido muestra el error existente; contador de caracteres (si se implementó); el doble clic no duplica el envío.
+7. **Detalle:** adjuntos se descargan; cargar XML; enviar correo; aprobar / devolver / rechazar con confirmación; banner y motivo de rechazo.
+8. **Usuarios:** crear, editar, desactivar/reactivar; “Perfiles y permisos” coincide con los permisos reales.
+9. **Clientes, Bandeja de correos y Auditoría:** formularios guardan, tablas se leen.
+10. **Error:** abrir una ruta inexistente con y sin sesión; subir un archivo muy grande (413).
+11. **Impresión** del detalle sin barra lateral.
 
 ---
 
 ## 7. Commits sugeridos
 
+Todos sobre `feat/facturaciones-v2-sec`, con `pytest -q` en verde. Si la persona usa atribución de Claude Code en sus commits, se mantiene la que tenga configurada.
+
 1. `chore(ui): agrega logo, favicon e ilustración optimizados`
-2. `style(ui): tema claro salvia y re-tema de Bootstrap`
+2. `style(ui): tema claro salvia, re-tema de Bootstrap y componentes`
 3. `feat(ui): barra lateral con logo, topbar y favicon`
 4. `feat(ui): login y error con logo e ilustración`
-5. `style(ui): panel principal`
-6. `style(ui): solicitudes, detalle y factura`
-7. `style(ui): clientes`
-8. `style(ui): administración`
-9. `style(ui): responsive, foco y estilos de impresión`
+5. `style(ui): panel con bienvenida, resumen, accesos y actividad`
+6. `style(ui): listado de solicitudes con chips y filtros`
+7. `style(ui): nueva solicitud en secciones y edición`
+8. `style(ui): detalle de solicitud, factura y proceso`
+9. `style(ui): clientes`
+10. `style(ui): usuarios, perfiles y permisos`
+11. `style(ui): bandeja de correos y auditoría`
+12. `style(ui): responsive, foco y estilos de impresión`
 
 ---
 
 ## 8. Prompt para Claude Code (repetir por fase)
 
 ```
-Lee docs/diseno/PLAN_REDISENO_PLATAFORMA.md completo.
-Ejecuta SOLO la Fase N.
-Cumple las reglas de la sección 1 sin excepciones: solo cambias diseño
-(plantillas, CSS e imágenes), nunca rutas, Python, JavaScript, tests ni la CSP.
-Lee cada plantilla completa antes de editarla.
-Al terminar, corre todas las verificaciones de la sección 6.1 y, si todo pasa,
+Trabaja en la rama feat/facturaciones-v2-sec, desde la subcarpeta del proyecto
+(la que contiene app/). No cambies de rama, no hagas push, rebase ni merge.
+Lee docs/diseno/PLAN_REDISENO_PLATAFORMA.md (v2) completo.
+Ejecuta SOLO la Fase N. (En la Fase 0 crea la etiqueta rediseno-base;
+en las demás, compárate siempre contra ella.)
+Las funcionalidades de la maqueta ya existen en el backend: solo las vistes,
+no las reimplementes. Cumple la sección 1 sin excepciones: cambias plantillas,
+CSS, imágenes y, como máximo, app/static/js/ui.js; nunca rutas, Python,
+migraciones, tests, la CSP ni app.js / login.js.
+Lee cada plantilla completa antes de editarla y confirma que cada variable
+que uses ya existe en su contexto; si no existe, no apliques ese elemento.
+Al terminar, corre las verificaciones de la sección 6.1 y, si todo pasa,
 haz el commit indicado en la sección 7.
 Entrega un resumen corto: archivos tocados, resultado de pytest y de cada
-verificación, y lo que no pudiste comprobar visualmente.
-Si una tarea de la fase choca con una regla, no la hagas y explica por qué.
+verificación, elementos "no aplicados" y lo que no pudiste comprobar visualmente.
+Si una tarea choca con una regla, no la hagas y explica por qué.
 ```
 
 ---
@@ -607,20 +782,27 @@ Si una tarea de la fase choca con una regla, no la hagas y explica por qué.
 
 | Riesgo | Mitigación |
 |---|---|
-| Un test compara marcado exacto (botón Volver, `aria-current`, menú) | Cadenas listadas en 1.3. Si un test falla, revertir el marcado, no el test |
-| `.text-bg-*` de Bootstrap usa `!important` | Sobrescribir solo con `.badge.text-bg-*` (mayor especificidad), único `!important` permitido (4.3) |
-| El *offcanvas* no abre en móvil | Requiere `bootstrap.bundle.min.js` (ya cargado) y que el `id="menu-principal"` coincida con `data-bs-target` |
-| Archivos de Inter ausentes | Sin `@font-face`, la fuente cae a `system-ui` y nada se rompe |
-| Al envolver el contenido en `.app-shell` se rompe el login o la página de error sin sesión | La envoltura se abre y cierra con `{% if current_user.is_authenticated %}`; probar ambas páginas sin sesión |
-| Se agrega funcionalidad por imitar la maqueta | Regla 1.2 y verificación 6.1-6. Ante la duda, no agregar |
-| Logo sobre fondo oscuro o salvia medio | Regla de la sección 3: el logo solo va sobre blanco o `--color-salvia-claro` |
-| Los nombres de estado no coinciden con el macro | Los valores salen de `_proceso.html` (`Pendiente`, `En revisión`, `En corrección`, `Aprobada`, `Rechazada`); un estado desconocido cae a gris sin romper nada |
+| Un test compara marcado exacto (botón Volver, `aria-current`, menú) | Cadenas en 1.3 y verificación 6.1-8. Si falla, revertir el marcado, no el test |
+| `.text-bg-*` de Bootstrap usa `!important` | Sobrescribir solo con `.badge.text-bg-*`; único `!important` permitido (4.3) |
+| El *offcanvas* no abre en móvil | Requiere `bootstrap.bundle.min.js` (ya cargado) y que `id="menu-principal"` coincida con `data-bs-target` |
+| Archivos de Inter ausentes | Sin `@font-face` cae a `system-ui` |
+| La envoltura `.app-shell` rompe login o error sin sesión | Se abre y cierra con `{% if current_user.is_authenticated %}`; probar ambas páginas sin sesión |
+| Se reimplementa lógica por imitar la maqueta | Regla 1.2 y tabla 2.3. Ante la duda, no aplicar |
+| Chips de estado pierden filtros o rompen la paginación | Construir la URL con `request.args` excluyendo solo la página; probar con `q` + `cliente_id` activos |
+| Un campo de contexto no existe con el nombre esperado (por ejemplo, estado del usuario) | Verificar en Fase 0; si falta, omitir el elemento |
+| Nombres de archivo de adjuntos con caracteres especiales | Jinja escapa por defecto; prohibido `|safe` (verificación 6.1-4) |
+| `resumen` o `adjuntos` en `None` por error de BD | Conservar las ramas existentes y probar ese caso con el estado vacío |
+| Un texto protegido por tests (tabla 1.3) se reescribe al imitar la maqueta | Verificación 6.1-9; los textos existentes no se cambian |
+| Se trabaja contra `main` y se comparan archivos sin las funcionalidades | Base fija `rediseno-base` y verificación de rama al inicio de 6.1 |
+| Comandos ejecutados desde la raíz de Git (carpeta exterior) | Rutas relativas fallan; ejecutar siempre desde la subcarpeta con `--relative` |
+| Logo sobre fondo oscuro o salvia medio | Solo sobre blanco o `--color-salvia-claro` |
+| Estados desconocidos en el macro | Caen a gris sin romper nada |
 
 ---
 
 ## 10. Fuera de alcance
 
 - Modo oscuro alternativo o selector de tema.
-- Funcionalidades de la maqueta inexistentes en el backend: buscadores, filtros en vivo, estadísticas, historial de actividad, autocompletado de clientes, carga de adjuntos, “Recordarme”, recuperación de contraseña.
-- Cambios en la CSP, en rutas, en servicios o en la base de datos.
-- Rediseño de correos HTML enviados al cliente o de documentos PDF/XML.
+- Funcionalidades de la maqueta sin backend: ficha de solo lectura del cliente, conteos por estado en los chips, buscador y filtros de usuarios en vivo, autocompletado, arrastrar y soltar archivos, “Recordarme”, recuperación de contraseña.
+- Cambios en la CSP, rutas, servicios, permisos, migraciones o base de datos.
+- Rediseño de correos enviados (`correos/*.txt`) o de documentos PDF/XML.
