@@ -1,0 +1,28 @@
+{# Solo presentación: no contiene lógica de negocio ni consulta datos. #}
+
+{% macro estado_solicitud(nombre) -%}
+{%- set clases = {
+    'Pendiente': 'secondary',
+    'En revisión': 'primary',
+    'En corrección': 'warning',
+    'Aprobada': 'success',
+    'Rechazada': 'danger',
+} -%}
+<span class="badge text-bg-{{ clases.get(nombre, 'secondary') }}">{{ nombre }}</span>
+{%- endmacro %}
+
+{% macro iniciales(nombre) -%}
+{{ (nombre or '?').split()[:2] | map('first') | join('') | upper }}
+{%- endmacro %}
+
+{# Tarjeta de resumen: icono, valor, etiqueta y, si se da, un enlace existente. #}
+{% macro metrica(valor, etiqueta, icono, url=None) -%}
+<div class="metrica">
+    <span class="metrica-icono" aria-hidden="true"><i class="bi {{ icono }}"></i></span>
+    <div class="metrica-texto">
+        <span class="metrica-valor">{{ valor }}</span>
+        {% if url %}<a class="metrica-etiqueta stretched-link" href="{{ url }}">{{ etiqueta }}</a>
+        {% else %}<span class="metrica-etiqueta">{{ etiqueta }}</span>{% endif %}
+    </div>
+</div>
+{%- endmacro %}
