@@ -12,22 +12,48 @@ Solicitud | Facturaciones SpA
 
 {% block content %}
 {% from "solicitudes/_proceso.html" import navegacion_proceso %}
+{% from "_ui.html" import estado_solicitud %}
+{% set tono_banner = {
+    'Pendiente': 'neutro',
+    'En revisión': 'info',
+    'En corrección': 'aviso',
+    'Aprobada': 'ok',
+    'Rechazada': 'error',
+}.get(solicitud.estado_nombre, 'neutro') %}
+{% set iconos_adjunto = {'PDF': 'bi-file-earmark-pdf', 'PNG': 'bi-file-earmark-image',
+                         'JPEG': 'bi-file-earmark-image'} %}
 <main class="container pt-3 pb-5">
     <header class="mb-3">
-        <h1 class="h2">Solicitud registrada</h1>
+        <p class="seccion-titulo mb-1">Solicitud registrada</p>
+        <h1 class="h2 mb-1">Solicitud {{ solicitud.public_id[:8] }}</h1>
 
-        <p class="text-body-secondary text-break mb-1">
+        <p class="text-body-secondary text-break small mb-0">
             Identificador: {{ solicitud.public_id }}
-        </p>
-        <p class="mb-0">
-            Versión: {{ solicitud.version }}
-            {% if factura_actual %}
-            · Factura v{{ factura_actual.version }} ({{ factura_actual.estado }})
-            {% endif %}
         </p>
     </header>
 
     {{ navegacion_proceso(solicitud, 'detalle', editable) }}
+
+    <section class="banner-estado banner-estado--{{ tono_banner }}" aria-label="Estado de la solicitud">
+        <div>
+            <p class="mb-0">
+                Versión: {{ solicitud.version }}
+                {% if factura_actual %}
+                · Factura v{{ factura_actual.version }} ({{ factura_actual.estado }})
+                {% endif %}
+            </p>
+
+            {% if solicitud.estado_nombre == 'Rechazada'
+                  and solicitud.motivo_rechazo %}
+            <div class="mt-2">
+                <h2 class="h6 mb-1">Motivo del rechazo</h2>
+                <p class="mb-0 texto-preformateado">{{ solicitud.motivo_rechazo }}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        {{ estado_solicitud(solicitud.estado_nombre) }}
+    </section>
 
     <div class="row g-4">
         <section class="col-12 col-lg-6">
@@ -35,24 +61,34 @@ Solicitud | Facturaciones SpA
                 <div class="card-body p-4">
                     <h2 class="h5 mb-3">Receptor histórico</h2>
 
-                    <dl class="mb-0">
-                        <dt>RUT</dt>
-                        <dd>{{ solicitud.rut }}</dd>
+                    <dl class="detalle-rejilla">
+                        <div>
+                            <dt>RUT</dt>
+                            <dd>{{ solicitud.rut }}</dd>
+                        </div>
 
-                        <dt>Razón social</dt>
-                        <dd>{{ solicitud.nombre }}</dd>
+                        <div>
+                            <dt>Razón social</dt>
+                            <dd>{{ solicitud.nombre }}</dd>
+                        </div>
 
-                        <dt>Giro</dt>
-                        <dd>{{ solicitud.giro }}</dd>
+                        <div>
+                            <dt>Giro</dt>
+                            <dd>{{ solicitud.giro }}</dd>
+                        </div>
 
-                        <dt>Dirección</dt>
-                        <dd>{{ solicitud.direccion }}</dd>
+                        <div>
+                            <dt>Dirección</dt>
+                            <dd>{{ solicitud.direccion }}</dd>
+                        </div>
 
-                        <dt>Correo de contacto</dt>
-                        <dd>
-                            {{ solicitud.email_contacto_receptor
-                               or 'No registrado históricamente' }}
-                        </dd>
+                        <div class="detalle-ancho">
+                            <dt>Correo de contacto</dt>
+                            <dd>
+                                {{ solicitud.email_contacto_receptor
+                                   or 'No registrado históricamente' }}
+                            </dd>
+                        </div>
                     </dl>
                 </div>
             </div>
@@ -63,33 +99,47 @@ Solicitud | Facturaciones SpA
                 <div class="card-body p-4">
                     <h2 class="h5 mb-3">Datos de facturación</h2>
 
-                    <dl class="mb-0">
-                        <dt>Concepto</dt>
-                        <dd class="texto-preformateado">{{ solicitud.concepto }}</dd>
+                    <dl class="detalle-rejilla">
+                        <div class="detalle-ancho">
+                            <dt>Monto bruto</dt>
+                            <dd class="valor-destacado">
+                                {{ "{:,.0f}".format(
+                                    solicitud.monto_bruto
+                                ).replace(",", ".") }} CLP
+                            </dd>
+                        </div>
 
-                        <dt>Monto bruto</dt>
-                        <dd>
-                            {{ "{:,.0f}".format(
-                                solicitud.monto_bruto
-                            ).replace(",", ".") }} CLP
-                        </dd>
+                        <div class="detalle-ancho">
+                            <dt>Concepto</dt>
+                            <dd class="texto-preformateado">{{ solicitud.concepto }}</dd>
+                        </div>
 
-                        <dt>Fecha de emisión solicitada</dt>
-                        <dd>{{ solicitud.fecha_emision }}</dd>
+                        <div>
+                            <dt>Fecha de emisión solicitada</dt>
+                            <dd>{{ solicitud.fecha_emision }}</dd>
+                        </div>
 
-                        <dt>Afectación</dt>
-                        <dd>{{ solicitud.tipo_afectacion }}</dd>
+                        <div>
+                            <dt>Afectación</dt>
+                            <dd>{{ solicitud.tipo_afectacion }}</dd>
+                        </div>
 
-                        <dt>Orden de compra</dt>
-                        <dd>
-                            {{ solicitud.nro_orden_compra or 'Sin orden' }}
-                        </dd>
+                        <div>
+                            <dt>Orden de compra</dt>
+                            <dd>
+                                {{ solicitud.nro_orden_compra or 'Sin orden' }}
+                            </dd>
+                        </div>
 
-                        <dt>Correo del solicitante</dt>
-                        <dd>{{ solicitud.email_emisor }}</dd>
+                        <div>
+                            <dt>Origen</dt>
+                            <dd>{{ solicitud.origen_nombre }}</dd>
+                        </div>
 
-                        <dt>Origen</dt>
-                        <dd>{{ solicitud.origen_nombre }}</dd>
+                        <div class="detalle-ancho">
+                            <dt>Correo del solicitante</dt>
+                            <dd>{{ solicitud.email_emisor }}</dd>
+                        </div>
                     </dl>
                 </div>
             </div>
@@ -105,42 +155,33 @@ Solicitud | Facturaciones SpA
                 No se pudieron cargar los documentos adjuntos.
             </p>
             {% elif adjuntos %}
-            <div class="table-responsive">
-                <table class="table table-sm align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Tipo</th>
-                            <th scope="col">Tamaño</th>
-                            <th scope="col">Cargado</th>
-                            <th scope="col"><span class="visually-hidden">Acciones</span></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for adjunto in adjuntos %}
-                        <tr>
-                            <td class="text-break">{{ adjunto.nombre_original }}</td>
-                            <td>{{ adjunto.tipo }}</td>
-                            <td class="text-nowrap">
-                                {{ (adjunto.tamano + 1023) // 1024 }} KB
-                            </td>
-                            <td class="text-nowrap">{{ adjunto.subido_en }}</td>
-                            <td class="text-end">
-                                <a
-                                    href="{{ url_for('solicitudes.descargar_adjunto',
-                                                     public_id=solicitud.public_id,
-                                                     adjunto_id=adjunto.id) }}"
-                                    class="btn btn-outline-primary btn-sm"
-                                >
-                                    <i class="bi bi-download" aria-hidden="true"></i>
-                                    Descargar
-                                </a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+            <ul class="list-unstyled mb-0">
+                {% for adjunto in adjuntos %}
+                <li class="fila-archivo">
+                    <span class="fila-archivo-icono" aria-hidden="true">
+                        <i class="bi {{ iconos_adjunto.get(adjunto.tipo, 'bi-file-earmark') }}"></i>
+                    </span>
+
+                    <div class="fila-archivo-texto">
+                        <span class="fila-archivo-nombre">{{ adjunto.nombre_original }}</span>
+                        <span class="fila-archivo-meta">
+                            {{ adjunto.tipo }} · {{ (adjunto.tamano + 1023) // 1024 }} KB
+                            · Cargado {{ adjunto.subido_en }}
+                        </span>
+                    </div>
+
+                    <a
+                        href="{{ url_for('solicitudes.descargar_adjunto',
+                                         public_id=solicitud.public_id,
+                                         adjunto_id=adjunto.id) }}"
+                        class="btn btn-outline-primary btn-sm"
+                    >
+                        <i class="bi bi-download" aria-hidden="true"></i>
+                        Descargar
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
             {% else %}
             <p class="text-body-secondary mb-0">Sin documentos adjuntos.</p>
             {% endif %}
@@ -152,20 +193,35 @@ Solicitud | Facturaciones SpA
             <h2 class="h5 mb-3">Documento XML</h2>
 
             {% if registro_xml %}
-            <p class="mb-1">Archivo: {{ registro_xml.nombre_original }}</p>
-            <p class="mb-1">Tamaño: {{ registro_xml.tamano }} bytes</p>
-            <p class="mb-1">Cargado: {{ registro_xml.subido_en }}</p>
-            <p class="mb-3">
-                SHA-256:
-                <code class="text-break">{{ registro_xml.sha256 }}</code>
-            </p>
-            <a
-                href="{{ url_for('solicitudes.descargar_xml',
-                                 public_id=solicitud.public_id) }}"
-                class="btn btn-outline-primary"
-            >
-                Descargar XML
-            </a>
+            <div class="fila-archivo">
+                <span class="fila-archivo-icono" aria-hidden="true">
+                    <i class="bi bi-file-earmark-code"></i>
+                </span>
+
+                <div class="fila-archivo-texto">
+                    <span class="fila-archivo-nombre">
+                        <span class="visually-hidden">Archivo:</span>
+                        {{ registro_xml.nombre_original }}
+                    </span>
+                    <span class="fila-archivo-meta d-block">
+                        Tamaño: {{ registro_xml.tamano }} bytes
+                        · Cargado: {{ registro_xml.subido_en }}
+                    </span>
+                    <span class="fila-archivo-meta d-block">
+                        SHA-256:
+                        <code class="text-break">{{ registro_xml.sha256 }}</code>
+                    </span>
+                </div>
+
+                <a
+                    href="{{ url_for('solicitudes.descargar_xml',
+                                     public_id=solicitud.public_id) }}"
+                    class="btn btn-outline-primary btn-sm"
+                >
+                    <i class="bi bi-download" aria-hidden="true"></i>
+                    Descargar XML
+                </a>
+            </div>
             {% else %}
             <p class="text-body-secondary">Aún no hay un XML asociado.</p>
             {% endif %}
@@ -195,6 +251,7 @@ Solicitud | Facturaciones SpA
                     Solo XML bien formado, máximo 5 MB.
                 </div>
                 <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-upload" aria-hidden="true"></i>
                     {{ 'Reemplazar XML' if registro_xml else 'Cargar XML' }}
                 </button>
             </form>
@@ -247,17 +304,17 @@ Solicitud | Facturaciones SpA
                 <table class="table table-sm align-middle mb-0">
                     <thead>
                         <tr>
-                            <th>Fecha</th>
-                            <th>Destinatario</th>
-                            <th>Estado</th>
-                            <th>Enviado por</th>
-                            <th>Adjunto (SHA-256)</th>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Destinatario</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Enviado por</th>
+                            <th scope="col">Adjunto (SHA-256)</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for envio in envios %}
                         <tr>
-                            <td>{{ envio.creado_en }}</td>
+                            <td class="text-nowrap small text-body-secondary">{{ envio.creado_en }}</td>
                             <td class="text-break">{{ envio.destinatario }}</td>
                             <td>
                                 {% if envio.estado == 'ENVIADO' %}
@@ -293,9 +350,7 @@ Solicitud | Facturaciones SpA
 
             <p>
                 Estado actual:
-                <span class="badge text-bg-secondary">
-                    {{ solicitud.estado_nombre }}
-                </span>
+                {{ estado_solicitud(solicitud.estado_nombre) }}
             </p>
 
             {% if estados_permitidos %}
@@ -310,48 +365,50 @@ Solicitud | Facturaciones SpA
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" name="version" value="{{ solicitud.version }}">
 
-                <div class="mb-3">
-                    <label for="estado_destino" class="form-label">
-                        Nuevo estado
-                    </label>
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <label for="estado_destino" class="form-label">
+                            Nuevo estado
+                        </label>
 
-                    <select
-                        id="estado_destino"
-                        name="estado_destino"
-                        class="form-select"
-                        required
-                    >
-                        <option value="">Seleccione un estado</option>
+                        <select
+                            id="estado_destino"
+                            name="estado_destino"
+                            class="form-select"
+                            required
+                        >
+                            <option value="">Seleccione un estado</option>
 
-                        {% for estado in estados_permitidos %}
-                        <option value="{{ estado }}">
-                            {{ estado }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
+                            {% for estado in estados_permitidos %}
+                            <option value="{{ estado }}">
+                                {{ estado }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="motivo_rechazo" class="form-label">
-                        Motivo de rechazo
-                    </label>
+                    <div class="col-md-7">
+                        <label for="motivo_rechazo" class="form-label">
+                            Motivo de rechazo
+                        </label>
 
-                    <textarea
-                        id="motivo_rechazo"
-                        name="motivo_rechazo"
-                        class="form-control"
-                        rows="3"
-                        maxlength="300"
-                        aria-describedby="motivo-help"
-                    ></textarea>
+                        <textarea
+                            id="motivo_rechazo"
+                            name="motivo_rechazo"
+                            class="form-control"
+                            rows="3"
+                            maxlength="300"
+                            aria-describedby="motivo-help"
+                        ></textarea>
 
-                    <div id="motivo-help" class="form-text">
-                        Obligatorio si selecciona Rechazada.
-                        Para otros estados no se guardará.
+                        <div id="motivo-help" class="form-text">
+                            Obligatorio si selecciona Rechazada.
+                            Para otros estados no se guardará.
+                        </div>
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary mt-3">
                     Actualizar estado
                 </button>
             </form>
@@ -368,15 +425,7 @@ Solicitud | Facturaciones SpA
     </section>
     {% endif %}
 
-    {% if solicitud.estado_nombre == 'Rechazada'
-          and solicitud.motivo_rechazo %}
-    <section class="alert alert-warning mt-4">
-        <h2 class="h6">Motivo del rechazo</h2>
-        <p class="mb-0 texto-preformateado">{{ solicitud.motivo_rechazo }}</p>
-    </section>
-    {% endif %}
-
-    <div class="d-flex flex-wrap gap-2 mt-4">
+    <div class="d-flex flex-wrap justify-content-end gap-2 mt-4">
         <a
             href="{{ url_for('solicitudes.factura', public_id=solicitud.public_id) }}"
             class="btn btn-success"
