@@ -85,6 +85,13 @@ class Config:
     IMAP_MAX_MENSAJES = _entero("IMAP_MAX_MENSAJES", 25)
     IMAP_MAX_BYTES = _entero("IMAP_MAX_BYTES", 10 * 1024 * 1024)
 
+    # Revisión automática de la bandeja (IMAP + proceso) en segundo plano.
+    # 0 = desactivada (use el botón o la tarea programada). Mínimo 30 s.
+    BANDEJA_REVISION_SEGUNDOS = _entero("BANDEJA_REVISION_SEGUNDOS", 120)
+    # Cada cuánto la página de la bandeja consulta si hay novedades.
+    # 0 = sin actualización automática de la página. Mínimo 10 s.
+    BANDEJA_REFRESCO_SEGUNDOS = _entero("BANDEJA_REFRESCO_SEGUNDOS", 20)
+
     # Repositorios privados (fuera de /static).
     CORREOS_FOLDER = os.getenv(
         "CORREOS_FOLDER",
@@ -117,4 +124,5 @@ class TestingConfig(Config):
     TESTING = True
     SECRET_KEY = "clave-solo-para-pruebas-automatizadas-0123456789"
     WTF_CSRF_ENABLED = False
+    BANDEJA_REVISION_SEGUNDOS = 0
     DB_NAME = os.getenv("DB_NAME_TEST", "facturaciones_spa_mvp_test")

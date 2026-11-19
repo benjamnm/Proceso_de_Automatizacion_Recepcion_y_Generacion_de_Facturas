@@ -3,6 +3,9 @@
 - Factura generada: "la factura vN está lista para validar".
 - Factura aprobada: "la factura vN fue validada", con el DTE para el SII
   adjunto.
+- Correo en revisión: un correo de facturación no pudo convertirse en
+  factura (datos faltantes o erróneos, cliente no identificado, error
+  técnico) y el Administrador debe revisarlo; indica qué falló.
 
 Mismo esquema de tres fases que correos_solicitud (sin bloqueos de BD
 durante SMTP). Cada aviso queda en envios_correo (tipo
@@ -343,3 +346,158 @@ def notificar_factura_aprobada(actor_id, public_id, ip=None):
         actor_id, "public_id", public_id, _contenido_aprobada,
         "FACTURA_APROBADA", ip,
     )
+
+
+# --- Correo que requiere revisión manual ---------------------------------
+#
+# Aún no existe solicitud (envios_correo.solicitud_id es obligatorio), por
+# lo que el aviso queda registrado solo en auditoria, con el id del correo.
+
+ETIQUETAS_DATOS = (
+    ("rut", "RUT del cliente"),
+    ("concepto", "Concepto"),
+    ("monto_bruto", "Monto"),
+    ("fecha_emision", "Fecha de emisión"),
+    ("tipo_afectacion", "Tipo de afectación"),
+    ("nro_orden_compra", "Orden de compra"),
+)
+
+
+def _enlace_bandeja(base_url, estado):
+    return f"{base_url.rstrip('/')}/admin/correos?estado={estado}"
+
+
+def componer_revision(correo, base_url):
+    observaciones = _cargar_json(correo.get("observaciones")) or {}
+    datos = _cargar_json(correo.get("datos_extraidos")) or {}
+    error_tecnico = correo["estado"] == "ERROR"
+
+    asunto = limpiar_cabecera(
+        f"[Facturaciones] Correo de facturación "
+        f"{'con error' if error_tecnico else 'requiere revisión'} - "
+        f"{correo['remitente']} - #{correo['id']}",
+        200,
+    )
+    cuerpo = render_template(
+        "correos/correo_requiere_revision.txt",
+        correo=correo,
+        error_tecnico=error_tecnico,
+        motivos=observaciones.get("motivos", []),
+        alertas=observaciones.get("alertas", []),
+        datos=[
+            (etiqueta, datos.get(clave))
+            for clave, etiqueta in ETIQUETAS_DATOS
+        ],
+        enlace=_enlace_bandeja(base_url, correo["estado"]),
+    )
+    return asunto, cuerpo
+
+
+def _preparar_revision(correo_id, cfg):
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT id FROM usuarios WHERE email = %s",
+                (current_app.config["SISTEMA_CORREO_EMAIL"],),
+            )
+            sistema = cursor.fetchone()
+            cursor.execute(
+                """
+                SELECT id, remitente, asunto, estado, recibido_en,
+                       datos_extraidos, observaciones
+                FROM correos_entrantes
+                WHERE id = %s
+                """,
+                (correo_id,),
+            )
+            correo = cursor.fetchone()
+            if sistema is None or correo is None:
+                return None, None, []
+            if correo["estado"] not in ("REQUIERE_REVISION", "ERROR"):
+                return sistema, correo, []
+
+            asunto, cuerpo = componer_revision(
+                correo, current_app.config["APP_BASE_URL"]
+            )
+            mensajes = [
+                (destinatario, construir_mensaje(
+                    remitente=cfg["remitente"],
+                    remitente_correo=cfg["remitente_correo"],
+                    destinatario=destinatario,
+                    asunto=asunto,
+                    cuerpo=cuerpo,
+                    cabeceras_extra={CABECERA_ORIGEN: VALOR_ORIGEN},
+                ))
+                for destinatario in destinatarios(cursor, current_app.config)
+            ]
+        return sistema, correo, mensajes
+    finally:
+        connection.close()
+
+
+def _auditar_revision(sistema_id, correo, destinatario, error):
+    connection = get_db_connection()
+    try:
+        connection.begin()
+        registrar_evento(
+            connection, sistema_id,
+            "NOTIFICACION_FALLIDA" if error else "NOTIFICACION_ENVIADA",
+            {
+                "correo_entrante_id": correo["id"],
+                "aviso": f"CORREO_{correo['estado']}",
+                "destinatario": destinatario,
+                "error_codigo": error.codigo if error else None,
+            },
+        )
+        connection.commit()
+    except Exception:
+        connection.rollback()
+        current_app.logger.exception(
+            "No se pudo auditar el aviso del correo %s", correo["id"]
+        )
+    finally:
+        connection.close()
+
+
+def notificar_correo_en_revision(correo_id):
+    """Avisa al Administrador que un correo quedó en REQUIERE_REVISION o
+    ERROR, indicando qué falló. Nunca lanza excepciones.
+
+    Devuelve {"enviados": n, "fallidos": n, "error": str|None}.
+    """
+    resultado = {"enviados": 0, "fallidos": 0, "error": None}
+
+    try:
+        cfg = validar_configuracion()
+        sistema, correo, mensajes = _preparar_revision(correo_id, cfg)
+    except ErrorCorreo as exc:
+        current_app.logger.warning("Aviso de revisión no enviado: %s", exc)
+        resultado["error"] = str(exc)
+        return resultado
+    except Exception:
+        current_app.logger.exception(
+            "No se pudo preparar el aviso de revisión del correo %s", correo_id
+        )
+        resultado["error"] = "No se pudo preparar el aviso."
+        return resultado
+
+    if correo is None:
+        resultado["error"] = "No se encontró el correo a notificar."
+    elif not mensajes:
+        resultado["error"] = "No hay Administradores activos a quienes avisar."
+
+    for destinatario, mensaje in mensajes:
+        error = None
+        try:
+            enviar(mensaje, cfg)
+        except ErrorCorreo as exc:
+            error = exc
+            current_app.logger.warning(
+                "Aviso de revisión del correo %s fallido: %s (%s)",
+                correo_id, exc.codigo, exc.detalle,
+            )
+        _auditar_revision(sistema["id"], correo, destinatario, error)
+        resultado["fallidos" if error else "enviados"] += 1
+
+    return resultado

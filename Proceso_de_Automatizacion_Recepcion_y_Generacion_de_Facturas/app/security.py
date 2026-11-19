@@ -105,6 +105,25 @@ class LimitadorIntentos:
                 self._fallos.pop(clave, None)
 
 
+def es_peticion_automatica():
+    """Sondeos y recargas que hace la página por sí sola, sin el usuario.
+
+    No deben contar como actividad: si no, una pestaña abierta en la
+    bandeja mantendría la sesión viva indefinidamente.
+    """
+    if request.endpoint in ENDPOINTS_SONDEO:
+        return True
+    return (
+        request.method == "GET"
+        and request.endpoint in ENDPOINTS_AUTORRECARGA
+        and request.args.get("auto") == "1"
+    )
+
+
+ENDPOINTS_SONDEO = {"admin.correos_novedades"}
+ENDPOINTS_AUTORRECARGA = {"admin.correos"}
+
+
 def controlar_inactividad():
     if request.endpoint == "static" or not current_user.is_authenticated:
         return None
@@ -122,7 +141,8 @@ def controlar_inactividad():
         )
         return redirect(url_for("auth.login"))
 
-    session[CLAVE_ACTIVIDAD] = ahora
+    if not es_peticion_automatica() or not isinstance(ultima, int):
+        session[CLAVE_ACTIVIDAD] = ahora
     return None
 
 

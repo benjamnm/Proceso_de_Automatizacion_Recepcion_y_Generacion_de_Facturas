@@ -1,0 +1,34 @@
+Estimado/a Administrador/a:
+
+{% if error_tecnico %}Ocurrió un error al procesar un correo de facturación y no se generó
+la factura.{% else %}Llegó un correo de facturación que no se pudo convertir en factura
+porque sus datos están incompletos o son erróneos.{% endif %} Revíselo y
+corrija lo indicado.
+
+  Correo N°:          {{ correo.id }}
+  Remitente:          {{ correo.remitente }}
+  Asunto:             {{ correo.asunto }}
+  Recibido:           {{ correo.recibido_en }}
+
+Qué falló:
+{% for motivo in motivos %}  - {{ motivo }}
+{% else %}  - No se registró el detalle. Revise el registro de la aplicación.
+{% endfor %}{% if alertas %}
+Puntos a verificar:
+{% for alerta in alertas %}  - {{ alerta }}
+{% endfor %}{% endif %}{% if not error_tecnico %}
+Datos detectados en el correo:
+{% for etiqueta, valor in datos %}  {{ (etiqueta ~ ':').ljust(20) }}{{ valor if valor not in (None, '') else '(no detectado)' }}
+{% endfor %}{% endif %}
+Cómo resolverlo:
+  - Cliente no identificado: regístrelo en Clientes con el correo del
+    remitente (o pida al cliente que indique su RUT) y use «Reprocesar».
+  - Datos faltantes o inválidos: pida al remitente que reenvíe la
+    solicitud corregida, o cree la solicitud manualmente.
+  - Si no corresponde a una solicitud real: use «Descartar» con el motivo.
+
+Revise el correo en la bandeja:
+{{ enlace }}
+
+--
+Mensaje generado automáticamente por Facturaciones SpA.

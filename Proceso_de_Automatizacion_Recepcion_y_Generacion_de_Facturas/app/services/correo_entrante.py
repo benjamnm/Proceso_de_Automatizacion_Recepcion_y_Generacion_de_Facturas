@@ -10,7 +10,8 @@ Etapa 2 - procesar_pendientes():
     Toma cada correo RECIBIDO, verifica su integridad, extrae los datos,
     identifica al cliente y crea la solicitud (origen Correo) con su
     factura v1 En revisión. Luego avisa al Administrador por SMTP.
-    Si faltan datos queda REQUIERE_REVISION con los motivos.
+    Si faltan datos queda REQUIERE_REVISION con los motivos y se avisa
+    al Administrador por correo indicando qué falló (también si ERROR).
 
 revisar_bandeja() ejecuta ambas etapas con un bloqueo de MySQL
 (GET_LOCK) para que dos ejecuciones simultáneas no se pisen.
@@ -47,7 +48,7 @@ from .extraccion_correo import (
     verificacion_remitente,
 )
 from .facturas import evento_factura_generada, generar_version
-from .notificaciones import notificar_factura_generada
+from .notificaciones import notificar_correo_en_revision, notificar_factura_generada
 from .solicitudes import (
     ErrorGestionSolicitud,
     comprobar_actor,
@@ -651,10 +652,15 @@ def procesar_pendientes(limite=50):
                 )
                 resumen["avisos_enviados"] += aviso["enviados"]
                 resumen["avisos_fallidos"] += aviso["fallidos"]
-        elif resultado["estado"] == "REQUIERE_REVISION":
-            resumen["requieren_revision"] += 1
-        elif resultado["estado"] == "ERROR":
-            resumen["errores"] += 1
+        elif resultado["estado"] in ("REQUIERE_REVISION", "ERROR"):
+            if resultado["estado"] == "REQUIERE_REVISION":
+                resumen["requieren_revision"] += 1
+            else:
+                resumen["errores"] += 1
+            # Avisa qué falló para que el Administrador lo corrija.
+            aviso = notificar_correo_en_revision(correo_id)
+            resumen["avisos_enviados"] += aviso["enviados"]
+            resumen["avisos_fallidos"] += aviso["fallidos"]
 
     return resumen
 
@@ -785,6 +791,52 @@ def listar_correos(estado=None, limite=100):
         fila["datos_extraidos"] = _cargar(fila["datos_extraidos"]) or {}
         fila["observaciones"] = _cargar(fila["observaciones"]) or {}
     return filas
+
+
+def firma_bandeja():
+    """Resumen liviano para que la página detecte cambios sin recargarse.
+
+    La "firma" cambia cuando entra un correo, cambia de estado o se genera
+    / valida una factura. Devuelve {"firma", "por_revisar", "por_validar"}.
+    """
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT COUNT(*) AS total, COALESCE(MAX(id), 0) AS ultimo,
+                       MAX(procesado_en) AS procesado,
+                       COALESCE(SUM(estado = 'REQUIERE_REVISION'), 0) AS por_revisar,
+                       COALESCE(SUM(estado = 'RECIBIDO'), 0) AS recibidos,
+                       COALESCE(SUM(estado = 'DESCARTADO'), 0) AS descartados
+                FROM correos_entrantes
+                """
+            )
+            correos = cursor.fetchone()
+            cursor.execute(
+                """
+                SELECT COALESCE(SUM(estado = 'EN_REVISION'), 0) AS por_validar,
+                       COUNT(*) AS total, MAX(revisada_en) AS revisada
+                FROM facturas
+                """
+            )
+            facturas = cursor.fetchone()
+    finally:
+        connection.close()
+
+    partes = [
+        correos["total"], correos["ultimo"], correos["procesado"],
+        correos["por_revisar"], correos["recibidos"], correos["descartados"],
+        facturas["por_validar"], facturas["total"], facturas["revisada"],
+    ]
+    firma = hashlib.sha256(
+        "|".join(str(p) for p in partes).encode("utf-8")
+    ).hexdigest()[:16]
+    return {
+        "firma": firma,
+        "por_revisar": int(correos["por_revisar"]),
+        "por_validar": int(facturas["por_validar"]),
+    }
 
 
 def obtener_eml_autorizado(actor_id, correo_id):

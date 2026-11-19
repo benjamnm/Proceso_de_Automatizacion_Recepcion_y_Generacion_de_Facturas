@@ -25,6 +25,41 @@ Bandeja de correos | Facturaciones SpA
         </form>
     </header>
 
+    {% if refresco_segundos %}
+    <div class="d-flex flex-wrap align-items-center gap-3 small text-body-secondary mb-3"
+         data-auto-actualizar
+         data-url="{{ url_for('admin.correos_novedades') }}"
+         data-firma="{{ firma }}"
+         data-intervalo="{{ refresco_segundos }}">
+        <div class="form-check form-switch mb-0">
+            <input class="form-check-input" type="checkbox" role="switch"
+                   id="auto-actualizar" checked data-auto-actualizar-interruptor>
+            <label class="form-check-label" for="auto-actualizar">
+                Actualizar automáticamente (cada {{ refresco_segundos }} s)
+            </label>
+        </div>
+        <span data-auto-actualizar-estado aria-live="polite"></span>
+        {% if revision.activa %}
+        <span>
+            <i class="bi bi-clock-history" aria-hidden="true"></i>
+            Revisión de la bandeja cada
+            {% if revision.intervalo % 60 == 0 %}{{ revision.intervalo // 60 }} min{% else %}{{ revision.intervalo }} s{% endif %}
+            {%- if revision.ultima %} · última: {{ revision.ultima.strftime('%H:%M:%S') }}{% endif %}
+            {%- if revision.error %} · <span class="text-danger-emphasis">{{ revision.error }}</span>{% endif %}
+        </span>
+        {% endif %}
+    </div>
+
+    <div class="alert alert-info d-none align-items-center gap-2" role="status"
+         data-auto-actualizar-aviso>
+        <i class="bi bi-bell" aria-hidden="true"></i>
+        <span class="me-auto">Hay novedades en la bandeja.</span>
+        <button type="button" class="btn btn-sm btn-primary" data-auto-actualizar-recargar>
+            Actualizar ahora
+        </button>
+    </div>
+    {% endif %}
+
     {% if not imap_configurado %}
     <div class="alert alert-warning d-flex gap-2">
         <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
@@ -144,4 +179,8 @@ Bandeja de correos | Facturaciones SpA
         </span>
     </p>
 </main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/auto-actualizar.js') }}"></script>
 {% endblock %}

@@ -6,6 +6,7 @@ from flask import (
     current_app,
     send_file,
     flash,
+    jsonify,
     redirect,
     render_template,
     request,
@@ -25,11 +26,14 @@ from werkzeug.security import generate_password_hash
 from ..services.correo_entrante import (
     ErrorCorreoEntrante,
     descartar_correo,
+    firma_bandeja,
     listar_correos,
     obtener_eml_autorizado,
     reprocesar_correo,
     revisar_bandeja,
 )
+
+from ..services import revision_automatica
 
 from . import admin_bp
 from ..auditoria_acciones import ACCIONES_VISIBLES, marcadores_acciones
@@ -405,13 +409,41 @@ def correos():
     if estado and estado not in ESTADOS_CORREO:
         estado = ""
 
+    try:
+        firma = firma_bandeja()["firma"]
+    except pymysql.MySQLError:
+        current_app.logger.warning("No se pudo calcular la firma de la bandeja.")
+        firma = ""
+
     return render_template(
         "admin/correos.html",
         correos=listar_correos(estado or None),
         estado=estado,
         estados=ESTADOS_CORREO,
         imap_configurado=bool(current_app.config.get("IMAP_HOST")),
+        firma=firma,
+        refresco_segundos=_refresco_segundos(),
+        revision=revision_automatica.estado(),
     )
+
+
+def _refresco_segundos():
+    try:
+        segundos = int(current_app.config.get("BANDEJA_REFRESCO_SEGUNDOS") or 0)
+    except (TypeError, ValueError):
+        return 0
+    return max(10, segundos) if segundos > 0 else 0
+
+
+@admin_bp.get("/correos/novedades")
+@admin_required
+def correos_novedades():
+    """Sondeo de la página de la bandeja (no renueva la inactividad)."""
+    try:
+        return jsonify(firma_bandeja())
+    except pymysql.MySQLError:
+        current_app.logger.warning("No se pudo consultar novedades de la bandeja.")
+        return jsonify({"error": "Base de datos no disponible."}), 503
 
 
 @admin_bp.post("/correos/revisar")
