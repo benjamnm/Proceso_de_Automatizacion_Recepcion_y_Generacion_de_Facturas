@@ -1,3 +1,4 @@
+import hmac
 import threading
 import time
 from functools import wraps
@@ -143,6 +144,54 @@ def controlar_inactividad():
 
     if not es_peticion_automatica() or not isinstance(ultima, int):
         session[CLAVE_ACTIVIDAD] = ahora
+    return None
+
+
+CLAVE_HUELLA = "_huella_password"
+# Lo único accesible mientras se debe cambiar una contraseña temporal.
+ENDPOINTS_CAMBIO_OBLIGATORIO = {"static", "auth.cambiar_password", "auth.logout"}
+
+
+def recordar_password_en_sesion(password_hash):
+    from .services.contrasenas import huella_sesion
+
+    session[CLAVE_HUELLA] = huella_sesion(
+        password_hash, current_app.config["SECRET_KEY"]
+    )
+
+
+def controlar_password():
+    """Cierra la sesión si la contraseña cambió desde que se abrió y
+    obliga a cambiar la contraseña temporal antes de usar el sistema."""
+    if request.endpoint == "static" or not current_user.is_authenticated:
+        return None
+
+    from .services.contrasenas import huella_sesion
+
+    huella = huella_sesion(
+        current_user.password_hash, current_app.config["SECRET_KEY"]
+    )
+    guardada = session.get(CLAVE_HUELLA)
+
+    if not isinstance(guardada, str):
+        session[CLAVE_HUELLA] = huella
+    elif not hmac.compare_digest(guardada, huella):
+        logout_user()
+        session.clear()
+        flash(
+            "La contraseña de su cuenta cambió. Inicie sesión nuevamente.",
+            "warning",
+        )
+        return redirect(url_for("auth.login"))
+
+    if (
+        getattr(current_user, "debe_cambiar_password", False)
+        and request.endpoint not in ENDPOINTS_CAMBIO_OBLIGATORIO
+    ):
+        if request.endpoint in ENDPOINTS_SONDEO:
+            abort(403)
+        return redirect(url_for("auth.cambiar_password"))
+
     return None
 
 

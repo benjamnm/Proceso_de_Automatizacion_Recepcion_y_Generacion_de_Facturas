@@ -52,7 +52,17 @@ from ..services.registros_xml import (
     guardar_xml,
     obtener_xml_autorizado,
 )
-from ..services.dte_sii import advertencias as advertencias_dte
+from ..services.dte_sii import (
+    ErrorDTE,
+    advertencias as advertencias_dte,
+    construir_dte,
+    datos_emisor,
+)
+from ..services.vista_xml import (
+    ErrorVistaXML,
+    formatear_xml,
+    interpretar_dte,
+)
 from ..services.facturas import (
     ErrorFactura,
     aprobar_factura,
@@ -1039,6 +1049,153 @@ def factura_observar(public_id):
         )
 
     return redirect(url_for("solicitudes.factura", public_id=public_id))
+
+
+ORIGENES_VISTA = ("borrador", "sii", "cargado")
+
+
+def _leer_archivo(ruta):
+    limite = current_app.config["MAX_XML_UPLOAD_BYTES"]
+    with open(ruta, "rb") as archivo:
+        contenido = archivo.read(limite + 1)
+    if len(contenido) > limite:
+        raise ErrorVistaXML("El XML es demasiado grande para previsualizarlo.")
+    return contenido
+
+
+def _auditar_vista(actor_id, detalle):
+    connection = get_db_connection()
+    try:
+        registrar_evento(
+            connection, actor_id, "XML_PREVISUALIZADO", detalle,
+            request.remote_addr,
+        )
+        connection.commit()
+    except pymysql.MySQLError:
+        connection.rollback()
+        raise
+    finally:
+        connection.close()
+
+
+def _xml_borrador(public_id):
+    """DTE construido al vuelo con la versión vigente (sin guardarlo)."""
+    solicitud = obtener_solicitud_autorizada(public_id)
+    versiones, _ = listar_versiones(solicitud["id"])
+    if not versiones:
+        raise ErrorVistaXML("Aún no se ha generado una versión de factura.")
+    vigente = versiones[0]
+
+    try:
+        emisor = datos_emisor(current_app.config)
+        contenido = construir_dte(vigente["datos"], emisor, folio=vigente["id"])
+    except ErrorDTE as exc:
+        raise ErrorVistaXML(str(exc)) from exc
+
+    aprobada = vigente["estado"] == "APROBADA"
+    return contenido, {
+        "titulo": (
+            f"Factura aprobada, versión {vigente['version']}"
+            if aprobada
+            else f"Borrador de la versión {vigente['version']}"
+        ),
+        "nombre": f"DTE_{vigente['tipo_dte']}_{public_id[:8]}_v{vigente['version']}.xml",
+        "descarga_url": None,
+        "es_borrador": not aprobada,
+    }
+
+
+def _xml_sii(public_id):
+    if current_user.role_name != "Administrador":
+        abort(403)
+    try:
+        actor, fila, ruta = obtener_archivo_sii(int(current_user.id), public_id)
+    except ErrorFactura as exc:
+        raise ErrorVistaXML(str(exc)) from exc
+
+    contenido = _leer_archivo(ruta)
+    _auditar_vista(actor["id"], {
+        "solicitud_afectada_id": fila["id"],
+        "public_id": public_id,
+        "factura_id": fila["factura_id"],
+        "version_factura": fila["version"],
+        "origen": "ARCHIVO_SII",
+        "sha256": fila["archivo_sii_sha256"],
+    })
+    return contenido, {
+        "titulo": f"Archivo SII de la versión {fila['version']}",
+        "nombre": f"DTE_{fila['tipo_dte']}_{public_id[:8]}_v{fila['version']}.xml",
+        "descarga_url": url_for("solicitudes.descargar_sii", public_id=public_id),
+        "es_borrador": False,
+        "sha256": fila["archivo_sii_sha256"],
+    }
+
+
+def _xml_cargado(public_id):
+    try:
+        actor, solicitud, registro_xml, ruta = obtener_xml_autorizado(
+            actor_id=int(current_user.id), public_id=public_id,
+        )
+    except ErrorArchivoXML as exc:
+        raise ErrorVistaXML(str(exc)) from exc
+
+    contenido = _leer_archivo(ruta)
+    _auditar_vista(actor["id"], {
+        "solicitud_afectada_id": solicitud["id"],
+        "public_id": public_id,
+        "registro_xml_id": registro_xml["id"],
+        "origen": "XML_CARGADO",
+        "sha256": registro_xml["sha256"],
+    })
+    return contenido, {
+        "titulo": "XML cargado en la solicitud",
+        "nombre": registro_xml["nombre_original"],
+        "descarga_url": url_for("solicitudes.descargar_xml", public_id=public_id),
+        "es_borrador": False,
+        "sha256": registro_xml["sha256"],
+    }
+
+
+@solicitudes_bp.get("/<string:public_id>/factura/vista")
+@solicitud_required
+def vista_factura(public_id):
+    """Previsualiza el diseño y el formato XML de la factura."""
+    origen = request.args.get("origen", "borrador")
+    if origen not in ORIGENES_VISTA:
+        abort(404)
+
+    volver = (
+        url_for("solicitudes.detalle", public_id=public_id)
+        if origen == "cargado"
+        else url_for("solicitudes.factura", public_id=public_id)
+    )
+    cargar = {"borrador": _xml_borrador, "sii": _xml_sii, "cargado": _xml_cargado}
+
+    try:
+        contenido, info = cargar[origen](public_id)
+        dte = interpretar_dte(contenido)
+        formato = formatear_xml(contenido)
+    except ErrorVistaXML as exc:
+        flash(str(exc), "warning")
+        return redirect(volver)
+    except OSError:
+        current_app.logger.exception("No se pudo leer el XML de %s", public_id)
+        flash("El archivo XML no está disponible.", "danger")
+        return redirect(volver)
+    except pymysql.MySQLError:
+        _error_bd("No se pudo preparar la vista previa", public_id)
+        return redirect(volver)
+
+    return render_template(
+        "solicitudes/vista_xml.html",
+        public_id=public_id,
+        origen=origen,
+        info=info,
+        dte=dte,
+        formato=formato,
+        tamano=len(contenido),
+        volver=volver,
+    )
 
 
 @solicitudes_bp.get("/<string:public_id>/factura/sii")

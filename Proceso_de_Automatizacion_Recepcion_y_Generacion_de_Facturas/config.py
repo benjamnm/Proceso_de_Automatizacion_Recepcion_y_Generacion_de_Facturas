@@ -47,6 +47,8 @@ class Config:
     LOGIN_MAX_INTENTOS = _entero("LOGIN_MAX_INTENTOS", 5)
     LOGIN_MAX_INTENTOS_IP = _entero("LOGIN_MAX_INTENTOS_IP", 20)
     LOGIN_BLOQUEO_MINUTOS = _entero("LOGIN_BLOQUEO_MINUTOS", 15)
+    # Solicitudes "¿Olvidó su contraseña?" por IP en la misma ventana.
+    RECUPERACION_MAX_IP = _entero("RECUPERACION_MAX_IP", 5)
 
     # Almacenamiento privado de XML (fuera de /static).
     XML_UPLOAD_FOLDER = os.getenv(

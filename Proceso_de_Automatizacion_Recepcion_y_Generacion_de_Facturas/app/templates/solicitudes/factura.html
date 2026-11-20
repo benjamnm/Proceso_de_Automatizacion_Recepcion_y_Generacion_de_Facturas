@@ -76,9 +76,17 @@ Factura | Facturaciones SpA
                 <h2 class="h5 mb-0">
                     {{ 'Factura electrónica (33)' if vigente.tipo_dte == 33 else 'Factura exenta (34)' }}
                 </h2>
-                <span class="small text-body-secondary">
-                    Generada {{ vigente.generada_en }} por {{ vigente.generada_por_nombre or '—' }}
-                </span>
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <span class="small text-body-secondary">
+                        Generada {{ vigente.generada_en }} por {{ vigente.generada_por_nombre or '—' }}
+                    </span>
+                    {% if emisor_configurado %}
+                    <a href="{{ url_for('solicitudes.vista_factura', public_id=solicitud.public_id, origen='borrador') }}"
+                       class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-eye" aria-hidden="true"></i> Previsualizar XML
+                    </a>
+                    {% endif %}
+                </div>
             </div>
 
             <div class="row g-4">
@@ -209,10 +217,16 @@ Factura | Facturaciones SpA
             <p class="mb-3">
                 SHA-256: <code class="text-break">{{ vigente.archivo_sii_sha256 }}</code>
             </p>
-            <a href="{{ url_for('solicitudes.descargar_sii', public_id=solicitud.public_id) }}"
-               class="btn btn-success">
-                <i class="bi bi-download" aria-hidden="true"></i> Descargar DTE (XML)
-            </a>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{{ url_for('solicitudes.vista_factura', public_id=solicitud.public_id, origen='sii') }}"
+                   class="btn btn-outline-success">
+                    <i class="bi bi-eye" aria-hidden="true"></i> Previsualizar DTE
+                </a>
+                <a href="{{ url_for('solicitudes.descargar_sii', public_id=solicitud.public_id) }}"
+                   class="btn btn-success">
+                    <i class="bi bi-download" aria-hidden="true"></i> Descargar DTE (XML)
+                </a>
+            </div>
             <p class="small text-body-secondary mt-3 mb-0">
                 El archivo no incluye firma electrónica ni timbre (TED) y su folio es
                 provisional: debe firmarse con el certificado digital y un folio CAF

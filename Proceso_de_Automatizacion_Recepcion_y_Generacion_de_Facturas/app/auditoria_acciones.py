@@ -32,6 +32,11 @@ ACCIONES_VISIBLES = (
     "NOTIFICACION_FALLIDA",
     "ADJUNTO_CARGADO",
     "ADJUNTO_DESCARGADO",
+    "XML_PREVISUALIZADO",
+    "PASSWORD_CAMBIADA",
+    "PASSWORD_RESTABLECIDA",
+    "PASSWORD_RECUPERACION_SOLICITADA",
+    "PASSWORD_RECUPERACION_DESCARTADA",
 )
 
 ETIQUETAS_ACCION = {
@@ -62,6 +67,11 @@ ETIQUETAS_ACCION = {
     "NOTIFICACION_FALLIDA": "Notificación fallida",
     "ADJUNTO_CARGADO": "Documento adjuntado",
     "ADJUNTO_DESCARGADO": "Documento adjunto descargado",
+    "XML_PREVISUALIZADO": "XML previsualizado",
+    "PASSWORD_CAMBIADA": "Contraseña cambiada",
+    "PASSWORD_RESTABLECIDA": "Contraseña restablecida",
+    "PASSWORD_RECUPERACION_SOLICITADA": "Recuperación de contraseña solicitada",
+    "PASSWORD_RECUPERACION_DESCARTADA": "Recuperación de contraseña descartada",
 }
 
 

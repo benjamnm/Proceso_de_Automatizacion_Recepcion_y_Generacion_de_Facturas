@@ -1062,8 +1062,239 @@ a.metrica-etiqueta:hover {
 }
 
 
+/* 9b. Vista previa de factura (XML) ---------------------------------- */
+.hoja-factura {
+    position: relative;
+    overflow: hidden;
+    max-width: 900px;
+    margin-inline: auto;
+    padding: 2rem;
+    background: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-md);
+    box-shadow: var(--sombra-tarjeta);
+    color: var(--color-grafito);
+}
+
+.hoja-marca-agua {
+    position: absolute;
+    inset: 40% 0 auto;
+    text-align: center;
+    font-size: clamp(3rem, 12vw, 7rem);
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    color: rgba(169, 68, 66, 0.08);
+    transform: rotate(-18deg);
+    pointer-events: none;
+    user-select: none;
+}
+
+.hoja-cabecera {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.hoja-emisor {
+    flex: 1 1 280px;
+}
+
+.hoja-emisor-nombre {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+}
+
+/* Recuadro tradicional de los documentos tributarios chilenos. */
+.hoja-recuadro {
+    flex: 0 1 260px;
+    padding: 0.85rem 1rem;
+    border: 3px solid #C0392B;
+    color: #A93226;
+    text-align: center;
+    font-weight: 700;
+}
+
+.hoja-recuadro p {
+    margin-bottom: 0.3rem;
+}
+
+.hoja-recuadro-tipo {
+    font-size: 1.05rem;
+}
+
+.hoja-recuadro-sii {
+    margin: 0.6rem 0 0 !important;
+    font-size: 0.85rem;
+}
+
+.hoja-bloque {
+    padding: 1rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-sm);
+}
+
+.hoja-datos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0.4rem 1.5rem;
+    margin: 0;
+}
+
+.hoja-datos > div {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.hoja-datos dt {
+    flex: 0 0 8.5rem;
+    font-weight: 600;
+}
+
+.hoja-datos dd {
+    margin: 0;
+    min-width: 0;
+}
+
+.hoja-tabla thead th {
+    background: var(--color-superficie-suave);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+
+.hoja-pie {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.hoja-pie-izquierda {
+    flex: 1 1 320px;
+}
+
+.hoja-subtitulo {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+}
+
+.hoja-referencias {
+    padding-left: 1.1rem;
+    font-size: 0.875rem;
+}
+
+.hoja-timbre {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    max-width: 380px;
+    padding: 0.75rem;
+    border: 1px dashed var(--estado-error-tx);
+    border-radius: var(--radio-sm);
+    background: var(--estado-error-bg);
+    color: var(--estado-error-tx);
+    font-size: 0.8rem;
+}
+
+.hoja-timbre-ok {
+    border-color: var(--estado-ok-tx);
+    background: var(--estado-ok-bg);
+    color: var(--estado-ok-tx);
+}
+
+.hoja-totales {
+    flex: 0 1 280px;
+    align-self: flex-start;
+    margin-bottom: 0;
+}
+
+.hoja-total th,
+.hoja-total td {
+    font-size: 1.05rem;
+    font-weight: 700;
+    border-top: 2px solid var(--color-grafito);
+}
+
+.codigo-xml {
+    max-height: 70vh;
+    overflow: auto;
+    padding: 1rem 0;
+    background: #FBFBFA;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    counter-reset: linea;
+}
+
+.codigo-linea {
+    display: block;
+    padding-inline: 1rem;
+    white-space: pre;
+}
+
+.codigo-linea::before {
+    counter-increment: linea;
+    content: counter(linea);
+    display: inline-block;
+    width: 3rem;
+    margin-right: 1rem;
+    color: var(--color-texto-secundario);
+    text-align: right;
+    user-select: none;
+}
+
+.xml-nombre { color: #1E4FA8; }
+.xml-atributo { color: #8A5300; }
+.xml-valor { color: #15633E; }
+.xml-simbolo { color: #687068; }
+.xml-comentario { color: #687068; font-style: italic; }
+.xml-declaracion,
+.xml-cdata { color: #7A3E9D; }
+
+@media (max-width: 575.98px) {
+    .hoja-factura {
+        padding: 1rem;
+    }
+
+    .hoja-recuadro {
+        flex-basis: 100%;
+    }
+
+    .hoja-datos dt {
+        flex-basis: 6.5rem;
+    }
+}
+
+
 /* 10. Impresión ------------------------------------------------------ */
 @media print {
+    .no-imprimir,
+    #panel-xml {
+        display: none !important;
+    }
+
+    #panel-diseno {
+        display: block !important;
+        opacity: 1 !important;
+    }
+
+    .hoja-factura {
+        max-width: none;
+        border: 0;
+        padding: 0;
+    }
+
+    .hoja-recuadro,
+    .hoja-marca-agua {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+
     .sidebar,
     .topbar,
     .flash-container,

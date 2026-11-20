@@ -18,6 +18,7 @@ from .security import (
     LimitadorIntentos,
     aplicar_cabeceras_seguridad,
     controlar_inactividad,
+    controlar_password,
 )
 
 LARGO_MINIMO_SECRET_KEY = 32
@@ -40,6 +41,7 @@ def create_app(config_class=Config):
         app.config["LOGIN_BLOQUEO_MINUTOS"] * 60
     )
     app.before_request(controlar_inactividad)
+    app.before_request(controlar_password)
     app.after_request(aplicar_cabeceras_seguridad)
 
     from .auth.routes import auth_bp

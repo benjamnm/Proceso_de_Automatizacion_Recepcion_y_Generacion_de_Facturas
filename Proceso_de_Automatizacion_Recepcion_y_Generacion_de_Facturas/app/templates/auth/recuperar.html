@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Recuperar contraseña | Facturaciones SpA
+{% endblock %}
+
+{% block styles %}
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/login.css') }}"
+>
+{% endblock %}
+
+{% block content %}
+<main class="login-page">
+    <section class="login-brand-panel d-none d-lg-flex">
+        <div class="brand-header">
+            <img
+                src="{{ url_for('static', filename='img/logo-facturaciones@2x.png') }}"
+                width="280"
+                height="81"
+                alt="Facturaciones SpA"
+            >
+        </div>
+
+        <div class="brand-content">
+            <p class="eyebrow">SISTEMA DE GESTIÓN</p>
+            <h1>
+                Recuperación<br>
+                de contraseña
+            </h1>
+            <img
+                class="login-ilustracion"
+                src="{{ url_for('static', filename='img/login-ilustracion.png') }}"
+                width="720"
+                height="381"
+                alt=""
+            >
+        </div>
+
+        <div class="brand-footer">
+            <i class="bi bi-shield-check" aria-hidden="true"></i>
+            <span>Conforme SII · Chile · 2026</span>
+        </div>
+    </section>
+
+    <section class="login-form-panel">
+        <div class="login-card">
+            <img
+                class="login-logo-movil d-lg-none"
+                src="{{ url_for('static', filename='img/logo-facturaciones.png') }}"
+                srcset="{{ url_for('static', filename='img/logo-facturaciones.png') }} 1x,
+                        {{ url_for('static', filename='img/logo-facturaciones@2x.png') }} 2x"
+                width="180"
+                height="53"
+                alt="Facturaciones SpA"
+            >
+
+            <header class="login-heading">
+                <h2>¿Olvidó su contraseña?</h2>
+                <p>
+                    Indique el correo de su cuenta. El Administrador recibirá
+                    la solicitud y, tras verificar su identidad, le entregará
+                    una contraseña temporal.
+                </p>
+            </header>
+
+            <form
+                method="POST"
+                action="{{ url_for('auth.recuperar') }}"
+                class="needs-validation"
+                novalidate
+            >
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div class="mb-4">
+                    <label for="email" class="form-label">
+                        Correo electrónico
+                    </label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        class="form-control login-input"
+                        placeholder="usuario@empresa.cl"
+                        autocomplete="username"
+                        maxlength="150"
+                        required
+                    >
+                    <div class="invalid-feedback">
+                        Ingrese un correo electrónico válido.
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-login w-100">
+                    Solicitar recuperación
+                </button>
+            </form>
+
+            <p class="text-center mt-3 mb-0">
+                <a href="{{ url_for('auth.login') }}">
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                    Volver a iniciar sesión
+                </a>
+            </p>
+        </div>
+    </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/login.js') }}"></script>
+{% endblock %}

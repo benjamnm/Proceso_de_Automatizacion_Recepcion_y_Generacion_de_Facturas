@@ -23,6 +23,14 @@ from ..services.usuarios import (
 
 from werkzeug.security import generate_password_hash
 
+from ..services.contrasenas import (
+    ErrorPassword,
+    descartar_recuperacion,
+    enviar_temporal_al_usuario,
+    listar_pendientes,
+    restablecer,
+)
+
 from ..services.correo_entrante import (
     ErrorCorreoEntrante,
     descartar_correo,
@@ -219,6 +227,8 @@ def usuarios():
             )
             perfiles = cursor.fetchall()
 
+        recuperaciones = recuperaciones_pendientes()
+
         return render_template(
             "admin/usuarios.html",
             usuarios=users,
@@ -227,10 +237,26 @@ def usuarios():
             values=values,
             perfiles=perfiles,
             capacidades=CAPACIDADES,
+            recuperaciones=recuperaciones,
+            con_recuperacion={
+                r["usuario_id"] for r in (recuperaciones or [])
+            },
         )
 
     finally:
         connection.close()
+
+
+def recuperaciones_pendientes():
+    """Solicitudes de recuperación pendientes; None sin la migración 005."""
+    try:
+        return listar_pendientes()
+    except pymysql.MySQLError:
+        current_app.logger.warning(
+            "No se pudieron listar las recuperaciones de contraseña "
+            "(¿falta la migración 005?)."
+        )
+        return None
 
 
 @admin_bp.route(
@@ -306,13 +332,118 @@ def usuario_editar(usuario_id):
                   else "No se realizaron cambios.", "success" if changed else "info",
                   )
             return redirect(url_for("admin.usuarios"))
+    return render_editar(usuario, roles, values, error=error)
+
+
+def render_editar(usuario, roles, values, error=None, error_password=None):
+    recuperaciones = recuperaciones_pendientes()
+
     return render_template(
         "admin/usuario_editar.html",
         usuario=usuario,
         roles=roles,
         values=values,
         error=error,
+        error_password=error_password,
+        recuperacion=next(
+            (r for r in recuperaciones or [] if r["usuario_id"] == usuario["id"]),
+            None,
+        ),
+        gestion_password_disponible=recuperaciones is not None,
+        smtp_configurado=bool(current_app.config.get("SMTP_HOST")),
     )
+
+
+@admin_bp.post("/usuarios/<int:usuario_id>/password")
+@admin_required
+def usuario_password(usuario_id):
+    """El Administrador restablece la contraseña de otra cuenta."""
+    try:
+        resultado = restablecer(
+            actor_id=int(current_user.id),
+            usuario_id=usuario_id,
+            modo=request.form.get("modo", ""),
+            password=request.form.get("password", ""),
+            confirmacion=request.form.get("password_confirm", ""),
+            exigir_cambio=request.form.get("exigir_cambio") == "1",
+            ip=request.remote_addr,
+        )
+
+    except ErrorPassword as exc:
+        error_password = str(exc)
+
+    except pymysql.MySQLError:
+        current_app.logger.exception(
+            "Error al restablecer la contraseña del usuario %s", usuario_id,
+        )
+        error_password = (
+            "No se pudo restablecer la contraseña. Intente nuevamente "
+            "(si persiste, verifique que se ejecutó la migración 005)."
+        )
+
+    else:
+        error_correo = None
+        enviado = False
+        if resultado["password"] and request.form.get("enviar_correo") == "1":
+            error_correo = enviar_temporal_al_usuario(
+                resultado["usuario"], resultado["password"]
+            )
+            enviado = error_correo is None
+
+        # Se muestra en la respuesta (no en un flash) para que la
+        # contraseña temporal no quede guardada en la cookie de sesión.
+        return render_template(
+            "admin/password_restablecida.html",
+            usuario=resultado["usuario"],
+            password=resultado["password"],
+            exigir_cambio=resultado["exigir_cambio"],
+            enviado=enviado,
+            error_correo=error_correo,
+        )
+
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT id, nombre, email, rol_id, activo FROM usuarios WHERE id = %s",
+                (usuario_id,),
+            )
+            usuario = cursor.fetchone()
+            if usuario is None:
+                abort(404, description="Usuario no encontrado.")
+            cursor.execute("SELECT id, nombre FROM roles ORDER BY nombre")
+            roles = cursor.fetchall()
+    finally:
+        connection.close()
+
+    values = {
+        "nombre": usuario["nombre"],
+        "email": usuario["email"],
+        "rol_id": str(usuario["rol_id"]),
+    }
+    return render_editar(
+        usuario, roles, values, error_password=error_password,
+    ), 400
+
+
+@admin_bp.post("/recuperaciones/<int:recuperacion_id>/descartar")
+@admin_required
+def recuperacion_descartar(recuperacion_id):
+    try:
+        descartar_recuperacion(
+            int(current_user.id), recuperacion_id, request.remote_addr,
+        )
+    except ErrorPassword as exc:
+        flash(str(exc), "warning")
+    except pymysql.MySQLError:
+        current_app.logger.exception(
+            "Error al descartar la recuperación %s", recuperacion_id,
+        )
+        flash("No se pudo descartar la solicitud. Intente nuevamente.", "danger")
+    else:
+        flash("Solicitud de recuperación descartada.", "success")
+
+    return redirect(url_for("admin.usuarios"))
 
 
 @admin_bp.post("/usuarios/<int:usuario_id>/estado")
