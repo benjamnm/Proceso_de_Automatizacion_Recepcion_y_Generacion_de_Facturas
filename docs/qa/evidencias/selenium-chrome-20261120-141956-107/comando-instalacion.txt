@@ -1,0 +1,1 @@
+﻿& "C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\.venv\Scripts\python.exe" -m pip install selenium

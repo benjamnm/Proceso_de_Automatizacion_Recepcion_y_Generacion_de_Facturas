@@ -1,0 +1,11 @@
+﻿rama=facturaciones-v2-first
+commit=1d84f9d11c3f19f71ace5fef604cace26f713e4a
+inicio=2026-11-20T14:04:54.3201694-03:00
+fin=2026-11-20T14:05:10.6001187-03:00
+duracion_segundos=16.28
+codigo_salida_pytest=0
+junit_generado_no_vacio=True
+
+Revisar el resumen de pytest y el JUnit antes de asignar un estado.
+Esta ejecución corresponde a la suite técnica de v2-first.
+No acredita Selenium, carga ni integración real de correo.

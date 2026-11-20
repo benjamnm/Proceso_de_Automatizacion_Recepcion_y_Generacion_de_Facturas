@@ -1,0 +1,9 @@
+﻿caso=E2E-LOGIN-001
+rama=facturaciones-v2-first
+commit=1d84f9d11c3f19f71ace5fef604cace26f713e4a
+url=http://127.0.0.1:5000/auth/login
+Interprete=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\.venv\Scripts\python.exe
+
+Estado Git previo:
+?? e2e/
+?? ../docs/

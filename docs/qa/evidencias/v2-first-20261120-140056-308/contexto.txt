@@ -1,0 +1,12 @@
+﻿ejecucion=v2-first-20261120-140056-308
+fase=recopilacion
+rama=facturaciones-v2-first
+commit=1d84f9d11c3f19f71ace5fef604cace26f713e4a
+directorio=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas
+pytest=pytest 9.1.1
+
+Interprete:
+C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\.venv\Scripts\python.exe
+3.15.2 (tags/v3.15.2:5e58eaa, Oct 25 2026, 17:27:03) [MSC v.1951 64 bit (AMD64)]
+
+Estado Git previo:

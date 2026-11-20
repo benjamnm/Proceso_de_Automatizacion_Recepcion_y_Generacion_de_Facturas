@@ -1,0 +1,4 @@
+﻿inicio=2026-11-20T14:00:56.9470085-03:00
+fin=2026-11-20T14:00:58.3291857-03:00
+codigo_salida=0
+Esta fase solo recopila pruebas; no acredita casos aprobados.

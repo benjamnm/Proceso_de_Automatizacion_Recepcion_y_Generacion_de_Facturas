@@ -1,0 +1,9 @@
+{
+  "browser": "chrome",
+  "browser_version": "157.0.8103.80",
+  "chromedriver_version": "157.0.8103.78 (4b3d0dabb8250b6f152d2d85d79e7706e309d087-refs/branch-heads/8103@{#1573})",
+  "window": {
+    "width": 1442,
+    "height": 882
+  }
+}

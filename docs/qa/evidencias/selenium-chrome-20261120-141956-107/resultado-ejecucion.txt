@@ -1,0 +1,6 @@
+﻿caso=E2E-LOGIN-001
+inicio=2026-11-20T14:23:00.3475015-03:00
+fin=2026-11-20T14:23:08.5302349-03:00
+codigo_salida=0
+junit_generado=True
+Alcance: pantalla de acceso; sin envío de credenciales.
