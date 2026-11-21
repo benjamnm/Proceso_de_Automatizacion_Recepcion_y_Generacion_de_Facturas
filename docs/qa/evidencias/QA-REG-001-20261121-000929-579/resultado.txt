@@ -1,0 +1,6 @@
+﻿caso=QA-REG-001
+inicio=2026-11-21T00:09:32.9528594-03:00
+fin=2026-11-21T00:10:01.2033434-03:00
+duracion_proceso_segundos=28.250484
+codigo_salida=0
+junit_generado=True

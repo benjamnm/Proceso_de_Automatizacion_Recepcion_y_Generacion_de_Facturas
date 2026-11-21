@@ -1,0 +1,13 @@
+﻿ejecucion=QA-REG-002
+rama=qa/facturaciones-v2-20261120
+commit_base=2c878f493cd8045f088513c6b206b4338e866a82
+python=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Scripts\python.exe
+aplicacion=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas
+alcance=suite test/ completa mas complemento local corregido
+nota=el complemento local no esta incluido en el commit base
+antecedentes=QA-REG-001:369 aprobadas; QA-COMP-002:7 aprobadas
+
+Estado Git previo:
+## qa/facturaciones-v2-20261120...origin/qa/facturaciones-v2-20261120
+?? test/test_qa_complementos.py
+?? ../docs/

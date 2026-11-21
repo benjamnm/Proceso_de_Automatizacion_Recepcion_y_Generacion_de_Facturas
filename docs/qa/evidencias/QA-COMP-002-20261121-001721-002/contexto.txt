@@ -1,0 +1,15 @@
+﻿ejecucion=QA-COMP-002
+antecedente=QA-COMP-001: 6 passed, 1 failed
+clasificacion=Correccion de expectativa de prueba
+motivo=El Emisor debe recibir rechazo al filtrar por responsable.
+cambio=Solo la funcion test_qa_query_no_suplanta_al_emisor.
+codigo_aplicacion_modificado=False
+rama=qa/facturaciones-v2-20261120
+commit_base=2c878f493cd8045f088513c6b206b4338e866a82
+nota=El complemento es un archivo adicional al commit base.
+python=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Scripts\python.exe
+
+Estado Git:
+## qa/facturaciones-v2-20261120...origin/qa/facturaciones-v2-20261120
+?? test/test_qa_complementos.py
+?? ../docs/

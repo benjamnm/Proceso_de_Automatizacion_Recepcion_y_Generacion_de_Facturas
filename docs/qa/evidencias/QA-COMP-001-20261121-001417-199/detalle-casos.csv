@@ -1,0 +1,8 @@
+﻿"ejecucion","clase","caso","estado","segundos_junit"
+"QA-COMP-001","test.test_qa_complementos","test_qa_csrf_invalido_no_consulta_usuario","APROBADO","0.257"
+"QA-COMP-001","test.test_qa_complementos","test_qa_csrf_valido_llega_a_validar_credenciales","APROBADO","0.224"
+"QA-COMP-001","test.test_qa_complementos","test_qa_logout_elimina_sesion_y_protege_panel[Administrador]","APROBADO","0.026"
+"QA-COMP-001","test.test_qa_complementos","test_qa_logout_elimina_sesion_y_protege_panel[Emisor]","APROBADO","0.030"
+"QA-COMP-001","test.test_qa_complementos","test_qa_logout_elimina_sesion_y_protege_panel[Lector]","APROBADO","0.024"
+"QA-COMP-001","test.test_qa_complementos","test_qa_busqueda_acepta_limite_inferior","APROBADO","0.020"
+"QA-COMP-001","test.test_qa_complementos","test_qa_query_no_suplanta_al_emisor","FALLIDO","0.021"

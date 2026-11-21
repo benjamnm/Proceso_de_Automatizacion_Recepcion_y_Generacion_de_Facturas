@@ -1,0 +1,4 @@
+﻿inicio=2026-11-21T00:14:21.4939952-03:00
+fin=2026-11-21T00:14:25.5567412-03:00
+codigo_salida=1
+junit_generado=True

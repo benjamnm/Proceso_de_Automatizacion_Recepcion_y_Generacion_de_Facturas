@@ -1,0 +1,5 @@
+﻿fecha=2026-11-21T00:15:46.7448849-03:00
+incidencia=El generador intento leer el manifiesto mientras lo escribia.
+clasificacion=Error del script de cierre de evidencia.
+accion=Conservar parcial y regenerar excluyendo el manifiesto final.
+pruebas_repetidas=False

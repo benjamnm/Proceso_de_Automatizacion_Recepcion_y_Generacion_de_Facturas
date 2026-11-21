@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="7" time="1.028" timestamp="2026-11-21T00:14:23.112140-03:00" hostname="Vins"><testcase classname="test.test_qa_complementos" name="test_qa_csrf_invalido_no_consulta_usuario" time="0.257" /><testcase classname="test.test_qa_complementos" name="test_qa_csrf_valido_llega_a_validar_credenciales" time="0.224" /><testcase classname="test.test_qa_complementos" name="test_qa_logout_elimina_sesion_y_protege_panel[Administrador]" time="0.026" /><testcase classname="test.test_qa_complementos" name="test_qa_logout_elimina_sesion_y_protege_panel[Emisor]" time="0.030" /><testcase classname="test.test_qa_complementos" name="test_qa_logout_elimina_sesion_y_protege_panel[Lector]" time="0.024" /><testcase classname="test.test_qa_complementos" name="test_qa_busqueda_acepta_limite_inferior" time="0.020" /><testcase classname="test.test_qa_complementos" name="test_qa_query_no_suplanta_al_emisor" time="0.021"><failure message="AssertionError: assert ['Solo el Adm...responsable.'] == []&#10;  &#10;  Left contains one more item: 'Solo el Administrador puede filtrar por responsable.'&#10;  &#10;  Full diff:&#10;  - []&#10;  + [&#10;  +     'Solo el Administrador puede filtrar por responsable.',&#10;  + ]">test\test_qa_complementos.py:110: in test_qa_query_no_suplanta_al_emisor
+    assert errores == []
+E   AssertionError: assert ['Solo el Adm...responsable.'] == []
+E     
+E     Left contains one more item: 'Solo el Administrador puede filtrar por responsable.'
+E     
+E     Full diff:
+E     - []
+E     + [
+E     +     'Solo el Administrador puede filtrar por responsable.',
+E     + ]</failure></testcase></testsuite></testsuites>

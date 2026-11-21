@@ -1,0 +1,8 @@
+﻿fecha=2026-11-21T00:00:43.7376220-03:00
+rama=qa/facturaciones-v2-20261120
+commit=2c878f493cd8045f088513c6b206b4338e866a82
+aplicacion=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas
+entorno=C:/GitHub/Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729
+
+Estado Git antes de preparar:
+## qa/facturaciones-v2-20261120...origin/qa/facturaciones-v2-20261120

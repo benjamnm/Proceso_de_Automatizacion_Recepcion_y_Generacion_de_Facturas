@@ -1,0 +1,113 @@
+"""QA-COMP-001: complementos a la regresion base. Sin servicios externos."""
+from html.parser import HTMLParser
+from types import SimpleNamespace
+
+import pytest
+
+from app import create_app
+from app.models import User
+from app.solicitudes import routes
+from config import TestingConfig
+
+
+class _TokenHTML(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.token = None
+
+    def handle_starttag(self, tag, attrs):
+        atributos = dict(attrs)
+        if tag == "input" and atributos.get("name") == "csrf_token":
+            self.token = atributos.get("value")
+
+
+@pytest.fixture
+def cliente_csrf_qa(tmp_path):
+    class ConfigQA(TestingConfig):
+        WTF_CSRF_ENABLED = True
+        XML_UPLOAD_FOLDER = str(tmp_path / "xml")
+        ADJUNTOS_FOLDER = str(tmp_path / "adjuntos")
+        CORREOS_FOLDER = str(tmp_path / "correos")
+        SII_FOLDER = str(tmp_path / "sii")
+        SMTP_HOST = ""
+        IMAP_HOST = ""
+
+    return create_app(ConfigQA).test_client()
+
+
+def test_qa_csrf_invalido_no_consulta_usuario(cliente_csrf_qa, monkeypatch):
+    llamadas = []
+    monkeypatch.setattr(
+        User, "get_by_email",
+        classmethod(lambda cls, email: llamadas.append(email)),
+    )
+    assert cliente_csrf_qa.get("/auth/login").status_code == 200
+    respuesta = cliente_csrf_qa.post("/auth/login", data={
+        "email": "qa@example.invalid", "password": "clave-qa-invalida",
+        "csrf_token": "token-manipulado",
+    })
+    assert respuesta.status_code == 400
+    assert llamadas == []
+
+
+def test_qa_csrf_valido_llega_a_validar_credenciales(cliente_csrf_qa, monkeypatch):
+    llamadas = []
+
+    def buscar(cls, email):
+        llamadas.append(email)
+        return None
+
+    monkeypatch.setattr(User, "get_by_email", classmethod(buscar))
+    pagina = cliente_csrf_qa.get("/auth/login")
+    assert pagina.status_code == 200
+    parser = _TokenHTML()
+    parser.feed(pagina.get_data(as_text=True))
+    assert parser.token
+    respuesta = cliente_csrf_qa.post("/auth/login", data={
+        "email": "qa@example.invalid", "password": "clave-qa-invalida",
+        "csrf_token": parser.token,
+    })
+    assert respuesta.status_code == 401
+    assert llamadas == ["qa@example.invalid"]
+
+
+@pytest.mark.parametrize("rol", ["Administrador", "Emisor", "Lector"])
+def test_qa_logout_elimina_sesion_y_protege_panel(client, login_como, rol):
+    login_como(rol)
+    with client.session_transaction() as sesion:
+        assert "_user_id" in sesion
+        sesion["qa_marcador_privado"] = "dato-solo-prueba"
+    salida = client.post("/auth/logout")
+    assert salida.status_code == 302
+    assert "/auth/login" in salida.headers["Location"]
+    with client.session_transaction() as sesion:
+        assert "_user_id" not in sesion
+        assert "qa_marcador_privado" not in sesion
+    protegida = client.get("/dashboard")
+    assert protegida.status_code == 302
+    assert "/auth/login" in protegida.headers["Location"]
+
+
+def test_qa_busqueda_acepta_limite_inferior(app, monkeypatch):
+    monkeypatch.setattr(
+        routes, "current_user", SimpleNamespace(id=1, role_name="Administrador")
+    )
+    with app.test_request_context("/solicitudes/?q=ab"):
+        where, parametros, _, errores = routes.construir_filtros()
+    assert errores == []
+    assert "LIKE" in where
+    assert parametros == ("%ab%", "%ab%")
+
+
+def test_qa_query_no_suplanta_al_emisor(app, monkeypatch):
+    monkeypatch.setattr(
+        routes, "current_user", SimpleNamespace(id=7, role_name="Emisor")
+    )
+    with app.test_request_context(
+        "/solicitudes/?q=servicio&emisor_id=999&rol=Administrador"
+    ):
+        where, parametros, _, errores = routes.construir_filtros()
+    assert errores == []
+    assert where.startswith("WHERE s.emisor_id = %s AND ")
+    assert parametros[0] == 7
+    assert 999 not in parametros
