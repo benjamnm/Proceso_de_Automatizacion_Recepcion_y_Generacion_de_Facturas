@@ -1,90 +1,43 @@
-# Proceso de Automatización Recepción y Generación de Facturas.
+# Proceso de Automatización Recepción y Generación de Facturas
 
-Proyecto CAPSTONE 005D
+Proyecto CAPSTONE 005D — Carla Correa, Vicente Oyarzún, Benjamín Arevalo, Vicente Valenzuela. Docente: Cindy Contador.
 
-Integrantes: Carla Correa, Vicente Oyarzún, Benjamín Arevalo, Vicente Valenzuela.
+Aplicación web (Flask + MySQL) que centraliza las solicitudes de facturación de Facturaciones SpA: registro manual o automático desde correo (IMAP), validación de datos, gestión de clientes y usuarios por rol, versiones de factura con validación del Administrador, generación del DTE (XML) para el SII y auditoría de todas las acciones.
 
-Asignatura: Capstone
+Estados de una solicitud: Pendiente → En revisión → Aprobada, con En corrección y Rechazada.
 
-Docente: Cindy Contador.
+## Puesta en marcha
 
-**Descripción del proyecto**
+Desde la carpeta `Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/`:
 
-Aplicación web la cual permite centralizar y gestionar las solicitudes de facturación de Facturaciones SpA, permitiendo a los usuarios internos registrar manualmente las solicitudes, consultar sus antecedentes y realizar seguimiento de su estado. El sistema contempla el registro del canal de origen de cada solicitud (correo electrónico, WhatsApp o web), la validación de los campos obligatorios, la administración de clientes y usuarios según sus roles y el control de los estados del trámite: Pendiente, En revisión y Emitida.
+```bash
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements-dev.txt
+copy .env.example .env      # completar SECRET_KEY, BD, SMTP/IMAP y EMPRESA_*
+```
 
-Además, permite asociar el archivo XML correspondiente a la factura emitida, conservarlo como respaldo para auditoría y enviarlo por correo electrónico mediante SMTP. La aplicación incorpora un historial de acciones para facilitar la trazabilidad de las operaciones realizadas por los usuarios.
+1. Sobre la base `facturaciones_spa_mvp`, ejecutar los scripts de `migrations/` en orden (001 a 005).
+2. `python seed.py` crea los roles y el Administrador inicial.
+3. `python run.py` inicia el servidor en <http://127.0.0.1:5000>.
+4. `pytest` ejecuta las pruebas.
 
-## Estructura de la Plataforma Web
+El flujo correo → factura → SII y las medidas de seguridad están en [docs/flujo_correo_factura.md](Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/docs/flujo_correo_factura.md).
+
+## Estructura
 
 ```text
 Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/
 ├── app/
-│   ├── __pycache__/
-│   ├── admin/
-│   │   ├── __pycache__/
-│   │   ├── __init__.py
-│   │   ├── routes.py
-│   │   ├── auditoria.html
-│   │   ├── usuario_editar.html
-│   │   └── usuarios.html
-│   ├── auth/
-│   │   ├── __pycache__/
-│   │   ├── __init__.py
-│   │   ├── routes.py
-│   │   └── login.html
-│   ├── clientes/
-│   │   ├── __pycache__/
-│   │   ├── __init__.py
-│   │   ├── routes.py
-│   │   ├── formulario.html
-│   │   └── listado.html
-│   ├── services/
-│   │   ├── __pycache__/
-│   │   ├── __init__.py
-│   │   ├── clientes.py
-│   │   ├── solicitudes.py
-│   │   ├── tokens_solicitud.py
-│   │   ├── usuarios.py
-│   │   └── validaciones.py
-│   ├── solicitudes/
-│   │   ├── __pycache__/
-│   │   ├── detalle.html
-│   │   ├── editar.html
-│   │   ├── listado.html
-│   │   └── nueva.html
-│   ├── static/
-│   │   ├── CSS/
-│   │   │   ├── app.css
-│   │   │   └── login.css
-│   │   └── js/
-│   │       ├── login.js
-│   │       └── solicitudes.js
-│   ├── templates/
-│   │   ├── admin/
-│   │   ├── auth/
-│   │   ├── clientes/
-│   │   ├── solicitudes/
-│   │   ├── base.html
-│   │   └── dashboard.html
-│   ├── __init__.py
-│   ├── extensions.py
-│   ├── models.py
-│   └── security.py
+│   ├── admin/ auth/ clientes/ solicitudes/   # blueprints (rutas)
+│   ├── cli/                                  # comandos flask (smtp-prueba, imap-prueba, correo-revisar)
+│   ├── services/                             # lógica de negocio
+│   ├── registros/                            # datos privados (XML, correos, DTE, adjuntos); no se versionan
+│   ├── static/ templates/
+│   ├── security.py permisos.py models.py
 ├── docs/
-├── instance/
 ├── migrations/
 ├── test/
-├── venv/
-├── .env.example
-├── .gitignore
-├── config.py
-├── package-lock.json
-├── package.json
-├── requirements.txt
-├── run.py
-├── seed.py
-├── .env.local
-├── README.md
-└── requirements.txt
+├── config.py run.py seed.py
+└── .env.example
 ```
-

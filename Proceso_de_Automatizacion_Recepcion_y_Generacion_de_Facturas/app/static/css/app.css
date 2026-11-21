@@ -1,18 +1,6 @@
-/* =====================================================================
-   Facturaciones SpA — tema claro salvia/grafito
-   Plan: docs/diseno/PLAN_REDISENO_PLATAFORMA.md (v2)
-
-   Bloques numerados según la Fase 1 del plan.
-
-   Reglas: fuera de los bloques 2 y 3 solo se usan tokens (var(--…)).
-   El único !important está en el bloque de .badge (6.5).
-   ===================================================================== */
-
-
-/* 1. @font-face -------------------------------------------------------
-   No se declara: app/static/fonts/inter/ no existe. --fuente cae a
-   system-ui. Para activar Inter, agregar aquí los @font-face con
-   font-display: swap cuando estén los .woff2 y OFL.txt. */
+/* Facturaciones SpA — tema claro salvia/grafito.
+   Fuera de los bloques 2 y 3 solo se usan tokens (var(--…)).
+   El único !important está en .badge (6.5). */
 
 
 /* 2. Tokens ---------------------------------------------------------- */
@@ -578,7 +566,7 @@ a:focus-visible,
 }
 
 
-/* 7. Componentes de la maqueta -------------------------------------- */
+/* 7. Componentes propios -------------------------------------------- */
 
 /* 7.1 Banda de bienvenida del panel */
 .bienvenida {

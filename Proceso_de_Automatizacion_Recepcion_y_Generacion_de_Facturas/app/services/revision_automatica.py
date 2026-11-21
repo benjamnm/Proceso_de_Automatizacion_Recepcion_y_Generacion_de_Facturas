@@ -91,8 +91,3 @@ def iniciar(app):
     hilo.start()
     app.logger.info("Revisión automática de la bandeja cada %s s.", intervalo)
     return True
-
-
-def detener():
-    _detener.set()
-    _actualizar(activa=False)

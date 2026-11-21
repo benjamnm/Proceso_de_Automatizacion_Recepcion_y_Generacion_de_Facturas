@@ -1,10 +1,7 @@
 /*
- * Actualización automática de la bandeja de correos.
- *
- * Consulta cada N segundos una firma liviana (JSON). 
- * Si cambió, recarga la página; si el usuario está escribiendo (p. ej. el motivo de descarte),
- * solo muestra un aviso para no perder lo escrito. Se pausa con la pestaña oculta.
- * La recarga lleva ?auto=1 para no contar como actividad del usuario.
+ * Bandeja de correos: consulta una firma JSON cada N segundos y recarga si
+ * cambió. Si el usuario está escribiendo solo avisa; se pausa con la
+ * pestaña oculta. La recarga lleva ?auto=1 para no contar como actividad.
  */
 (() => {
     "use strict";

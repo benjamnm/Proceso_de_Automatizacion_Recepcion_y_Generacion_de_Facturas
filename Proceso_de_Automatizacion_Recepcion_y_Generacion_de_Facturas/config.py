@@ -22,11 +22,16 @@ def _booleano(nombre, por_defecto=False):
     return valor in {"1", "true", "si", "sí", "yes", "on"}
 
 
+def _carpeta(nombre, por_defecto):
+    """Rutas relativas se resuelven desde BASE_DIR, no desde la consola."""
+    ruta = Path(os.getenv(nombre, "").strip() or por_defecto)
+    return str(ruta if ruta.is_absolute() else BASE_DIR / ruta)
+
+
 class Config:
     # Obligatoria (mínimo 32 caracteres): create_app() se niega a iniciar sin ella.
     SECRET_KEY = os.getenv("SECRET_KEY", "")
 
-    # Base de datos (XAMPP por defecto, salvo la contraseña).
     DB_HOST = os.getenv("DB_HOST", "127.0.0.1")
     DB_PORT = _entero("DB_PORT", 3306)
     DB_NAME = os.getenv("DB_NAME", "facturaciones_spa_mvp")
@@ -50,23 +55,15 @@ class Config:
     # Solicitudes "¿Olvidó su contraseña?" por IP en la misma ventana.
     RECUPERACION_MAX_IP = _entero("RECUPERACION_MAX_IP", 5)
 
-    # Almacenamiento privado de XML (fuera de /static).
-    XML_UPLOAD_FOLDER = os.getenv(
-        "XML_UPLOAD_FOLDER",
-        str(BASE_DIR / "app" / "registros" / "xml"),
-    )
+    # Datos de clientes: carpetas privadas, fuera de /static.
+    XML_UPLOAD_FOLDER = _carpeta("XML_UPLOAD_FOLDER", "app/registros/xml")
     MAX_XML_UPLOAD_BYTES = 5 * 1024 * 1024
 
-    # Documentos adjuntos a la solicitud (privados, fuera de /static).
-    ADJUNTOS_FOLDER = os.getenv(
-        "ADJUNTOS_FOLDER",
-        str(BASE_DIR / "app" / "registros" / "adjuntos"),
-    )
+    ADJUNTOS_FOLDER = _carpeta("ADJUNTOS_FOLDER", "app/registros/adjuntos")
     MAX_ADJUNTO_BYTES = 5 * 1024 * 1024
     MAX_ADJUNTOS_SOLICITUD = 3
 
-    # Cuerpo máximo de una petición: 3 adjuntos de 5 MB más el formulario.
-    # Cada archivo tiene además su propio límite (XML y adjuntos: 5 MB).
+    # 3 adjuntos de 5 MB más el formulario.
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024
 
     SMTP_HOST = os.getenv("SMTP_HOST", "")
@@ -87,22 +84,13 @@ class Config:
     IMAP_MAX_MENSAJES = _entero("IMAP_MAX_MENSAJES", 25)
     IMAP_MAX_BYTES = _entero("IMAP_MAX_BYTES", 10 * 1024 * 1024)
 
-    # Revisión automática de la bandeja (IMAP + proceso) en segundo plano.
-    # 0 = desactivada (use el botón o la tarea programada). Mínimo 30 s.
+    # Segundos entre revisiones IMAP en segundo plano (0 = off, mínimo 30).
     BANDEJA_REVISION_SEGUNDOS = _entero("BANDEJA_REVISION_SEGUNDOS", 120)
-    # Cada cuánto la página de la bandeja consulta si hay novedades.
-    # 0 = sin actualización automática de la página. Mínimo 10 s.
+    # Segundos entre sondeos de la página de la bandeja (0 = off, mínimo 10).
     BANDEJA_REFRESCO_SEGUNDOS = _entero("BANDEJA_REFRESCO_SEGUNDOS", 20)
 
-    # Repositorios privados (fuera de /static).
-    CORREOS_FOLDER = os.getenv(
-        "CORREOS_FOLDER",
-        str(BASE_DIR / "app" / "registros" / "correos"),
-    )
-    SII_FOLDER = os.getenv(
-        "SII_FOLDER",
-        str(BASE_DIR / "app" / "registros" / "sii"),
-    )
+    CORREOS_FOLDER = _carpeta("CORREOS_FOLDER", "app/registros/correos")
+    SII_FOLDER = _carpeta("SII_FOLDER", "app/registros/sii")
 
     # Usuario técnico creado por la migración 003.
     SISTEMA_CORREO_EMAIL = os.getenv(

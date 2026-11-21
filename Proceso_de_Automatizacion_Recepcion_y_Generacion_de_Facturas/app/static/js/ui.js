@@ -1,5 +1,4 @@
-// Solo presentación: contador de caracteres del concepto.
-// No valida ni bloquea nada; maxlength sigue siendo la validación real.
+// Contador de caracteres del concepto (la validación real es maxlength).
 (() => {
     "use strict";
     const campo = document.querySelector("#concepto");

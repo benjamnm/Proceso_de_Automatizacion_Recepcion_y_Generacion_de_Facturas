@@ -33,3 +33,18 @@ def test_conexion_usa_la_configuracion(app, monkeypatch):
     assert capturado["password"] == "secreta"
     assert capturado["database"] == "bd_x"
     assert capturado["charset"] == "utf8mb4"
+
+
+def test_carpetas_relativas_se_resuelven_desde_el_proyecto(monkeypatch, tmp_path):
+    from config import BASE_DIR, _carpeta
+
+    monkeypatch.setenv("CARPETA_PRUEBA", "Registros_Correo")
+    assert _carpeta("CARPETA_PRUEBA", "x") == str(BASE_DIR / "Registros_Correo")
+
+    monkeypatch.setenv("CARPETA_PRUEBA", str(tmp_path))
+    assert _carpeta("CARPETA_PRUEBA", "x") == str(tmp_path)
+
+    monkeypatch.delenv("CARPETA_PRUEBA")
+    assert _carpeta("CARPETA_PRUEBA", "app/registros/sii") == str(
+        BASE_DIR / "app" / "registros" / "sii"
+    )

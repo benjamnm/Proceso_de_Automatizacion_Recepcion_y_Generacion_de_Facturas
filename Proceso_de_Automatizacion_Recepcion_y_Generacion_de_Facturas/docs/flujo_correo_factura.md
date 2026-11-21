@@ -25,9 +25,9 @@ Correos incompletos o de remitentes no registrados quedan `REQUIERE_REVISION` en
    ```
 4. Programar la revisión (Programador de tareas de Windows, cada 5 minutos):
    ```
-   Programa:   C:\Github\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\venv\Scripts\flask.exe
+   Programa:   <carpeta del proyecto>\venv\Scripts\flask.exe
    Argumentos: --app run correo-revisar
-   Iniciar en: C:\Github\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas
+   Iniciar en: <carpeta del proyecto>
    ```
    También existe el botón **Revisar bandeja ahora** en la bandeja del Administrador. Dos ejecuciones simultáneas se excluyen con `GET_LOCK`.
 
@@ -54,7 +54,7 @@ Orden de compra: 4500012345
 - Remitente no registrado o falla SPF/DMARC → revisión manual; RUT de otro contacto → alerta visible al validar.
 - Avisos propios (`X-Facturaciones-Origen`), respuestas automáticas y listas se ignoran (evita bucles).
 - Solo el Administrador valida, observa, descarga DTE y gestiona la bandeja; todo queda en `auditoria`.
-- Las carpetas `CORREOS_FOLDER` y `SII_FOLDER` contienen datos de clientes: deben quedar fuera del repositorio (`.gitignore` excluye `Registros_Correo/`, `Registros_SII/` y `*.eml`).
+- Las carpetas de datos (`XML_UPLOAD_FOLDER`, `ADJUNTOS_FOLDER`, `CORREOS_FOLDER`, `SII_FOLDER`) contienen datos de clientes. Una ruta relativa se resuelve desde la carpeta del proyecto (no desde la consola) y `.gitignore` excluye `app/registros/*`, `Registros_Correo/`, `Registros_SII/` y `*.eml`.
 
 ### Plataforma web
 

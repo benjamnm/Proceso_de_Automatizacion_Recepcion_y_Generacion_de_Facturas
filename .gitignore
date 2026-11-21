@@ -18,7 +18,7 @@ htmlcov/
 instance/
 *.log
 
-# Archivos XML subidos por usuarios (datos de clientes)
+# Datos de clientes (XML, correos, DTE y adjuntos)
 Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/xml/*
 !Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/xml/.gitkeep
 Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/correos/*
@@ -29,9 +29,9 @@ Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/adjun
 !Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas/app/registros/adjuntos/.gitkeep
 uploads/
 
-# Repositorios de correos y DTE configurados fuera de app/ (datos sensibles)
-C:\Github\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Registros_Correo
-C:\Github\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Registros_SII
+# Carpetas de correos y DTE configuradas fuera de app/ (datos sensibles)
+Registros_Correo/
+Registros_SII/
 *.eml
 
 # Certificados digitales / claves (firma electrónica SII, CAF, TLS)
@@ -52,8 +52,7 @@ dump*.sql
 .claude/settings.local.json
 
 # Editores y sistema
-.vscode/*
-!.vscode/settings.json
+.vscode/
 Thumbs.db
 .DS_Store
 node_modules/
