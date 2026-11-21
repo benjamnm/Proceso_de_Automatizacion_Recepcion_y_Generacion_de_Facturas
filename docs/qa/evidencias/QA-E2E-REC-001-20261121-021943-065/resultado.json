@@ -1,0 +1,74 @@
+{
+  "ejecucion": "QA-E2E-REC-001",
+  "caso": "E2E-AUTH-006",
+  "inicio": "2026-11-21T02:19:49.786376-03:00",
+  "base": "facturaciones_spa_qa",
+  "pruebas_iniciadas": true,
+  "codigo_pytest": 0,
+  "modalidad": "ventana real; mismo servidor; sin ajustar reloj ni limites",
+  "fase": "ejecucion_selenium",
+  "cuenta_bd_verificada": "qa_facturaciones@127.0.0.1",
+  "ultimo_login_antes": "2026-11-21 04:25:33",
+  "limites_login": {
+    "ip_y_correo": 5,
+    "por_ip": 20,
+    "ventana_minutos": 15
+  },
+  "limites_modificados": false,
+  "espera_programada_segundos": 905,
+  "http_login": 200,
+  "ultimo_login_despues": "2026-11-21 05:35:27",
+  "ultimo_login_actualizado": true,
+  "servidor_qa_detenido": true,
+  "bloqueo_confirmado": true,
+  "recuperacion_confirmada": true,
+  "espera_inicio": "2026-11-21T02:20:20.558366-03:00",
+  "reintento_no_antes_de": "2026-11-21T02:35:25.558489-03:00",
+  "espera_real_segundos": 905.0028659000527,
+  "post_login_observados": [
+    {
+      "intento": 1,
+      "status": 401,
+      "sesion_autenticada": false,
+      "fecha": "2026-11-21T02:20:16.474351-03:00"
+    },
+    {
+      "intento": 2,
+      "status": 401,
+      "sesion_autenticada": false,
+      "fecha": "2026-11-21T02:20:17.500170-03:00"
+    },
+    {
+      "intento": 3,
+      "status": 401,
+      "sesion_autenticada": false,
+      "fecha": "2026-11-21T02:20:18.237165-03:00"
+    },
+    {
+      "intento": 4,
+      "status": 401,
+      "sesion_autenticada": false,
+      "fecha": "2026-11-21T02:20:19.017736-03:00"
+    },
+    {
+      "intento": 5,
+      "status": 401,
+      "sesion_autenticada": false,
+      "fecha": "2026-11-21T02:20:19.768710-03:00"
+    },
+    {
+      "intento": 6,
+      "status": 429,
+      "sesion_autenticada": false,
+      "fecha": "2026-11-21T02:20:20.192368-03:00"
+    },
+    {
+      "intento": 7,
+      "status": 302,
+      "sesion_autenticada": true,
+      "fecha": "2026-11-21T02:35:27.336798-03:00"
+    }
+  ],
+  "fin": "2026-11-21T02:35:32.706569-03:00",
+  "junit_generado": true
+}

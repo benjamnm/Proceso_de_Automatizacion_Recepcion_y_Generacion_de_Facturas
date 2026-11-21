@@ -1,0 +1,11 @@
+{
+  "ejecucion": "QA-E2E-001",
+  "caso": "E2E-LOGIN-001",
+  "inicio": "2026-11-21T00:33:56.706275-03:00",
+  "pruebas_iniciadas": false,
+  "codigo_pytest": null,
+  "error_orquestacion": "El PID no corresponde al servidor iniciado",
+  "servidor_qa_detenido": true,
+  "fin": "2026-11-21T00:33:57.961924-03:00",
+  "junit_generado": false
+}

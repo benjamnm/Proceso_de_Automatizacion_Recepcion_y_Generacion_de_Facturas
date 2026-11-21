@@ -1,0 +1,18 @@
+﻿ejecucion=QA-E2E-NEG-001
+casos=E2E-AUTH-003 y E2E-AUTH-004
+rama=qa/facturaciones-v2-20261120
+commit_base=47e321258e984428f717a9821d29a5a6190761f8
+base=facturaciones_spa_qa
+alcance=dos POST negativos, 401, mensaje generico, sesion denegada y ultimo_login sin cambios
+nota=caso y lanzador locales adicionales; no se modifica .env ni controles de seguridad
+efecto=contadores de fallos en memoria del servidor temporal; no se reinician ni alteran limites
+python=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Scripts\python.exe
+
+Estado Git:
+## qa/facturaciones-v2-20261120...origin/qa/facturaciones-v2-20261120
+?? e2e/
+?? ../docs/qa/evidencias/QA-DATOS-001-20261121-012009-697/
+?? ../docs/qa/evidencias/QA-E2E-001-20261121-003327-265/
+?? ../docs/qa/evidencias/QA-E2E-002-20261121-003651-984/
+?? ../docs/qa/evidencias/QA-E2E-AUTH-001-20261121-012437-746/
+?? ../docs/qa/evidencias/QA-E2E-NEG-001-20261121-013609-295/

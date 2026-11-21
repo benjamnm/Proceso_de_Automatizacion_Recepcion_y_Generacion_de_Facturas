@@ -1,0 +1,10 @@
+{
+  "pid": 11448,
+  "base_url": "http://127.0.0.1:54892",
+  "testing": false,
+  "debug": false,
+  "csrf_activo": true,
+  "revision_automatica_segundos": 0,
+  "conexiones_mysql_smtp_imap": "bloqueadas en este proceso",
+  "alcance": "pantalla publica; no apto para pruebas de autenticacion real"
+}

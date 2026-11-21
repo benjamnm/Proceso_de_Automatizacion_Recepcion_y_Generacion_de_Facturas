@@ -1,0 +1,58 @@
+{
+  "ejecucion": "QA-E2E-LOCK-001",
+  "caso": "E2E-AUTH-005",
+  "inicio": "2026-11-21T01:46:12.289209-03:00",
+  "base": "facturaciones_spa_qa",
+  "pruebas_iniciadas": true,
+  "codigo_pytest": 0,
+  "alcance": "misma IP y mismo correo; no prueba bloqueo global ni desbloqueo temporal",
+  "fase": "ejecucion_selenium",
+  "cuenta_bd_verificada": "qa_facturaciones@127.0.0.1",
+  "ultimo_login_antes": "2026-11-21 04:25:33",
+  "limites_login": {
+    "ip_y_correo": 5,
+    "por_ip": 20,
+    "ventana_minutos": 15
+  },
+  "limites_modificados": false,
+  "http_login": 200,
+  "ultimo_login_despues": "2026-11-21 04:25:33",
+  "ultimo_login_sin_cambios": true,
+  "servidor_qa_detenido": true,
+  "post_login_observados": [
+    {
+      "intento": 1,
+      "status": 401,
+      "sesion_autenticada": false
+    },
+    {
+      "intento": 2,
+      "status": 401,
+      "sesion_autenticada": false
+    },
+    {
+      "intento": 3,
+      "status": 401,
+      "sesion_autenticada": false
+    },
+    {
+      "intento": 4,
+      "status": 401,
+      "sesion_autenticada": false
+    },
+    {
+      "intento": 5,
+      "status": 401,
+      "sesion_autenticada": false
+    },
+    {
+      "intento": 6,
+      "status": 429,
+      "sesion_autenticada": false
+    }
+  ],
+  "bloqueo_verificado": true,
+  "desbloqueo_por_tiempo_verificado": false,
+  "fin": "2026-11-21T01:47:03.288041-03:00",
+  "junit_generado": true
+}

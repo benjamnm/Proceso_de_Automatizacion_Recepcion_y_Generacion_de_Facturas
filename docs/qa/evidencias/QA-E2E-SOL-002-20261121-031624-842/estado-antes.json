@@ -1,0 +1,113 @@
+{
+  "solicitudes": [
+    {
+      "id": 1,
+      "public_id": "07738979a51988f9e9b80314703efdca",
+      "emisor_id": 2,
+      "cliente_id": 1,
+      "estado_id": 1,
+      "origen_id": 1,
+      "rut": "11111111-1",
+      "nombre": "Cliente Sintetico QA Aislamiento",
+      "direccion": "Direccion ficticia QA 123",
+      "giro": "Servicios de prueba QA",
+      "email_contacto_receptor": "cliente.qa@example.com",
+      "concepto": "QA-HORIZONTAL-A-f8d47c02",
+      "nro_orden_compra": null,
+      "fecha_emision": "2026-11-21",
+      "monto_bruto": "119000",
+      "tipo_afectacion": "AFECTA",
+      "email_emisor": "qa.emisor@example.invalid",
+      "motivo_rechazo": null,
+      "creado_en": "2026-11-21 02:58:18",
+      "actualizado_en": "2026-11-21 02:58:18",
+      "version": 1,
+      "estado_nombre": "Pendiente",
+      "origen_nombre": "Web"
+    },
+    {
+      "id": 2,
+      "public_id": "79abf9736ffbea95925ac870ebf2945c",
+      "emisor_id": 4,
+      "cliente_id": 1,
+      "estado_id": 1,
+      "origen_id": 1,
+      "rut": "11111111-1",
+      "nombre": "Cliente Sintetico QA Aislamiento",
+      "direccion": "Direccion ficticia QA 123",
+      "giro": "Servicios de prueba QA",
+      "email_contacto_receptor": "cliente.qa@example.com",
+      "concepto": "QA-HORIZONTAL-B-f8d47c02",
+      "nro_orden_compra": null,
+      "fecha_emision": "2026-11-21",
+      "monto_bruto": "238000",
+      "tipo_afectacion": "AFECTA",
+      "email_emisor": "qa.emisor2@example.invalid",
+      "motivo_rechazo": null,
+      "creado_en": "2026-11-21 02:58:18",
+      "actualizado_en": "2026-11-21 02:58:18",
+      "version": 1,
+      "estado_nombre": "Pendiente",
+      "origen_nombre": "Web"
+    },
+    {
+      "id": 3,
+      "public_id": "ee2e8fdb51290c59ae0ab6457a3ba001",
+      "emisor_id": 2,
+      "cliente_id": 1,
+      "estado_id": 1,
+      "origen_id": 1,
+      "rut": "11111111-1",
+      "nombre": "Cliente Sintetico QA Aislamiento",
+      "direccion": "Direccion ficticia QA 123",
+      "giro": "Servicios de prueba QA",
+      "email_contacto_receptor": "cliente.qa@example.com",
+      "concepto": "QA-CREACION-WEB-80979053",
+      "nro_orden_compra": "QA-OC-80979053",
+      "fecha_emision": "2026-11-21",
+      "monto_bruto": "357000",
+      "tipo_afectacion": "AFECTA",
+      "email_emisor": "qa.emisor@example.invalid",
+      "motivo_rechazo": null,
+      "creado_en": "2026-11-21 03:10:06",
+      "actualizado_en": "2026-11-21 03:10:06",
+      "version": 1,
+      "estado_nombre": "Pendiente",
+      "origen_nombre": "Web"
+    }
+  ],
+  "auditoria": [
+    {
+      "id": 1,
+      "usuario_id": 2,
+      "accion": "SOLICITUD_CREADA",
+      "detalle": {
+        "solicitud_afectada_id": 3,
+        "public_id": "ee2e8fdb51290c59ae0ab6457a3ba001",
+        "cliente_id": 1,
+        "estado": "Pendiente",
+        "origen": "Web",
+        "concepto": "QA-CREACION-WEB-80979053",
+        "monto_bruto": "357000",
+        "fecha_emision": "2026-11-21",
+        "tipo_afectacion": "AFECTA",
+        "nro_orden_compra": "QA-OC-80979053",
+        "receptor_historico": {
+          "rut": "11111111-1",
+          "nombre": "Cliente Sintetico QA Aislamiento",
+          "direccion": "Direccion ficticia QA 123",
+          "giro": "Servicios de prueba QA",
+          "email": "cliente.qa@example.com"
+        }
+      },
+      "creado_en": "2026-11-21 03:10:06"
+    }
+  ],
+  "conteos": {
+    "facturas": 0,
+    "registros_xml": 0,
+    "adjuntos_solicitud": 0,
+    "envios_correo": 0,
+    "correos_entrantes": 0
+  }
+}

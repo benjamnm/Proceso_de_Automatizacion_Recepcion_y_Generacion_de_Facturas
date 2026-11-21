@@ -1,0 +1,49 @@
+{
+  "id": "QA-DATOS-003",
+  "base": "facturaciones_spa_qa",
+  "origen": "SQL de preparacion; no flujo funcional",
+  "emisor_a": {
+    "id": 2,
+    "email": "qa.emisor@example.invalid",
+    "nombre": "Emisor Sintetico QA"
+  },
+  "emisor_b": {
+    "id": 4,
+    "email": "qa.emisor2@example.invalid",
+    "nombre": "Segundo Emisor Sintetico QA"
+  },
+  "cliente": {
+    "rut": "11111111-1",
+    "razon_social": "Cliente Sintetico QA Aislamiento",
+    "direccion": "Direccion ficticia QA 123",
+    "giro": "Servicios de prueba QA",
+    "email_contacto": "cliente.qa@example.com",
+    "id": 1
+  },
+  "solicitudes": [
+    {
+      "etiqueta": "A",
+      "id": 1,
+      "public_id": "07738979a51988f9e9b80314703efdca",
+      "emisor_id": 2,
+      "email_emisor": "qa.emisor@example.invalid",
+      "concepto": "QA-HORIZONTAL-A-f8d47c02",
+      "estado": "Pendiente",
+      "version": 1,
+      "monto_bruto": "119000",
+      "cliente_id": 1
+    },
+    {
+      "etiqueta": "B",
+      "id": 2,
+      "public_id": "79abf9736ffbea95925ac870ebf2945c",
+      "emisor_id": 4,
+      "email_emisor": "qa.emisor2@example.invalid",
+      "concepto": "QA-HORIZONTAL-B-f8d47c02",
+      "estado": "Pendiente",
+      "version": 1,
+      "monto_bruto": "238000",
+      "cliente_id": 1
+    }
+  ]
+}

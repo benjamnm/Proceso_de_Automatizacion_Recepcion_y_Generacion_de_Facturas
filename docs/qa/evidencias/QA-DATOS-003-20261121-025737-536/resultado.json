@@ -1,0 +1,97 @@
+{
+  "id": "QA-DATOS-003",
+  "inicio": "2026-11-21T02:57:40.332881-03:00",
+  "base": "facturaciones_spa_qa",
+  "estado": "PREPARACION_CORRECTA",
+  "commit_confirmado": true,
+  "nota": "Fixtures insertados por SQL; no demuestra creacion mediante aplicacion",
+  "fase": "insercion_fixtures",
+  "cuenta_bd_verificada": "qa_facturaciones@127.0.0.1",
+  "conteos_antes": {
+    "adjuntos_solicitud": 0,
+    "auditoria": 0,
+    "clientes": 0,
+    "correos_entrantes": 0,
+    "envios_correo": 0,
+    "estados_solicitud": 0,
+    "facturas": 0,
+    "origenes_solicitud": 0,
+    "recuperaciones_password": 0,
+    "registros_xml": 0,
+    "roles": 3,
+    "solicitudes": 0,
+    "usuarios": 3
+  },
+  "usuarios_originales": [
+    {
+      "id": 1,
+      "email": "qa.admin@example.invalid",
+      "nombre": "Administrador Sintetico QA",
+      "activo": 1,
+      "debe_cambiar_password": 0,
+      "ultimo_login": "2026-11-21 05:35:27",
+      "rol": "Administrador"
+    },
+    {
+      "id": 2,
+      "email": "qa.emisor@example.invalid",
+      "nombre": "Emisor Sintetico QA",
+      "activo": 1,
+      "debe_cambiar_password": 0,
+      "ultimo_login": "2026-11-21 05:50:48",
+      "rol": "Emisor"
+    },
+    {
+      "id": 3,
+      "email": "qa.lector@example.invalid",
+      "nombre": "Lector Sintetico QA",
+      "activo": 1,
+      "debe_cambiar_password": 0,
+      "ultimo_login": "2026-11-21 05:50:55",
+      "rol": "Lector"
+    }
+  ],
+  "conteos_despues": {
+    "adjuntos_solicitud": 0,
+    "auditoria": 0,
+    "clientes": 1,
+    "correos_entrantes": 0,
+    "envios_correo": 0,
+    "estados_solicitud": 5,
+    "facturas": 0,
+    "origenes_solicitud": 2,
+    "recuperaciones_password": 0,
+    "registros_xml": 0,
+    "roles": 3,
+    "solicitudes": 2,
+    "usuarios": 4
+  },
+  "usuarios_existentes_modificados": false,
+  "solicitudes": [
+    {
+      "etiqueta": "A",
+      "id": 1,
+      "public_id": "07738979a51988f9e9b80314703efdca",
+      "emisor_id": 2,
+      "email_emisor": "qa.emisor@example.invalid",
+      "concepto": "QA-HORIZONTAL-A-f8d47c02",
+      "estado": "Pendiente",
+      "version": 1,
+      "monto_bruto": "119000",
+      "cliente_id": 1
+    },
+    {
+      "etiqueta": "B",
+      "id": 2,
+      "public_id": "79abf9736ffbea95925ac870ebf2945c",
+      "emisor_id": 4,
+      "email_emisor": "qa.emisor2@example.invalid",
+      "concepto": "QA-HORIZONTAL-B-f8d47c02",
+      "estado": "Pendiente",
+      "version": 1,
+      "monto_bruto": "238000",
+      "cliente_id": 1
+    }
+  ],
+  "fin": "2026-11-21T02:58:18.085579-03:00"
+}

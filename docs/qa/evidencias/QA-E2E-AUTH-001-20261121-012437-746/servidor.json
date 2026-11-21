@@ -1,0 +1,10 @@
+{
+  "base_url": "http://127.0.0.1:54032",
+  "base_datos": "facturaciones_spa_qa",
+  "cuenta_bd": "qa_facturaciones",
+  "csrf_activo": true,
+  "debug": false,
+  "testing": false,
+  "smtp_imap": "bloqueados",
+  "revision_automatica_segundos": 0
+}

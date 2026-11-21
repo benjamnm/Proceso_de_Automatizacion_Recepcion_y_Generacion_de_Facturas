@@ -1,0 +1,20 @@
+{
+  "id": "QA-DATOS-002",
+  "inicio": "2026-11-21T02:44:14.855012-03:00",
+  "base": "facturaciones_spa_qa",
+  "estado": "PREPARACION_NO_COMPLETADA",
+  "commit_confirmado": false,
+  "fase": "verificacion_previa",
+  "cuenta_bd_verificada": "qa_facturaciones@127.0.0.1",
+  "usuarios_antes": [
+    {
+      "email": "qa.admin@example.invalid",
+      "nombre": "Administrador Sintetico QA",
+      "activo": 1,
+      "rol": "Administrador"
+    }
+  ],
+  "tipo_error": "RuntimeError",
+  "error_controlado": "CLAVE_WEB_NO_VALIDA_O_NO_COINCIDE",
+  "fin": "2026-11-21T02:44:42.814756-03:00"
+}

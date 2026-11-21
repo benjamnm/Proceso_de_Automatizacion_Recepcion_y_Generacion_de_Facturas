@@ -1,0 +1,273 @@
+{
+  "ejecucion": "QA-E2E-RBAC-001",
+  "casos": [
+    "E2E-RBAC-001",
+    "E2E-RBAC-002"
+  ],
+  "inicio": "2026-11-21T02:50:10.162771-03:00",
+  "base": "facturaciones_spa_qa",
+  "pruebas_iniciadas": true,
+  "codigo_pytest": 0,
+  "alcance": "permisos verticales GET; no decide HU13 ni prueba aislamiento entre emisores",
+  "fase": "ejecucion_selenium",
+  "cuenta_bd_verificada": "qa_facturaciones@127.0.0.1",
+  "ultimo_login_antes": {
+    "Administrador": "2026-11-21 05:35:27",
+    "Emisor": null,
+    "Lector": null
+  },
+  "http_login": 200,
+  "ultimo_login_despues": {
+    "Administrador": "2026-11-21 05:35:27",
+    "Emisor": "2026-11-21 05:50:48",
+    "Lector": "2026-11-21 05:50:55"
+  },
+  "ultimo_login_admin_sin_cambios": true,
+  "servidor_qa_detenido": true,
+  "perfiles_completados": [
+    "Emisor",
+    "Lector"
+  ],
+  "verificaciones_http": [
+    {
+      "perfil": "Emisor",
+      "ruta": "/dashboard",
+      "http": 200,
+      "aprobada": true
+    },
+    {
+      "perfil": "Emisor",
+      "ruta": "/solicitudes/",
+      "http": 200,
+      "aprobada": true
+    },
+    {
+      "perfil": "Emisor",
+      "ruta": "/admin/usuarios",
+      "http": 403,
+      "aprobada": true
+    },
+    {
+      "perfil": "Emisor",
+      "ruta": "/clientes/",
+      "http": 403,
+      "aprobada": true
+    },
+    {
+      "perfil": "Emisor",
+      "ruta": "/admin/correos",
+      "http": 403,
+      "aprobada": true
+    },
+    {
+      "perfil": "Emisor",
+      "ruta": "/admin/auditoria",
+      "http": 403,
+      "aprobada": true
+    },
+    {
+      "perfil": "Emisor",
+      "ruta": "/dashboard",
+      "http": 302,
+      "aprobada": true
+    },
+    {
+      "perfil": "Lector",
+      "ruta": "/dashboard",
+      "http": 200,
+      "aprobada": true
+    },
+    {
+      "perfil": "Lector",
+      "ruta": "/admin/usuarios",
+      "http": 403,
+      "aprobada": true
+    },
+    {
+      "perfil": "Lector",
+      "ruta": "/clientes/",
+      "http": 403,
+      "aprobada": true
+    },
+    {
+      "perfil": "Lector",
+      "ruta": "/admin/correos",
+      "http": 403,
+      "aprobada": true
+    },
+    {
+      "perfil": "Lector",
+      "ruta": "/admin/auditoria",
+      "http": 403,
+      "aprobada": true
+    },
+    {
+      "perfil": "Lector",
+      "ruta": "/dashboard",
+      "http": 302,
+      "aprobada": true
+    }
+  ],
+  "eventos_http": [
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "perfil": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "perfil": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "POST",
+      "status": 302,
+      "perfil": "Emisor"
+    },
+    {
+      "ruta": "/dashboard",
+      "metodo": "GET",
+      "status": 200,
+      "perfil": "Emisor"
+    },
+    {
+      "ruta": "/dashboard",
+      "metodo": "GET",
+      "status": 200,
+      "perfil": "Emisor"
+    },
+    {
+      "ruta": "/solicitudes/",
+      "metodo": "GET",
+      "status": 200,
+      "perfil": "Emisor"
+    },
+    {
+      "ruta": "/admin/usuarios",
+      "metodo": "GET",
+      "status": 403,
+      "perfil": "Emisor"
+    },
+    {
+      "ruta": "/clientes/",
+      "metodo": "GET",
+      "status": 403,
+      "perfil": "Emisor"
+    },
+    {
+      "ruta": "/admin/correos",
+      "metodo": "GET",
+      "status": 403,
+      "perfil": "Emisor"
+    },
+    {
+      "ruta": "/admin/auditoria",
+      "metodo": "GET",
+      "status": 403,
+      "perfil": "Emisor"
+    },
+    {
+      "ruta": "/auth/logout",
+      "metodo": "POST",
+      "status": 302,
+      "perfil": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "perfil": null
+    },
+    {
+      "ruta": "/dashboard",
+      "metodo": "GET",
+      "status": 302,
+      "perfil": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "perfil": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "perfil": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "POST",
+      "status": 302,
+      "perfil": "Lector"
+    },
+    {
+      "ruta": "/dashboard",
+      "metodo": "GET",
+      "status": 200,
+      "perfil": "Lector"
+    },
+    {
+      "ruta": "/dashboard",
+      "metodo": "GET",
+      "status": 200,
+      "perfil": "Lector"
+    },
+    {
+      "ruta": "/admin/usuarios",
+      "metodo": "GET",
+      "status": 403,
+      "perfil": "Lector"
+    },
+    {
+      "ruta": "/clientes/",
+      "metodo": "GET",
+      "status": 403,
+      "perfil": "Lector"
+    },
+    {
+      "ruta": "/admin/correos",
+      "metodo": "GET",
+      "status": 403,
+      "perfil": "Lector"
+    },
+    {
+      "ruta": "/admin/auditoria",
+      "metodo": "GET",
+      "status": 403,
+      "perfil": "Lector"
+    },
+    {
+      "ruta": "/auth/logout",
+      "metodo": "POST",
+      "status": 302,
+      "perfil": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "perfil": null
+    },
+    {
+      "ruta": "/dashboard",
+      "metodo": "GET",
+      "status": 302,
+      "perfil": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "perfil": null
+    }
+  ],
+  "errores_cierre_navegador": [],
+  "hu13": "PENDIENTE; no se evalua acceso historico del Lector",
+  "fin": "2026-11-21T02:50:59.486911-03:00",
+  "junit_generado": true
+}

@@ -1,0 +1,23 @@
+﻿id=QA-DATOS-003
+rama=qa/facturaciones-v2-20261120
+commit_base=47e321258e984428f717a9821d29a5a6190761f8
+python=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Scripts\python.exe
+destino=127.0.0.1:3306/facturaciones_spa_qa
+cuenta_bd=qa_facturaciones@127.0.0.1
+altas=1 Emisor,1 cliente,2 solicitudes,5 estados,2 origenes
+nota=SQL de preparacion; no acredita creacion mediante formulario ni genera auditoria funcional falsa
+
+Estado Git:
+## qa/facturaciones-v2-20261120...origin/qa/facturaciones-v2-20261120
+?? e2e/
+?? ../docs/qa/evidencias/QA-DATOS-001-20261121-012009-697/
+?? ../docs/qa/evidencias/QA-DATOS-002-20261121-024414-179/
+?? ../docs/qa/evidencias/QA-DATOS-002-20261121-024508-685/
+?? ../docs/qa/evidencias/QA-DATOS-003-20261121-025737-536/
+?? ../docs/qa/evidencias/QA-E2E-001-20261121-003327-265/
+?? ../docs/qa/evidencias/QA-E2E-002-20261121-003651-984/
+?? ../docs/qa/evidencias/QA-E2E-AUTH-001-20261121-012437-746/
+?? ../docs/qa/evidencias/QA-E2E-LOCK-001-20261121-014607-186/
+?? ../docs/qa/evidencias/QA-E2E-NEG-001-20261121-013609-295/
+?? ../docs/qa/evidencias/QA-E2E-RBAC-001-20261121-025005-352/
+?? ../docs/qa/evidencias/QA-E2E-REC-001-20261121-021943-065/

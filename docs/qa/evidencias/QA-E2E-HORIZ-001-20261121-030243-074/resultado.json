@@ -1,0 +1,300 @@
+{
+  "ejecucion": "QA-E2E-HORIZ-001",
+  "casos": [
+    "E2E-HORIZ-001",
+    "E2E-HORIZ-002"
+  ],
+  "inicio": "2026-11-21T03:02:45.709909-03:00",
+  "base": "facturaciones_spa_qa",
+  "pruebas_iniciadas": true,
+  "codigo_pytest": 0,
+  "alcance": "listado propio; detalle y formulario propios; GET y POST ajenos; snapshots sin cambios",
+  "fase": "ejecucion_selenium",
+  "cuenta_bd_verificada": "qa_facturaciones@127.0.0.1",
+  "http_login": 200,
+  "servidor_qa_detenido": true,
+  "solicitudes_sin_cambios": true,
+  "emisores_completados": [
+    "A",
+    "B"
+  ],
+  "verificaciones_http": [
+    {
+      "emisor": "A",
+      "metodo": "GET",
+      "ruta": "/solicitudes/",
+      "http": 200
+    },
+    {
+      "emisor": "A",
+      "metodo": "GET",
+      "ruta": "/solicitudes/07738979a51988f9e9b80314703efdca",
+      "http": 200
+    },
+    {
+      "emisor": "A",
+      "metodo": "GET",
+      "ruta": "/solicitudes/07738979a51988f9e9b80314703efdca/editar",
+      "http": 200
+    },
+    {
+      "emisor": "A",
+      "metodo": "GET",
+      "ruta": "/solicitudes/79abf9736ffbea95925ac870ebf2945c",
+      "http": 404
+    },
+    {
+      "emisor": "A",
+      "metodo": "GET",
+      "ruta": "/solicitudes/79abf9736ffbea95925ac870ebf2945c/editar",
+      "http": 404
+    },
+    {
+      "emisor": "A",
+      "metodo": "GET",
+      "ruta": "/solicitudes/07738979a51988f9e9b80314703efdca/editar",
+      "http": 200
+    },
+    {
+      "emisor": "A",
+      "metodo": "POST",
+      "ruta": "/solicitudes/79abf9736ffbea95925ac870ebf2945c/editar",
+      "http": 404,
+      "csrf_valido_de_sesion": true
+    },
+    {
+      "emisor": "A",
+      "metodo": "GET",
+      "ruta": "/dashboard",
+      "http": 302
+    },
+    {
+      "emisor": "B",
+      "metodo": "GET",
+      "ruta": "/solicitudes/",
+      "http": 200
+    },
+    {
+      "emisor": "B",
+      "metodo": "GET",
+      "ruta": "/solicitudes/79abf9736ffbea95925ac870ebf2945c",
+      "http": 200
+    },
+    {
+      "emisor": "B",
+      "metodo": "GET",
+      "ruta": "/solicitudes/79abf9736ffbea95925ac870ebf2945c/editar",
+      "http": 200
+    },
+    {
+      "emisor": "B",
+      "metodo": "GET",
+      "ruta": "/solicitudes/07738979a51988f9e9b80314703efdca",
+      "http": 404
+    },
+    {
+      "emisor": "B",
+      "metodo": "GET",
+      "ruta": "/solicitudes/07738979a51988f9e9b80314703efdca/editar",
+      "http": 404
+    },
+    {
+      "emisor": "B",
+      "metodo": "GET",
+      "ruta": "/solicitudes/79abf9736ffbea95925ac870ebf2945c/editar",
+      "http": 200
+    },
+    {
+      "emisor": "B",
+      "metodo": "POST",
+      "ruta": "/solicitudes/07738979a51988f9e9b80314703efdca/editar",
+      "http": 404,
+      "csrf_valido_de_sesion": true
+    },
+    {
+      "emisor": "B",
+      "metodo": "GET",
+      "ruta": "/dashboard",
+      "http": 302
+    }
+  ],
+  "eventos_http": [
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "POST",
+      "status": 302,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/dashboard",
+      "metodo": "GET",
+      "status": 200,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/",
+      "metodo": "GET",
+      "status": 200,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/07738979a51988f9e9b80314703efdca",
+      "metodo": "GET",
+      "status": 200,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/07738979a51988f9e9b80314703efdca/editar",
+      "metodo": "GET",
+      "status": 200,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/79abf9736ffbea95925ac870ebf2945c",
+      "metodo": "GET",
+      "status": 404,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/79abf9736ffbea95925ac870ebf2945c/editar",
+      "metodo": "GET",
+      "status": 404,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/07738979a51988f9e9b80314703efdca/editar",
+      "metodo": "GET",
+      "status": 200,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/79abf9736ffbea95925ac870ebf2945c/editar",
+      "metodo": "POST",
+      "status": 404,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/auth/logout",
+      "metodo": "POST",
+      "status": 302,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/dashboard",
+      "metodo": "GET",
+      "status": 302,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "POST",
+      "status": 302,
+      "usuario_id": 4
+    },
+    {
+      "ruta": "/dashboard",
+      "metodo": "GET",
+      "status": 200,
+      "usuario_id": 4
+    },
+    {
+      "ruta": "/solicitudes/",
+      "metodo": "GET",
+      "status": 200,
+      "usuario_id": 4
+    },
+    {
+      "ruta": "/solicitudes/79abf9736ffbea95925ac870ebf2945c",
+      "metodo": "GET",
+      "status": 200,
+      "usuario_id": 4
+    },
+    {
+      "ruta": "/solicitudes/79abf9736ffbea95925ac870ebf2945c/editar",
+      "metodo": "GET",
+      "status": 200,
+      "usuario_id": 4
+    },
+    {
+      "ruta": "/solicitudes/07738979a51988f9e9b80314703efdca",
+      "metodo": "GET",
+      "status": 404,
+      "usuario_id": 4
+    },
+    {
+      "ruta": "/solicitudes/07738979a51988f9e9b80314703efdca/editar",
+      "metodo": "GET",
+      "status": 404,
+      "usuario_id": 4
+    },
+    {
+      "ruta": "/solicitudes/79abf9736ffbea95925ac870ebf2945c/editar",
+      "metodo": "GET",
+      "status": 200,
+      "usuario_id": 4
+    },
+    {
+      "ruta": "/solicitudes/07738979a51988f9e9b80314703efdca/editar",
+      "metodo": "POST",
+      "status": 404,
+      "usuario_id": 4
+    },
+    {
+      "ruta": "/auth/logout",
+      "metodo": "POST",
+      "status": 302,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/dashboard",
+      "metodo": "GET",
+      "status": 302,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "usuario_id": null
+    }
+  ],
+  "errores_cierre_navegador": [],
+  "fin": "2026-11-21T03:03:31.145847-03:00",
+  "junit_generado": true
+}

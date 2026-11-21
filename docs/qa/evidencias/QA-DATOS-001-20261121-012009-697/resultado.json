@@ -1,0 +1,32 @@
+{
+  "id": "QA-DATOS-001",
+  "inicio": "2026-11-21T01:20:09.931708-03:00",
+  "base": "facturaciones_spa_qa",
+  "usuario_bd": "qa_facturaciones",
+  "administrador_qa": "qa.admin@example.invalid",
+  "estado": "PREPARACION_CORRECTA",
+  "commit_confirmado": true,
+  "fase": "insercion_qa",
+  "cuenta_autenticada": "qa_facturaciones@127.0.0.1",
+  "permisos_restringidos_verificados": true,
+  "conteos_antes": {
+    "adjuntos_solicitud": 0,
+    "auditoria": 0,
+    "clientes": 0,
+    "correos_entrantes": 0,
+    "envios_correo": 0,
+    "estados_solicitud": 0,
+    "facturas": 0,
+    "origenes_solicitud": 0,
+    "recuperaciones_password": 0,
+    "registros_xml": 0,
+    "roles": 0,
+    "solicitudes": 0,
+    "usuarios": 0
+  },
+  "roles_creados": 3,
+  "usuarios_creados": 1,
+  "id_administrador": 1,
+  "nota": "Solo roles y Administrador; otros catalogos siguen vacios. No es prueba de login.",
+  "fin": "2026-11-21T01:20:46.024604-03:00"
+}

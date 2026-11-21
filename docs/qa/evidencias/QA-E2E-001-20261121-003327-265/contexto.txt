@@ -1,0 +1,13 @@
+﻿ejecucion=QA-E2E-001
+caso=E2E-LOGIN-001
+rama=qa/facturaciones-v2-20261120
+commit_base=47e321258e984428f717a9821d29a5a6190761f8
+alcance=pantalla publica y toggle; sin envio de formulario
+modo=servidor temporal de fabrica real con CSRF; datos y correo bloqueados
+nota=launcher y caso locales adicionales al commit base
+python=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Scripts\python.exe
+
+Estado Git:
+## qa/facturaciones-v2-20261120...origin/qa/facturaciones-v2-20261120
+?? e2e/
+?? ../docs/qa/evidencias/QA-E2E-001-20261121-003327-265/

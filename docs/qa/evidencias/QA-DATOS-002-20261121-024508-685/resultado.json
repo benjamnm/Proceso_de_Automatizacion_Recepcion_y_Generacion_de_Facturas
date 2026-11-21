@@ -1,0 +1,41 @@
+{
+  "id": "QA-DATOS-002",
+  "inicio": "2026-11-21T02:45:09.193734-03:00",
+  "base": "facturaciones_spa_qa",
+  "estado": "PREPARACION_CORRECTA",
+  "commit_confirmado": true,
+  "fase": "insercion_qa",
+  "cuenta_bd_verificada": "qa_facturaciones@127.0.0.1",
+  "usuarios_antes": [
+    {
+      "email": "qa.admin@example.invalid",
+      "nombre": "Administrador Sintetico QA",
+      "activo": 1,
+      "rol": "Administrador"
+    }
+  ],
+  "usuarios_despues": [
+    {
+      "email": "qa.admin@example.invalid",
+      "nombre": "Administrador Sintetico QA",
+      "activo": 1,
+      "rol": "Administrador"
+    },
+    {
+      "email": "qa.emisor@example.invalid",
+      "nombre": "Emisor Sintetico QA",
+      "activo": 1,
+      "rol": "Emisor"
+    },
+    {
+      "email": "qa.lector@example.invalid",
+      "nombre": "Lector Sintetico QA",
+      "activo": 1,
+      "rol": "Lector"
+    }
+  ],
+  "usuarios_creados": 2,
+  "usuarios_totales": 3,
+  "administrador_modificado": false,
+  "fin": "2026-11-21T02:46:14.204418-03:00"
+}

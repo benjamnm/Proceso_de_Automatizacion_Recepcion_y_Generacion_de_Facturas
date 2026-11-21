@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="6.631" timestamp="2026-11-21T03:10:03.142825-03:00" hostname="Vins"><testcase classname="e2e.test_creacion_solicitud_qa" name="test_crear_solicitud_web_persistida" time="6.339" /></testsuite></testsuites>

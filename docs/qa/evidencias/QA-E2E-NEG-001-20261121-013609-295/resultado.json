@@ -1,0 +1,53 @@
+{
+  "ejecucion": "QA-E2E-NEG-001",
+  "casos": [
+    "E2E-AUTH-003",
+    "E2E-AUTH-004"
+  ],
+  "inicio": "2026-11-21T01:36:12.998943-03:00",
+  "base": "facturaciones_spa_qa",
+  "pruebas_iniciadas": true,
+  "codigo_pytest": 0,
+  "fase": "ejecucion_selenium",
+  "cuenta_bd_verificada": "qa_facturaciones@127.0.0.1",
+  "ultimo_login_antes": "2026-11-21 04:25:33",
+  "limites_login": {
+    "por_cuenta": 5,
+    "por_ip": 20,
+    "nota": "No se alteraron los limites heredados; servidor nuevo"
+  },
+  "http_login": 200,
+  "ultimo_login_despues": "2026-11-21 04:25:33",
+  "ultimo_login_sin_cambios": true,
+  "post_login_observados": [
+    {
+      "status": 401,
+      "sesion_autenticada": false
+    },
+    {
+      "status": 401,
+      "sesion_autenticada": false
+    }
+  ],
+  "escenarios_verificados": [
+    {
+      "escenario": "clave_incorrecta",
+      "http": 401,
+      "mensaje": "El correo o la contraseña no son válidos.",
+      "sesion_autenticada": false,
+      "panel_protegido": true,
+      "ultimo_login_sin_cambios": true
+    },
+    {
+      "escenario": "cuenta_inexistente",
+      "http": 401,
+      "mensaje": "El correo o la contraseña no son válidos.",
+      "sesion_autenticada": false,
+      "panel_protegido": true,
+      "ultimo_login_sin_cambios": true
+    }
+  ],
+  "servidor_qa_detenido": true,
+  "fin": "2026-11-21T01:36:42.503524-03:00",
+  "junit_generado": true
+}

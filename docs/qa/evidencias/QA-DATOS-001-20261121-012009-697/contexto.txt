@@ -1,0 +1,7 @@
+﻿id=QA-DATOS-001
+rama=qa/facturaciones-v2-20261120
+commit=47e321258e984428f717a9821d29a5a6190761f8
+python=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Scripts\python.exe
+destino=127.0.0.1:3306/facturaciones_spa_qa
+cuenta_bd=qa_facturaciones@127.0.0.1
+nota=preparacion de datos sinteticos; sin ejecucion de seed.py ni lectura de .env

@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="921.321" timestamp="2026-11-21T02:20:10.994844-03:00" hostname="Vins"><testcase classname="e2e.test_recuperacion_bloqueo_qa" name="test_recuperacion_tras_ventana_real" time="920.953" /></testsuite></testsuites>

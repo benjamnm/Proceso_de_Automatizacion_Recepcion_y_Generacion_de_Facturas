@@ -1,0 +1,13 @@
+{
+  "ejecucion": "QA-E2E-002",
+  "caso": "E2E-LOGIN-001",
+  "inicio": "2026-11-21T00:36:55.853812-03:00",
+  "pruebas_iniciadas": true,
+  "codigo_pytest": 0,
+  "servidor_iniciado": true,
+  "modalidad": "servidor WSGI propio en hilo; sin comparacion de PID",
+  "http_login": 200,
+  "servidor_qa_detenido": true,
+  "fin": "2026-11-21T00:37:16.032778-03:00",
+  "junit_generado": true
+}

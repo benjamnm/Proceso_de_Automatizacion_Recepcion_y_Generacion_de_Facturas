@@ -1,0 +1,17 @@
+{
+  "ejecucion": "QA-E2E-AUTH-001",
+  "caso": "E2E-AUTH-002",
+  "inicio": "2026-11-21T01:24:40.818668-03:00",
+  "base": "facturaciones_spa_qa",
+  "pruebas_iniciadas": true,
+  "codigo_pytest": 0,
+  "fase": "ejecucion_selenium",
+  "cuenta_bd_verificada": "qa_facturaciones@127.0.0.1",
+  "ultimo_login_antes": null,
+  "http_login": 200,
+  "ultimo_login_despues": "2026-11-21 04:25:33",
+  "envios_login_navegador": 1,
+  "servidor_qa_detenido": true,
+  "fin": "2026-11-21T01:25:37.673202-03:00",
+  "junit_generado": true
+}
