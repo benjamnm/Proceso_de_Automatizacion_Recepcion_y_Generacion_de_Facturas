@@ -667,3 +667,20 @@ def test_detalle_funciona_sin_la_migracion_004(client, login_como, monkeypatch):
 
     assert "No se pudieron cargar los documentos adjuntos." in html
     assert "Receptor histórico" in html
+
+
+def test_nueva_marca_el_campo_con_error(client, login_como, monkeypatch):
+    monkeypatch.setattr("app.solicitudes.routes.obtener_clientes_activos",
+                        lambda: [])
+    login_como("Emisor")
+
+    html = client.post(
+        "/solicitudes/nueva",
+        data={**DATOS, "monto_bruto": "1.000"},
+        content_type="multipart/form-data",
+    ).get_data(as_text=True)
+
+    assert 'is-invalid' in html
+    assert 'aria-describedby="error-monto_bruto"' in html
+    assert 'id="error-monto_bruto" class="invalid-feedback d-block"' in html
+    assert 'id="error-concepto"' not in html

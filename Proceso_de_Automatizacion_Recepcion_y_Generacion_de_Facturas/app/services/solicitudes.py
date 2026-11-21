@@ -44,20 +44,30 @@ class ErrorGestionSolicitud(Exception):
     pass
 
 
+def _texto(datos, campo):
+    """Valor como texto; "" si falta o es de un tipo no admitido."""
+    valor = datos.get(campo)
+    if isinstance(valor, bool) or not isinstance(valor, (str, int, Decimal, date)):
+        return ""
+    return str(valor).strip()
+
+
 def validar_solicitud(datos):
     limpio = {}
     errores = {}
 
-    cliente_id = str(datos.get("cliente_id", "")).strip()
+    cliente_id = _texto(datos, "cliente_id")
 
-    if not re.fullmatch(r"[0-9]{1,10}", cliente_id):
+    if not cliente_id:
+        errores["cliente_id"] = "Seleccione un cliente receptor."
+    elif not re.fullmatch(r"[0-9]{1,10}", cliente_id):
         errores["cliente_id"] = "Seleccione un cliente válido."
     elif not 1 <= int(cliente_id) <= 4294967295:
         errores["cliente_id"] = "Seleccione un cliente válido."
     else:
         limpio["cliente_id"] = int(cliente_id)
 
-    concepto = str(datos.get("concepto", "")).strip()
+    concepto = _texto(datos, "concepto")
 
     if not concepto:
         errores["concepto"] = "Ingrese el concepto de facturación."
@@ -68,9 +78,11 @@ def validar_solicitud(datos):
     else:
         limpio["concepto"] = concepto
 
-    monto = str(datos.get("monto_bruto", "")).strip()
+    monto = _texto(datos, "monto_bruto")
 
-    if not re.fullmatch(r"[0-9]{1,14}", monto):
+    if not monto:
+        errores["monto_bruto"] = "Ingrese el monto bruto."
+    elif not re.fullmatch(r"[0-9]{1,14}", monto):
         errores["monto_bruto"] = (
             "Ingrese un monto entero de hasta 14 dígitos, "
             "sin puntos ni comas."
@@ -80,27 +92,34 @@ def validar_solicitud(datos):
     else:
         limpio["monto_bruto"] = Decimal(monto)
 
-    fecha = str(datos.get("fecha_emision") or "").strip()
+    fecha = _texto(datos, "fecha_emision")
 
-    try:
-        if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", fecha):
-            raise ValueError
+    if not fecha:
+        errores["fecha_emision"] = "Ingrese la fecha de emisión solicitada."
+    else:
+        try:
+            if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", fecha):
+                raise ValueError
 
-        limpio["fecha_emision"] = date.fromisoformat(fecha)
+            limpio["fecha_emision"] = date.fromisoformat(fecha)
 
-    except ValueError:
-        errores["fecha_emision"] = "Ingrese una fecha válida."
+        except ValueError:
+            errores["fecha_emision"] = (
+                "Ingrese una fecha válida con formato AAAA-MM-DD."
+            )
 
-    afectacion = datos.get("tipo_afectacion", "")
+    afectacion = _texto(datos, "tipo_afectacion")
 
-    if afectacion not in {"AFECTA", "EXENTA"}:
+    if not afectacion:
+        errores["tipo_afectacion"] = "Seleccione la afectación tributaria."
+    elif afectacion not in {"AFECTA", "EXENTA"}:
         errores["tipo_afectacion"] = (
             "Seleccione una afectación tributaria válida."
         )
     else:
         limpio["tipo_afectacion"] = afectacion
 
-    orden = str(datos.get("nro_orden_compra") or "").strip()
+    orden = _texto(datos, "nro_orden_compra")
 
     if len(orden) > 40:
         errores["nro_orden_compra"] = (

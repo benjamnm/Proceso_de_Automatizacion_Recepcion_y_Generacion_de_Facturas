@@ -80,3 +80,31 @@ def test_solicitud_valida():
 def test_solicitud_invalida(campo, valor):
     _, errores = validar_solicitud(datos_solicitud(**{campo: valor}))
     assert campo in errores
+
+
+@pytest.mark.parametrize("campo, mensaje", [
+    ("cliente_id", "Seleccione un cliente receptor."),
+    ("monto_bruto", "Ingrese el monto bruto."),
+    ("fecha_emision", "Ingrese la fecha de emisión solicitada."),
+    ("tipo_afectacion", "Seleccione la afectación tributaria."),
+])
+def test_solicitud_campo_vacio_tiene_mensaje_propio(campo, mensaje):
+    _, errores = validar_solicitud(datos_solicitud(**{campo: ""}))
+    assert errores[campo] == mensaje
+
+
+@pytest.mark.parametrize("valor", [None, True, ["5"], {"a": 1}])
+def test_solicitud_tolera_tipos_inesperados(valor):
+    datos = datos_solicitud(cliente_id=valor, nro_orden_compra=valor)
+    limpio, errores = validar_solicitud(datos)
+    assert "cliente_id" in errores
+    assert limpio["nro_orden_compra"] is None
+
+
+def test_solicitud_acepta_valores_del_flujo_de_correo():
+    limpio, errores = validar_solicitud(datos_solicitud(
+        cliente_id=5, monto_bruto=Decimal("119000"),
+        fecha_emision=date(2026, 10, 28),
+    ))
+    assert errores == {}
+    assert limpio["cliente_id"] == 5

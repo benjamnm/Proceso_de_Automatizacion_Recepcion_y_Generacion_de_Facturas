@@ -1,5 +1,3 @@
-{# Solo presentación: no contiene lógica de negocio ni consulta datos. #}
-
 {% macro estado_solicitud(nombre) -%}
 {%- set clases = {
     'Pendiente': 'secondary',
@@ -31,4 +29,11 @@
         {% else %}<span class="metrica-etiqueta">{{ etiqueta }}</span>{% endif %}
     </div>
 </div>
+{%- endmacro %}
+
+{# Mensaje de error bajo un campo del formulario (enlazado por aria-describedby). #}
+{% macro error_campo(errores, campo) -%}
+{%- if errores and errores.get(campo) -%}
+<div id="error-{{ campo }}" class="invalid-feedback d-block">{{ errores[campo] }}</div>
+{%- endif -%}
 {%- endmacro %}

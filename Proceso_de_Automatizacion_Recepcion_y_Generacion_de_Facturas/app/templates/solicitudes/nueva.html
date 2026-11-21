@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_ui.html" import error_campo %}
 
 {% set migas = [
     ('Panel', url_for('dashboard')),
@@ -75,8 +76,10 @@ Nueva solicitud | Facturaciones SpA
                                 <select
                                     id="cliente_id"
                                     name="cliente_id"
-                                    class="form-select"
+                                    class="form-select{% if errores.get('cliente_id') %} is-invalid{% endif %}"
                                     required
+                                    {% if errores.get('cliente_id') %}aria-describedby="error-cliente_id"{% endif %}
+                                    {% if errores.get('cliente_id') %}aria-invalid="true"{% endif %}
                                 >
                                     <option value="">
                                         Seleccione un cliente
@@ -94,6 +97,7 @@ Nueva solicitud | Facturaciones SpA
                                     </option>
                                     {% endfor %}
                                 </select>
+                                {{ error_campo(errores, 'cliente_id') }}
                             </div>
 
                             <div>
@@ -104,12 +108,14 @@ Nueva solicitud | Facturaciones SpA
                                 <textarea
                                     id="concepto"
                                     name="concepto"
-                                    class="form-control"
+                                    class="form-control{% if errores.get('concepto') %} is-invalid{% endif %}"
                                     rows="4"
                                     maxlength="500"
-                                    aria-describedby="ayuda-concepto"
+                                    aria-describedby="ayuda-concepto{% if errores.get('concepto') %} error-concepto{% endif %}"
                                     required
+                                    {% if errores.get('concepto') %}aria-invalid="true"{% endif %}
                                 >{{ values.concepto }}</textarea>
+                                {{ error_campo(errores, 'concepto') }}
 
                                 <div id="ayuda-concepto" class="ayuda-campo">
                                     <span>Describa el servicio o producto a facturar.</span>
@@ -137,10 +143,13 @@ Nueva solicitud | Facturaciones SpA
                                         inputmode="numeric"
                                         pattern="[0-9]{1,14}"
                                         maxlength="14"
-                                        class="form-control"
+                                        class="form-control{% if errores.get('monto_bruto') %} is-invalid{% endif %}"
                                         value="{{ values.monto_bruto }}"
                                         required
+                                        {% if errores.get('monto_bruto') %}aria-describedby="error-monto_bruto"{% endif %}
+                                        {% if errores.get('monto_bruto') %}aria-invalid="true"{% endif %}
                                     >
+                                    {{ error_campo(errores, 'monto_bruto') }}
 
                                     <div class="form-text">
                                         Pesos enteros, sin puntos ni comas.
@@ -156,10 +165,13 @@ Nueva solicitud | Facturaciones SpA
                                         id="fecha_emision"
                                         name="fecha_emision"
                                         type="date"
-                                        class="form-control"
+                                        class="form-control{% if errores.get('fecha_emision') %} is-invalid{% endif %}"
                                         value="{{ values.fecha_emision }}"
                                         required
+                                        {% if errores.get('fecha_emision') %}aria-describedby="error-fecha_emision"{% endif %}
+                                        {% if errores.get('fecha_emision') %}aria-invalid="true"{% endif %}
                                     >
+                                    {{ error_campo(errores, 'fecha_emision') }}
                                 </div>
 
                                 <div class="col-md-6">
@@ -173,8 +185,10 @@ Nueva solicitud | Facturaciones SpA
                                     <select
                                         id="tipo_afectacion"
                                         name="tipo_afectacion"
-                                        class="form-select"
+                                        class="form-select{% if errores.get('tipo_afectacion') %} is-invalid{% endif %}"
                                         required
+                                        {% if errores.get('tipo_afectacion') %}aria-describedby="error-tipo_afectacion"{% endif %}
+                                        {% if errores.get('tipo_afectacion') %}aria-invalid="true"{% endif %}
                                     >
                                         <option value="">
                                             Seleccione una opción
@@ -198,6 +212,7 @@ Nueva solicitud | Facturaciones SpA
                                             Exenta
                                         </option>
                                     </select>
+                                    {{ error_campo(errores, 'tipo_afectacion') }}
                                 </div>
 
                                 <div class="col-md-6">
@@ -211,10 +226,13 @@ Nueva solicitud | Facturaciones SpA
                                     <input
                                         id="nro_orden_compra"
                                         name="nro_orden_compra"
-                                        class="form-control"
+                                        class="form-control{% if errores.get('nro_orden_compra') %} is-invalid{% endif %}"
                                         maxlength="40"
                                         value="{{ values.nro_orden_compra }}"
+                                        {% if errores.get('nro_orden_compra') %}aria-describedby="error-nro_orden_compra"{% endif %}
+                                        {% if errores.get('nro_orden_compra') %}aria-invalid="true"{% endif %}
                                     >
+                                    {{ error_campo(errores, 'nro_orden_compra') }}
                                 </div>
                             </div>
                         </section>
