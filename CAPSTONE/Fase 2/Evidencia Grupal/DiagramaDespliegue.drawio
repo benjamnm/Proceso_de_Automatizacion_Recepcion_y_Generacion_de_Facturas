@@ -1,0 +1,191 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="despliegue" name="Diagrama de despliegue">
+    <mxGraphModel dx="3914" dy="1939" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1940" pageHeight="1300" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="d2" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=18;fontColor=#172B4D;" value="&lt;b&gt;Diagrama de despliegue — Plataforma de gestión de solicitudes de facturación (Facturaciones SpA)&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="1300" x="300" as="geometry" />
+        </mxCell>
+        <mxCell id="d3" parent="1" style="shape=cube;size=14;flipH=1;html=1;whiteSpace=wrap;verticalAlign=top;align=left;spacingTop=16;spacingLeft=10;spacingRight=20;fontSize=13;container=1;collapsible=0;recursiveResize=0;strokeWidth=2;fillColor=#F2F2F2;strokeColor=#777777;" value="&lt;font color=&quot;#555555&quot;&gt;«device»&lt;/font&gt;&lt;br&gt;&lt;b&gt;Equipo del remitente&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Cliente o área que solicita la factura por correo&lt;/font&gt;" vertex="1">
+          <mxGeometry height="140" width="340" x="30" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="d4" parent="1" style="shape=cube;size=14;flipH=1;html=1;whiteSpace=wrap;verticalAlign=top;align=left;spacingTop=16;spacingLeft=10;spacingRight=20;fontSize=13;container=1;collapsible=0;recursiveResize=0;strokeWidth=2;fillColor=#F2F2F2;strokeColor=#777777;" value="&lt;font color=&quot;#555555&quot;&gt;«device»&lt;/font&gt;&lt;br&gt;&lt;b&gt;Servidor de correo de Facturaciones SpA&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Proveedor por definir&lt;/font&gt;" vertex="1">
+          <mxGeometry height="300" width="340" x="30" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="d5" parent="d4" style="html=1;whiteSpace=wrap;fontSize=12;fillColor=#FFFFFF;strokeColor=#555555;verticalAlign=top;spacingTop=4;spacingRight=18;" value="&lt;font color=&quot;#555555&quot;&gt;«mailbox»&lt;/font&gt;&lt;br&gt;&lt;b&gt;Casilla de facturación&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Entrada: IMAP · Salida: SMTP&lt;br&gt;Recibe solicitudes y envía avisos&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="300" x="15" y="95" as="geometry" />
+        </mxCell>
+        <mxCell id="d6" parent="d5" style="shape=note;size=5;html=1;fillColor=#FFFFFF;strokeColor=#555555;" value="" vertex="1">
+          <mxGeometry height="18" width="14" x="278" y="6" as="geometry" />
+        </mxCell>
+        <mxCell id="d7" parent="d4" style="html=1;whiteSpace=wrap;fontSize=12;fillColor=#FFFFFF;strokeColor=#555555;verticalAlign=top;spacingTop=4;spacingRight=18;" value="&lt;font color=&quot;#555555&quot;&gt;«mailbox»&lt;/font&gt;&lt;br&gt;&lt;b&gt;Correo del usuario&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Bandeja donde llega el aviso&lt;br&gt;«factura generada, revisar»&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="300" x="15" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="d8" parent="d7" style="shape=note;size=5;html=1;fillColor=#FFFFFF;strokeColor=#555555;" value="" vertex="1">
+          <mxGeometry height="18" width="14" x="278" y="6" as="geometry" />
+        </mxCell>
+        <mxCell id="d9" parent="1" style="shape=cube;size=14;flipH=1;html=1;whiteSpace=wrap;verticalAlign=top;align=left;spacingTop=16;spacingLeft=10;spacingRight=20;fontSize=13;container=1;collapsible=0;recursiveResize=0;strokeWidth=2;fillColor=#E8F1FF;strokeColor=#3568A8;" value="&lt;font color=&quot;#555555&quot;&gt;«device»&lt;/font&gt;&lt;br&gt;&lt;b&gt;Equipo del usuario&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;PC de la empresa · 1..3 usuarios&lt;/font&gt;" vertex="1">
+          <mxGeometry height="330" width="340" x="30" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="d10" parent="d9" style="shape=cube;size=14;flipH=1;html=1;whiteSpace=wrap;verticalAlign=top;align=left;spacingTop=16;spacingLeft=10;spacingRight=20;fontSize=13;container=1;collapsible=0;recursiveResize=0;strokeWidth=2;fillColor=#FFFFFF;strokeColor=#3568A8;" value="&lt;font color=&quot;#555555&quot;&gt;«execution environment»&lt;/font&gt;&lt;br&gt;&lt;b&gt;Navegador web&lt;/b&gt;" vertex="1">
+          <mxGeometry height="120" width="305" x="15" y="85" as="geometry" />
+        </mxCell>
+        <mxCell id="d11" parent="d10" style="html=1;whiteSpace=wrap;fontSize=12;fillColor=#FFFFFF;strokeColor=#555555;verticalAlign=top;spacingTop=4;spacingRight=18;" value="&lt;font color=&quot;#555555&quot;&gt;«artifact»&lt;/font&gt;&lt;br&gt;&lt;b&gt;Interfaz web&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Revisión, corrección y aprobación de facturas&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="275" x="15" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="d12" parent="d11" style="shape=note;size=5;html=1;fillColor=#FFFFFF;strokeColor=#555555;" value="" vertex="1">
+          <mxGeometry height="18" width="14" x="253" y="6" as="geometry" />
+        </mxCell>
+        <mxCell id="d13" parent="d9" style="shape=cube;size=14;flipH=1;html=1;whiteSpace=wrap;verticalAlign=top;align=left;spacingTop=16;spacingLeft=10;spacingRight=20;fontSize=13;container=1;collapsible=0;recursiveResize=0;strokeWidth=2;fillColor=#FFFFFF;strokeColor=#3568A8;" value="&lt;font color=&quot;#555555&quot;&gt;«execution environment»&lt;/font&gt;&lt;br&gt;&lt;b&gt;Cliente de correo&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Lee el aviso de factura generada&lt;/font&gt;" vertex="1">
+          <mxGeometry height="95" width="305" x="15" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="d14" parent="1" style="shape=cube;size=14;flipH=1;html=1;whiteSpace=wrap;verticalAlign=top;align=left;spacingTop=16;spacingLeft=10;spacingRight=20;fontSize=13;container=1;collapsible=0;recursiveResize=0;strokeWidth=2;fillColor=#F5F5F5;strokeColor=#777777;" value="&lt;font color=&quot;#555555&quot;&gt;«device»&lt;/font&gt;&lt;br&gt;&lt;b&gt;Repositorio GitHub&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Código fuente versionado con Git&lt;/font&gt;" vertex="1">
+          <mxGeometry height="150" width="340" x="30" y="1110" as="geometry" />
+        </mxCell>
+        <mxCell id="d15" parent="d14" style="html=1;whiteSpace=wrap;fontSize=12;fillColor=#FFFFFF;strokeColor=#555555;verticalAlign=top;spacingTop=4;spacingRight=18;" value="&lt;font color=&quot;#555555&quot;&gt;«artifact»&lt;/font&gt;&lt;br&gt;&lt;b&gt;Código de la aplicación&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Aplicación web y automatización&lt;/font&gt;" vertex="1">
+          <mxGeometry height="52" width="280" x="15" y="85" as="geometry" />
+        </mxCell>
+        <mxCell id="d16" parent="d15" style="shape=note;size=5;html=1;fillColor=#FFFFFF;strokeColor=#555555;" value="" vertex="1">
+          <mxGeometry height="18" width="14" x="258" y="6" as="geometry" />
+        </mxCell>
+        <mxCell id="d17" parent="1" style="shape=cube;size=14;flipH=1;html=1;whiteSpace=wrap;verticalAlign=top;align=left;spacingTop=16;spacingLeft=10;spacingRight=20;fontSize=13;container=1;collapsible=0;recursiveResize=0;strokeWidth=2;fillColor=#E7F3E8;strokeColor=#46854B;" value="&lt;font color=&quot;#555555&quot;&gt;«device»&lt;/font&gt;&lt;br&gt;&lt;b&gt;Servidor interno de Facturaciones SpA&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Servidor compartido · capacidad y sistema operativo por verificar&lt;/font&gt;" vertex="1">
+          <mxGeometry height="920" width="1000" x="470" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="d18" parent="d17" style="shape=cube;size=14;flipH=1;html=1;whiteSpace=wrap;verticalAlign=top;align=left;spacingTop=16;spacingLeft=10;spacingRight=20;fontSize=13;container=1;collapsible=0;recursiveResize=0;strokeWidth=2;fillColor=#FFFFFF;strokeColor=#46854B;" value="&lt;font color=&quot;#555555&quot;&gt;«execution environment»&lt;/font&gt;&lt;br&gt;&lt;b&gt;Servicio de automatización&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Python · tarea programada que revisa la casilla cada N minutos&lt;/font&gt;" vertex="1">
+          <mxGeometry height="360" width="430" x="30" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="d19" parent="d18" style="html=1;whiteSpace=wrap;fontSize=12;fillColor=#FFFFFF;strokeColor=#555555;verticalAlign=top;spacingTop=4;spacingRight=18;" value="&lt;font color=&quot;#555555&quot;&gt;«artifact»&lt;/font&gt;&lt;br&gt;&lt;b&gt;lector_correos&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Detecta correos de facturación&lt;br&gt;y descarga el correo y sus adjuntos&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="390" x="20" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="d20" parent="d19" style="shape=note;size=5;html=1;fillColor=#FFFFFF;strokeColor=#555555;" value="" vertex="1">
+          <mxGeometry height="18" width="14" x="368" y="6" as="geometry" />
+        </mxCell>
+        <mxCell id="d21" parent="d18" style="html=1;whiteSpace=wrap;fontSize=12;fillColor=#FFFFFF;strokeColor=#555555;verticalAlign=top;spacingTop=4;spacingRight=18;" value="&lt;font color=&quot;#555555&quot;&gt;«artifact»&lt;/font&gt;&lt;br&gt;&lt;b&gt;procesador_facturas&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Extrae los datos y genera el borrador&lt;br&gt;de factura XML (versión 1)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="390" x="20" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="d22" parent="d21" style="shape=note;size=5;html=1;fillColor=#FFFFFF;strokeColor=#555555;" value="" vertex="1">
+          <mxGeometry height="18" width="14" x="368" y="6" as="geometry" />
+        </mxCell>
+        <mxCell id="d23" parent="d18" style="html=1;whiteSpace=wrap;fontSize=12;fillColor=#FFFFFF;strokeColor=#555555;verticalAlign=top;spacingTop=4;spacingRight=18;" value="&lt;font color=&quot;#555555&quot;&gt;«artifact»&lt;/font&gt;&lt;br&gt;&lt;b&gt;notificador&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Avisa al usuario por correo que la&lt;br&gt;factura está generada y debe revisarla&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="390" x="20" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="d24" parent="d23" style="shape=note;size=5;html=1;fillColor=#FFFFFF;strokeColor=#555555;" value="" vertex="1">
+          <mxGeometry height="18" width="14" x="368" y="6" as="geometry" />
+        </mxCell>
+        <mxCell id="d25" parent="d17" style="shape=cube;size=14;flipH=1;html=1;whiteSpace=wrap;verticalAlign=top;align=left;spacingTop=16;spacingLeft=10;spacingRight=20;fontSize=13;container=1;collapsible=0;recursiveResize=0;strokeWidth=2;fillColor=#FFFFFF;strokeColor=#46854B;" value="&lt;font color=&quot;#555555&quot;&gt;«file system»&lt;/font&gt;&lt;br&gt;&lt;b&gt;Repositorio de documentos&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Directorio controlado · acceso restringido&lt;/font&gt;" vertex="1">
+          <mxGeometry height="360" width="400" x="570" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="d26" parent="d25" style="html=1;whiteSpace=wrap;fontSize=12;fillColor=#FFFFFF;strokeColor=#555555;verticalAlign=top;spacingTop=4;spacingRight=18;" value="&lt;font color=&quot;#555555&quot;&gt;«artifact»&lt;/font&gt;&lt;br&gt;&lt;b&gt;Correos recibidos&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Correo original (.eml) y adjuntos&lt;/font&gt;" vertex="1">
+          <mxGeometry height="62" width="360" x="20" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="d27" parent="d26" style="shape=note;size=5;html=1;fillColor=#FFFFFF;strokeColor=#555555;" value="" vertex="1">
+          <mxGeometry height="18" width="14" x="338" y="6" as="geometry" />
+        </mxCell>
+        <mxCell id="d28" parent="d25" style="html=1;whiteSpace=wrap;fontSize=12;fillColor=#FFFFFF;strokeColor=#555555;verticalAlign=top;spacingTop=4;spacingRight=18;" value="&lt;font color=&quot;#555555&quot;&gt;«artifact»&lt;/font&gt;&lt;br&gt;&lt;b&gt;Facturas XML versionadas&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;factura_v1.xml, factura_v2.xml…&lt;br&gt;SHA-256 · conservación 3 meses&lt;/font&gt;" vertex="1">
+          <mxGeometry height="72" width="360" x="20" y="177" as="geometry" />
+        </mxCell>
+        <mxCell id="d29" parent="d28" style="shape=note;size=5;html=1;fillColor=#FFFFFF;strokeColor=#555555;" value="" vertex="1">
+          <mxGeometry height="18" width="14" x="338" y="6" as="geometry" />
+        </mxCell>
+        <mxCell id="d30" parent="d25" style="html=1;whiteSpace=wrap;fontSize=12;fillColor=#FFFFFF;strokeColor=#555555;verticalAlign=top;spacingTop=4;spacingRight=18;" value="&lt;font color=&quot;#555555&quot;&gt;«artifact»&lt;/font&gt;&lt;br&gt;&lt;b&gt;Respaldo de documentos&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Copia periódica según política por definir&lt;/font&gt;" vertex="1">
+          <mxGeometry height="62" width="360" x="20" y="264" as="geometry" />
+        </mxCell>
+        <mxCell id="d31" parent="d30" style="shape=note;size=5;html=1;fillColor=#FFFFFF;strokeColor=#555555;" value="" vertex="1">
+          <mxGeometry height="18" width="14" x="338" y="6" as="geometry" />
+        </mxCell>
+        <mxCell id="d32" parent="d17" style="shape=cube;size=14;flipH=1;html=1;whiteSpace=wrap;verticalAlign=top;align=left;spacingTop=16;spacingLeft=10;spacingRight=20;fontSize=13;container=1;collapsible=0;recursiveResize=0;strokeWidth=2;fillColor=#FFFFFF;strokeColor=#46854B;" value="&lt;font color=&quot;#555555&quot;&gt;«execution environment»&lt;/font&gt;&lt;br&gt;&lt;b&gt;MySQL Server&lt;/b&gt;" vertex="1">
+          <mxGeometry height="380" width="430" x="30" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="d33" parent="d32" style="html=1;whiteSpace=wrap;fontSize=12;fillColor=#F4F8F4;strokeColor=#555555;verticalAlign=top;spacingTop=4;spacingRight=18;" value="&lt;font color=&quot;#555555&quot;&gt;«schema»&lt;/font&gt;&lt;br&gt;&lt;b&gt;bd_facturaciones&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;usuarios · roles · clientes · solicitudes&lt;br&gt;estados_solicitud · origenes_solicitud&lt;br&gt;registros_xml · auditoria&lt;br&gt;&lt;b&gt;Por agregar:&lt;/b&gt; correos_recibidos&lt;br&gt;versiones_factura · envios_sii&lt;/font&gt;" vertex="1">
+          <mxGeometry height="150" width="390" x="20" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="d34" parent="d33" style="shape=note;size=5;html=1;fillColor=#FFFFFF;strokeColor=#555555;" value="" vertex="1">
+          <mxGeometry height="18" width="14" x="368" y="6" as="geometry" />
+        </mxCell>
+        <mxCell id="d35" parent="d32" style="html=1;whiteSpace=wrap;fontSize=12;fillColor=#FFFFFF;strokeColor=#555555;verticalAlign=top;spacingTop=4;spacingRight=18;" value="&lt;font color=&quot;#555555&quot;&gt;«artifact»&lt;/font&gt;&lt;br&gt;&lt;b&gt;Respaldo de la base de datos&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Copia periódica según política por definir&lt;/font&gt;" vertex="1">
+          <mxGeometry height="62" width="390" x="20" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="d36" parent="d35" style="shape=note;size=5;html=1;fillColor=#FFFFFF;strokeColor=#555555;" value="" vertex="1">
+          <mxGeometry height="18" width="14" x="368" y="6" as="geometry" />
+        </mxCell>
+        <mxCell id="d37" parent="d17" style="shape=cube;size=14;flipH=1;html=1;whiteSpace=wrap;verticalAlign=top;align=left;spacingTop=16;spacingLeft=10;spacingRight=20;fontSize=13;container=1;collapsible=0;recursiveResize=0;strokeWidth=2;fillColor=#FFFFFF;strokeColor=#46854B;" value="&lt;font color=&quot;#555555&quot;&gt;«execution environment»&lt;/font&gt;&lt;br&gt;&lt;b&gt;Python 3.14 + Flask&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Servidor de aplicación (WSGI) por definir&lt;/font&gt;" vertex="1">
+          <mxGeometry height="380" width="400" x="570" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="d38" parent="d37" style="html=1;whiteSpace=wrap;fontSize=12;fillColor=#FFFFFF;strokeColor=#555555;verticalAlign=top;spacingTop=4;spacingRight=18;" value="&lt;font color=&quot;#555555&quot;&gt;«artifact»&lt;/font&gt;&lt;br&gt;&lt;b&gt;aplicacion_facturacion&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Revisión y corrección · Versiones e historial&lt;br&gt;Aprobación y envío al SII&lt;/font&gt;" vertex="1">
+          <mxGeometry height="72" width="360" x="20" y="85" as="geometry" />
+        </mxCell>
+        <mxCell id="d39" parent="d38" style="shape=note;size=5;html=1;fillColor=#FFFFFF;strokeColor=#555555;" value="" vertex="1">
+          <mxGeometry height="18" width="14" x="338" y="6" as="geometry" />
+        </mxCell>
+        <mxCell id="d40" parent="d37" style="html=1;whiteSpace=wrap;fontSize=12;fillColor=#FFFFFF;strokeColor=#555555;verticalAlign=top;spacingTop=4;spacingRight=18;" value="&lt;font color=&quot;#555555&quot;&gt;«artifact»&lt;/font&gt;&lt;br&gt;&lt;b&gt;config.env&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Credenciales MySQL, IMAP/SMTP,&lt;br&gt;certificado digital y folios (CAF)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="66" width="360" x="20" y="172" as="geometry" />
+        </mxCell>
+        <mxCell id="d41" parent="d40" style="shape=note;size=5;html=1;fillColor=#FFFFFF;strokeColor=#555555;" value="" vertex="1">
+          <mxGeometry height="18" width="14" x="338" y="6" as="geometry" />
+        </mxCell>
+        <mxCell id="d42" parent="d37" style="html=1;whiteSpace=wrap;fontSize=12;fillColor=#FFFFFF;strokeColor=#555555;verticalAlign=top;spacingTop=4;spacingRight=18;" value="&lt;font color=&quot;#555555&quot;&gt;«artifact»&lt;/font&gt;&lt;br&gt;&lt;b&gt;Plantillas de la vista&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Solicitudes, facturas, versiones,&lt;br&gt;usuarios e historial&lt;/font&gt;" vertex="1">
+          <mxGeometry height="66" width="360" x="20" y="253" as="geometry" />
+        </mxCell>
+        <mxCell id="d43" parent="d42" style="shape=note;size=5;html=1;fillColor=#FFFFFF;strokeColor=#555555;" value="" vertex="1">
+          <mxGeometry height="18" width="14" x="338" y="6" as="geometry" />
+        </mxCell>
+        <mxCell id="d44" parent="1" style="shape=note;size=15;html=1;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=8;spacingTop=4;fillColor=#FFFBE6;strokeColor=#B58B00;fontSize=12;" value="&lt;b&gt;Flujo&lt;/b&gt;&lt;br&gt;1. Llega un correo de facturación a la casilla.&lt;br&gt;2. La automatización lo lee y descarga.&lt;br&gt;3. Guarda el correo y sus adjuntos.&lt;br&gt;4. Genera la factura XML v1 y la registra.&lt;br&gt;5. Avisa al usuario que la factura está lista.&lt;br&gt;6. El usuario revisa en la plataforma.&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;• Con errores: corrige, se guarda v2 (v3…) con registro de cambios y vuelve a revisión.&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;• Correcta: aprueba.&lt;br&gt;7. La factura aprobada se envía al SII." vertex="1">
+          <mxGeometry height="330" width="340" x="1560" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="d45" parent="1" style="shape=cube;size=14;flipH=1;html=1;whiteSpace=wrap;verticalAlign=top;align=left;spacingTop=16;spacingLeft=10;spacingRight=20;fontSize=13;container=1;collapsible=0;recursiveResize=0;strokeWidth=2;fillColor=#F2F2F2;strokeColor=#777777;" value="&lt;font color=&quot;#555555&quot;&gt;«external system»&lt;/font&gt;&lt;br&gt;&lt;b&gt;SII&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;Recibe la factura aprobada, la valida y la emite como DTE&lt;/font&gt;" vertex="1">
+          <mxGeometry height="170" width="340" x="1560" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="d46" parent="1" style="shape=note;size=15;html=1;whiteSpace=wrap;align=left;verticalAlign=top;spacingLeft=8;spacingTop=4;fillColor=#FFFBE6;strokeColor=#B58B00;fontSize=12;" value="&lt;b&gt;Por definir&lt;/b&gt;&lt;br&gt;Enviar al SII desde software propio exige certificación ante el SII, certificado digital y folios (CAF). Alternativa: un proveedor de facturación electrónica ya certificado." vertex="1">
+          <mxGeometry height="150" width="340" x="1560" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="d47" edge="1" parent="1" source="d3" style="html=1;endArrow=none;strokeWidth=1.6;strokeColor=#333333;fontSize=12;labelBackgroundColor=#FFFFFF;rounded=0;edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="d4" value="1. SMTP · correo con&lt;br&gt;solicitud de facturación">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d48" edge="1" parent="1" source="d18" style="html=1;endArrow=none;strokeWidth=1.6;strokeColor=#333333;fontSize=12;labelBackgroundColor=#FFFFFF;rounded=0;edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=1;entryY=0.3;entryDx=0;entryDy=0;" target="d4" value="2. IMAP · lectura y descarga">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d49" edge="1" parent="1" source="d18" style="html=1;endArrow=none;strokeWidth=1.6;strokeColor=#333333;fontSize=12;labelBackgroundColor=#FFFFFF;rounded=0;edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" target="d4" value="5. SMTP · aviso al usuario">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d50" edge="1" parent="1" source="d18" style="html=1;endArrow=none;strokeWidth=1.6;strokeColor=#333333;fontSize=12;labelBackgroundColor=#FFFFFF;rounded=0;edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;exitX=1;exitY=0.2;exitDx=0;exitDy=0;entryX=0;entryY=0.2;entryDx=0;entryDy=0;" target="d25" value="3. Guarda&lt;br&gt;archivos">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d51" edge="1" parent="1" source="d18" style="html=1;endArrow=none;strokeWidth=1.6;strokeColor=#333333;fontSize=12;labelBackgroundColor=#FFFFFF;rounded=0;edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="d32" value="4. TCP MySQL · registra&lt;br&gt;solicitud y versión 1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d52" edge="1" parent="1" source="d37" style="html=1;endArrow=none;strokeWidth=1.6;strokeColor=#333333;fontSize=12;labelBackgroundColor=#FFFFFF;rounded=0;edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="d25" value="Lee y guarda versiones XML">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d53" edge="1" parent="1" source="d37" style="html=1;endArrow=none;strokeWidth=1.6;strokeColor=#333333;fontSize=12;labelBackgroundColor=#FFFFFF;rounded=0;edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.18;exitDx=0;exitDy=0;entryX=1;entryY=0.18;entryDx=0;entryDy=0;" target="d32" value="TCP&lt;br&gt;MySQL">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d54" edge="1" parent="1" source="d4" style="html=1;endArrow=none;strokeWidth=1.6;strokeColor=#333333;fontSize=12;labelBackgroundColor=#FFFFFF;rounded=0;edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;exitX=0;exitY=0.9;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="d13" value="IMAP · aviso">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="12" y="570" />
+              <mxPoint x="12" y="967" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="d55" edge="1" parent="1" source="d9" style="html=1;endArrow=none;strokeWidth=1.6;strokeColor=#333333;fontSize=12;labelBackgroundColor=#FFFFFF;rounded=0;edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;exitX=1;exitY=0.98;exitDx=0;exitDy=0;entryX=0.4;entryY=1;entryDx=0;entryDy=0;" target="d37" value="6. HTTP/HTTPS red interna · revisión, corrección y aprobación">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1200" y="1023" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="d56" edge="1" parent="1" source="d37" style="html=1;endArrow=none;strokeWidth=1.6;strokeColor=#333333;fontSize=12;labelBackgroundColor=#FFFFFF;rounded=0;edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="d45" value="7. HTTPS · envío de&lt;br&gt;factura aprobada">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d57" edge="1" parent="1" source="d15" style="html=1;endArrow=none;strokeWidth=1.6;strokeColor=#333333;fontSize=12;labelBackgroundColor=#FFFFFF;rounded=0;edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;endSize=12;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.85;entryY=1;entryDx=0;entryDy=0;" target="d17" value="«deploy»">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1320" y="1221" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -15,6 +15,11 @@
         form.classList.add("was-validated");
     });
 
+    // La página de recuperación no tiene campo de contraseña.
+    if (!togglePassword || !passwordInput || !passwordIcon) {
+        return;
+    }
+
     togglePassword.addEventListener("click", () => {
         const shouldShow = passwordInput.type === "password";
 

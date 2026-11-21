@@ -1,391 +1,305 @@
 {% extends "base.html" %}
+{% from "_ui.html" import error_campo %}
 
-{% macro error_campo(campo) %}
-    {% if errores.get(campo) %}
-    <div
-        id="{{ campo }}_error"
-        class="invalid-feedback d-block"
-    >
-        {{ errores[campo] }}
-    </div>
-    {% endif %}
-{% endmacro %}
+{% set migas = [
+    ('Panel', url_for('dashboard')),
+    ('Solicitudes', url_for('solicitudes.listado')),
+    ('Nueva solicitud', None),
+] %}
 
 {% block title %}
-{{ 'Editar solicitud' if editando else 'Nueva solicitud' }}
-| Facturaciones SpA
+Nueva solicitud | Facturaciones SpA
 {% endblock %}
 
 {% block content %}
-<main class="container py-4 py-lg-5">
-    <div class="row justify-content-center">
-        <section class="col-12 col-lg-9">
+<main class="container pt-3 pb-5">
+    <div class="row">
+        <section class="col-12 col-xl-10">
             <div class="card">
                 <div class="card-body p-4">
-                    <h1 class="h3 mb-2">
-                        {{ 'Editar solicitud' if editando
-                           else 'Nueva solicitud de facturación' }}
-                    </h1>
+                    <header class="d-flex align-items-start gap-3 mb-4">
+                        <span class="icono-recuadro" aria-hidden="true">
+                            <i class="bi bi-file-earmark-plus"></i>
+                        </span>
 
-                    <p class="text-body-secondary">
-                        {% if editando %}
-                        Solo se permiten cambios mientras la solicitud
-                        permanezca Pendiente.
-                        {% else %}
-                        La solicitud se registrará como Pendiente.
-                        Este proceso no emite una factura tributaria.
-                        {% endif %}
-                    </p>
+                        <div>
+                            <h1 class="h3 mb-1">Nueva solicitud de facturación</h1>
+
+                            <p class="text-body-secondary mb-0">
+                                La solicitud se registrará como Pendiente.
+                                Este proceso no emite una factura tributaria.
+                            </p>
+                        </div>
+                    </header>
 
                     {% if errores %}
-                    <div
-                        id="resumen_errores"
-                        class="alert alert-danger"
-                        role="alert"
-                        tabindex="-1"
-                    >
-                        <p class="mb-2">
-                            No se pudo completar la operación.
-                            Revisa los siguientes errores:
-                        </p>
-
+                    <div class="alert alert-danger" role="alert">
                         <ul class="mb-0">
-                            {% for campo, mensaje in errores.items() %}
-                            <li>
-                                {% if campo in [
-                                    'cliente_id',
-                                    'concepto',
-                                    'monto_bruto',
-                                    'fecha_emision',
-                                    'tipo_afectacion',
-                                    'nro_orden_compra'
-                                ] %}
-                                <a
-                                    href="#{{ campo }}"
-                                    class="alert-link"
-                                >
-                                    {{ mensaje }}
-                                </a>
-                                {% else %}
-                                {{ mensaje }}
-                                {% endif %}
-                            </li>
+                            {% for error in errores.values() %}
+                            <li>{{ error }}</li>
                             {% endfor %}
                         </ul>
+                        <p class="mb-0 mt-2 small">
+                            Si había seleccionado documentos adjuntos,
+                            vuelva a seleccionarlos antes de enviar.
+                        </p>
                     </div>
                     {% endif %}
 
-                    {% if not editando and not clientes %}
-                    <div class="alert alert-warning" role="status">
+                    {% if not clientes %}
+                    <div class="alert alert-warning">
                         No hay clientes activos.
                         Un Administrador debe registrar un cliente.
                     </div>
                     {% endif %}
 
-                    <p class="small text-body-secondary">
-                        Los campos marcados con * son obligatorios.
-                    </p>
-
                     <form
                         method="post"
-                        action="{{ url_for(
-                            'solicitudes.editar',
-                            public_id=solicitud.public_id
-                        ) if editando else url_for('solicitudes.nueva') }}"
+                        action="{{ url_for('solicitudes.nueva') }}"
+                        enctype="multipart/form-data"
+                        data-bloquear-envio
                     >
-                        <input
-                            type="hidden"
-                            name="csrf_token"
-                            value="{{ csrf_token() }}"
-                        >
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="token_envio" value="{{ token_envio }}">
 
-                        {% if editando %}
-                        <input
-                            type="hidden"
-                            name="version"
-                            value="{{ version }}"
-                        >
-                        {% else %}
-                        <input
-                            type="hidden"
-                            name="token_envio"
-                            value="{{ token_envio }}"
-                        >
-                        {% endif %}
+                        <section class="seccion-formulario" aria-labelledby="seccion-cliente">
+                            <h2 id="seccion-cliente" class="seccion-formulario-titulo">
+                                <span class="seccion-formulario-numero" aria-hidden="true">1</span>
+                                Cliente y concepto
+                            </h2>
 
-                        <div class="mb-3">
-                            <label for="cliente_id" class="form-label">
-                                Cliente receptor *
-                            </label>
-
-                            {% if editando %}
-                            <input
-                                type="hidden"
-                                name="cliente_id"
-                                value="{{ solicitud.cliente_id }}"
-                            >
-
-                            <input
-                                id="cliente_id"
-                                type="text"
-                                class="form-control{% if errores.get('cliente_id') %} is-invalid{% endif %}"
-                                value="{{ solicitud.nombre }} — {{ solicitud.rut }}"
-                                readonly
-                                aria-describedby="cliente_id_ayuda{% if errores.get('cliente_id') %} cliente_id_error{% endif %}"
-                                {% if errores.get('cliente_id') %}
-                                aria-invalid="true"
-                                {% endif %}
-                            >
-
-                            <div id="cliente_id_ayuda" class="form-text">
-                                El cliente y sus datos históricos
-                                no se modifican desde esta pantalla.
-                            </div>
-                            {% else %}
-                            <select
-                                id="cliente_id"
-                                name="cliente_id"
-                                class="form-select{% if errores.get('cliente_id') %} is-invalid{% endif %}"
-                                required
-                                {% if errores.get('cliente_id') %}
-                                aria-invalid="true"
-                                aria-describedby="cliente_id_error"
-                                {% endif %}
-                            >
-                                <option value="">
-                                    Seleccione un cliente
-                                </option>
-
-                                {% for cliente in clientes %}
-                                <option
-                                    value="{{ cliente.id }}"
-                                    {% if (values.cliente_id|string) == (cliente.id|string) %}
-                                    selected
-                                    {% endif %}
-                                >
-                                    {{ cliente.razon_social }}
-                                    — {{ cliente.rut }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                            {% endif %}
-
-                            {{ error_campo('cliente_id') }}
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="concepto" class="form-label">
-                                Concepto de facturación *
-                            </label>
-
-                            <textarea
-                                id="concepto"
-                                name="concepto"
-                                class="form-control{% if errores.get('concepto') %} is-invalid{% endif %}"
-                                rows="4"
-                                maxlength="500"
-                                required
-                                aria-describedby="concepto_ayuda{% if errores.get('concepto') %} concepto_error{% endif %}"
-                                {% if errores.get('concepto') %}
-                                aria-invalid="true"
-                                {% endif %}
-                            >{{ values.concepto }}</textarea>
-
-                            <div id="concepto_ayuda" class="form-text">
-                                Máximo 500 caracteres.
-                            </div>
-
-                            {{ error_campo('concepto') }}
-                        </div>
-
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label
-                                    for="monto_bruto"
-                                    class="form-label"
-                                >
-                                    Monto bruto — CLP *
-                                </label>
-
-                                <input
-                                    id="monto_bruto"
-                                    name="monto_bruto"
-                                    type="text"
-                                    inputmode="numeric"
-                                    pattern="[0-9]{1,14}"
-                                    maxlength="14"
-                                    class="form-control{% if errores.get('monto_bruto') %} is-invalid{% endif %}"
-                                    value="{{ values.monto_bruto }}"
-                                    required
-                                    aria-describedby="monto_bruto_ayuda{% if errores.get('monto_bruto') %} monto_bruto_error{% endif %}"
-                                    {% if errores.get('monto_bruto') %}
-                                    aria-invalid="true"
-                                    {% endif %}
-                                >
-
-                                <div
-                                    id="monto_bruto_ayuda"
-                                    class="form-text"
-                                >
-                                    Pesos enteros mayores que cero,
-                                    sin puntos ni comas.
-                                    Máximo 14 dígitos.
-                                </div>
-
-                                {{ error_campo('monto_bruto') }}
-                            </div>
-
-                            <div class="col-md-6">
-                                <label
-                                    for="fecha_emision"
-                                    class="form-label"
-                                >
-                                    Fecha de emisión solicitada *
-                                </label>
-
-                                <input
-                                    id="fecha_emision"
-                                    name="fecha_emision"
-                                    type="date"
-                                    class="form-control{% if errores.get('fecha_emision') %} is-invalid{% endif %}"
-                                    value="{{ values.fecha_emision }}"
-                                    required
-                                    {% if errores.get('fecha_emision') %}
-                                    aria-invalid="true"
-                                    aria-describedby="fecha_emision_error"
-                                    {% endif %}
-                                >
-
-                                {{ error_campo('fecha_emision') }}
-                            </div>
-
-                            <div class="col-md-6">
-                                <label
-                                    for="tipo_afectacion"
-                                    class="form-label"
-                                >
-                                    Afectación tributaria *
+                            <div class="mb-3">
+                                <label for="cliente_id" class="form-label">
+                                    Cliente receptor
                                 </label>
 
                                 <select
-                                    id="tipo_afectacion"
-                                    name="tipo_afectacion"
-                                    class="form-select{% if errores.get('tipo_afectacion') %} is-invalid{% endif %}"
+                                    id="cliente_id"
+                                    name="cliente_id"
+                                    class="form-select{% if errores.get('cliente_id') %} is-invalid{% endif %}"
                                     required
-                                    {% if errores.get('tipo_afectacion') %}
-                                    aria-invalid="true"
-                                    aria-describedby="tipo_afectacion_error"
-                                    {% endif %}
+                                    {% if errores.get('cliente_id') %}aria-describedby="error-cliente_id"{% endif %}
+                                    {% if errores.get('cliente_id') %}aria-invalid="true"{% endif %}
                                 >
                                     <option value="">
-                                        Seleccione una opción
+                                        Seleccione un cliente
                                     </option>
 
+                                    {% for cliente in clientes %}
                                     <option
-                                        value="AFECTA"
-                                        {% if values.tipo_afectacion == 'AFECTA' %}
+                                        value="{{ cliente.id }}"
+                                        {% if values.cliente_id == cliente.id|string %}
                                         selected
                                         {% endif %}
                                     >
-                                        Afecta
+                                        {{ cliente.razon_social }}
+                                        — {{ cliente.rut }}
                                     </option>
-
-                                    <option
-                                        value="EXENTA"
-                                        {% if values.tipo_afectacion == 'EXENTA' %}
-                                        selected
-                                        {% endif %}
-                                    >
-                                        Exenta
-                                    </option>
+                                    {% endfor %}
                                 </select>
-
-                                {{ error_campo('tipo_afectacion') }}
+                                {{ error_campo(errores, 'cliente_id') }}
                             </div>
 
-                            <div class="col-md-6">
-                                <label
-                                    for="nro_orden_compra"
-                                    class="form-label"
-                                >
-                                    Orden de compra — opcional
+                            <div>
+                                <label for="concepto" class="form-label">
+                                    Concepto de facturación
                                 </label>
 
-                                <input
-                                    id="nro_orden_compra"
-                                    name="nro_orden_compra"
-                                    type="text"
-                                    class="form-control{% if errores.get('nro_orden_compra') %} is-invalid{% endif %}"
-                                    maxlength="40"
-                                    value="{{ values.nro_orden_compra }}"
-                                    aria-describedby="nro_orden_compra_ayuda{% if errores.get('nro_orden_compra') %} nro_orden_compra_error{% endif %}"
-                                    {% if errores.get('nro_orden_compra') %}
-                                    aria-invalid="true"
-                                    {% endif %}
-                                >
+                                <textarea
+                                    id="concepto"
+                                    name="concepto"
+                                    class="form-control{% if errores.get('concepto') %} is-invalid{% endif %}"
+                                    rows="4"
+                                    maxlength="500"
+                                    aria-describedby="ayuda-concepto{% if errores.get('concepto') %} error-concepto{% endif %}"
+                                    required
+                                    {% if errores.get('concepto') %}aria-invalid="true"{% endif %}
+                                >{{ values.concepto }}</textarea>
+                                {{ error_campo(errores, 'concepto') }}
 
-                                <div
-                                    id="nro_orden_compra_ayuda"
-                                    class="form-text"
-                                >
-                                    Máximo 40 caracteres.
+                                <div id="ayuda-concepto" class="ayuda-campo">
+                                    <span>Describa el servicio o producto a facturar.</span>
+                                    <span id="contador-concepto" class="contador">{{ values.concepto|length }} / 500</span>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="seccion-formulario" aria-labelledby="seccion-facturacion">
+                            <h2 id="seccion-facturacion" class="seccion-formulario-titulo">
+                                <span class="seccion-formulario-numero" aria-hidden="true">2</span>
+                                Datos de facturación
+                            </h2>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="monto_bruto" class="form-label">
+                                        Monto bruto — CLP
+                                    </label>
+
+                                    <input
+                                        id="monto_bruto"
+                                        name="monto_bruto"
+                                        type="text"
+                                        inputmode="numeric"
+                                        pattern="[0-9]{1,14}"
+                                        maxlength="14"
+                                        class="form-control{% if errores.get('monto_bruto') %} is-invalid{% endif %}"
+                                        value="{{ values.monto_bruto }}"
+                                        required
+                                        {% if errores.get('monto_bruto') %}aria-describedby="error-monto_bruto"{% endif %}
+                                        {% if errores.get('monto_bruto') %}aria-invalid="true"{% endif %}
+                                    >
+                                    {{ error_campo(errores, 'monto_bruto') }}
+
+                                    <div class="form-text">
+                                        Pesos enteros, sin puntos ni comas.
+                                    </div>
                                 </div>
 
-                                {{ error_campo('nro_orden_compra') }}
+                                <div class="col-md-6">
+                                    <label for="fecha_emision" class="form-label">
+                                        Fecha de emisión solicitada
+                                    </label>
+
+                                    <input
+                                        id="fecha_emision"
+                                        name="fecha_emision"
+                                        type="date"
+                                        class="form-control{% if errores.get('fecha_emision') %} is-invalid{% endif %}"
+                                        value="{{ values.fecha_emision }}"
+                                        required
+                                        {% if errores.get('fecha_emision') %}aria-describedby="error-fecha_emision"{% endif %}
+                                        {% if errores.get('fecha_emision') %}aria-invalid="true"{% endif %}
+                                    >
+                                    {{ error_campo(errores, 'fecha_emision') }}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label
+                                        for="tipo_afectacion"
+                                        class="form-label"
+                                    >
+                                        Afectación tributaria
+                                    </label>
+
+                                    <select
+                                        id="tipo_afectacion"
+                                        name="tipo_afectacion"
+                                        class="form-select{% if errores.get('tipo_afectacion') %} is-invalid{% endif %}"
+                                        required
+                                        {% if errores.get('tipo_afectacion') %}aria-describedby="error-tipo_afectacion"{% endif %}
+                                        {% if errores.get('tipo_afectacion') %}aria-invalid="true"{% endif %}
+                                    >
+                                        <option value="">
+                                            Seleccione una opción
+                                        </option>
+
+                                        <option
+                                            value="AFECTA"
+                                            {% if values.tipo_afectacion == 'AFECTA' %}
+                                            selected
+                                            {% endif %}
+                                        >
+                                            Afecta
+                                        </option>
+
+                                        <option
+                                            value="EXENTA"
+                                            {% if values.tipo_afectacion == 'EXENTA' %}
+                                            selected
+                                            {% endif %}
+                                        >
+                                            Exenta
+                                        </option>
+                                    </select>
+                                    {{ error_campo(errores, 'tipo_afectacion') }}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label
+                                        for="nro_orden_compra"
+                                        class="form-label"
+                                    >
+                                        Orden de compra — opcional
+                                    </label>
+
+                                    <input
+                                        id="nro_orden_compra"
+                                        name="nro_orden_compra"
+                                        class="form-control{% if errores.get('nro_orden_compra') %} is-invalid{% endif %}"
+                                        maxlength="40"
+                                        value="{{ values.nro_orden_compra }}"
+                                        {% if errores.get('nro_orden_compra') %}aria-describedby="error-nro_orden_compra"{% endif %}
+                                        {% if errores.get('nro_orden_compra') %}aria-invalid="true"{% endif %}
+                                    >
+                                    {{ error_campo(errores, 'nro_orden_compra') }}
+                                </div>
                             </div>
-                        </div>
+                        </section>
 
-                        <div class="d-flex flex-wrap gap-2 mt-4">
-                            <button
-                                type="submit"
-                                class="btn btn-primary"
-                                {% if not editando and not clientes %}
-                                disabled
-                                {% endif %}
-                            >
-                                {{ 'Guardar cambios' if editando
-                                   else 'Registrar solicitud' }}
-                            </button>
+                        <section class="seccion-formulario" aria-labelledby="seccion-adjuntos">
+                            <h2 id="seccion-adjuntos" class="seccion-formulario-titulo">
+                                <span class="seccion-formulario-numero" aria-hidden="true">3</span>
+                                Documentos adjuntos
+                            </h2>
 
-                            <a
-                                href="{{ url_for('solicitudes.listado') }}"
-                                class="btn btn-outline-secondary"
-                            >
-                                Volver al listado
-                            </a>
+                            <label for="adjuntos" class="form-label">
+                                Documentos adjuntos — opcional
+                            </label>
 
-                            {% if editando %}
-                            <a
-                                href="{{ url_for(
-                                    'solicitudes.editar',
-                                    public_id=solicitud.public_id
-                                ) }}"
-                                class="btn btn-outline-secondary"
+                            <input
+                                type="file"
+                                name="adjuntos"
+                                id="adjuntos"
+                                class="form-control{% if errores.adjuntos %} is-invalid{% endif %}"
+                                multiple
+                                accept=".pdf,.png,.jpg,.jpeg"
+                                aria-describedby="adjuntos-help{% if errores.adjuntos %} adjuntos-error{% endif %}"
                             >
-                                Recargar datos guardados
-                            </a>
-                            {% else %}
+
+                            {% if errores.adjuntos %}
+                            <div id="adjuntos-error" class="invalid-feedback">
+                                {{ errores.adjuntos }}
+                            </div>
+                            {% endif %}
+
+                            <div id="adjuntos-help" class="form-text">
+                                Opcional. PDF, PNG o JPG; hasta 3 archivos de 5 MB.
+                            </div>
+                        </section>
+
+                        <div class="d-flex flex-wrap justify-content-end gap-2 mt-4">
                             <a
                                 href="{{ url_for('solicitudes.nueva') }}"
                                 class="btn btn-outline-secondary"
                             >
                                 Abrir formulario nuevo
                             </a>
-                            {% endif %}
-                        </div>
 
-                        <p class="small text-body-secondary mt-3 mb-0">
-                            {% if editando %}
-                            Recargar descarta los cambios no guardados.
-                            {% else %}
-                            Abrir un formulario nuevo descarta
-                            los datos que todavía no hayas registrado.
-                            {% endif %}
-                        </p>
+                            <a
+                                href="{{ url_for('solicitudes.listado') }}"
+                                class="btn btn-outline-secondary"
+                            >
+                                Cancelar
+                            </a>
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                                {% if not clientes %}disabled{% endif %}
+                            >
+                                <i class="bi bi-check-lg" aria-hidden="true"></i>
+                                Registrar solicitud
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
         </section>
     </div>
 </main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/ui.js') }}"></script>
 {% endblock %}

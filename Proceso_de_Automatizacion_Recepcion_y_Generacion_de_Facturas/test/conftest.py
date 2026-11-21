@@ -2,13 +2,14 @@ import sys
 from pathlib import Path
 
 import pytest
+from flask_login.utils import _create_identifier
 
 # Permite "from app import ..." y "from config import ..." al ejecutar pytest.
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from app import create_app  # noqa: E402
-from app.models import User  # noqa: E402
-from config import TestingConfig  # noqa: E402
+from app import create_app
+from app.models import User
+from config import TestingConfig
 
 
 @pytest.fixture
@@ -41,9 +42,14 @@ def login_como(client, monkeypatch):
         monkeypatch.setattr(
             User, "get_by_id", classmethod(lambda cls, _id: usuario)
         )
+        with client.application.test_request_context(
+            environ_base=client.environ_base
+        ):
+            identificador = _create_identifier()
         with client.session_transaction() as sesion:
             sesion["_user_id"] = str(user_id)
             sesion["_fresh"] = True
+            sesion["_id"] = identificador
         return usuario
 
     return _login

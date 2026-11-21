@@ -101,8 +101,13 @@ def construir_mensaje(
     cuerpo,
     responder_a=None,
     adjunto=None,
+    cabeceras_extra=None,
 ):
-    """adjunto: tupla (nombre_archivo, contenido_bytes) de un XML."""
+    """adjunto: tupla (nombre_archivo, contenido_bytes) de un XML.
+
+    cabeceras_extra: dict de cabeceras X-* propias (se sanean igual que
+    el resto para impedir inyección de cabeceras).
+    """
     mensaje = EmailMessage()
     mensaje["From"] = limpiar_cabecera(remitente, 300)
     mensaje["To"] = limpiar_cabecera(destinatario, 150)
@@ -114,6 +119,10 @@ def construir_mensaje(
 
     if responder_a:
         mensaje["Reply-To"] = limpiar_cabecera(responder_a, 150)
+
+    for nombre, valor in (cabeceras_extra or {}).items():
+        if re.fullmatch(r"X-[A-Za-z0-9-]{1,60}", nombre):
+            mensaje[nombre] = limpiar_cabecera(valor, 200)
 
     mensaje.set_content(cuerpo)
 

@@ -1,137 +1,244 @@
 {% extends "base.html" %}
+{% from "_ui.html" import estado_solicitud, metrica %}
 
 {% block title %}
     Panel principal | Facturaciones SpA
 {% endblock %}
 
 {% block content %}
-<nav class="navbar navbar-dark" style="background: #192f58;">
-    <div class="container-fluid">
-        <span class="navbar-brand mb-0 h1">
-            Facturaciones SpA
-        </span>
-
-        <div class="d-flex align-items-center gap-3">
-            <div class="text-white">
-                <small class="d-block opacity-75">Usuario</small>
-                <strong>{{ current_user.nombre }}</strong>
-                <span class="badge bg-secondary ms-2">
-                    {{ current_user.role_name }}
-                </span>
-            </div>
-
-            <form method="POST" action="{{ url_for('auth.logout') }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="btn btn-outline-light btn-sm">
-                    <i class="bi bi-box-arrow-right"></i>
-                    Cerrar sesión
-                </button>
-            </form>
-        </div>
-    </div>
-</nav>
-
-<main class="dashboard-content">
-    <div class="container py-5">
-        <div class="row">
-            <div class="col-12">
-                <h1 class="mb-3">Panel principal</h1>
-                <p class="text-secondary mb-4">
-                    Bienvenido al sistema de gestión de facturación.
+{% set iconos_estado = {
+    'Pendiente': 'bi-hourglass-split',
+    'En revisión': 'bi-patch-check',
+    'En corrección': 'bi-pencil-square',
+    'Aprobada': 'bi-check2-circle',
+    'Rechazada': 'bi-x-circle',
+} %}
+<main>
+    <div class="container py-4">
+        <header class="bienvenida">
+            <div>
+                <h1>Panel principal</h1>
+                <p>
+                    Bienvenido/a, {{ current_user.nombre }}.
+                    <span class="badge text-bg-secondary ms-1">{{ current_user.role_name }}</span>
                 </p>
             </div>
-        </div>
 
-        <div class="row g-4">
             {% if current_user.role_name in ['Administrador', 'Emisor'] %}
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <i class="bi bi-plus-circle"></i>
-                            Nueva solicitud
-                        </h5>
-                        <p class="card-text text-secondary">
-                            Crea una nueva solicitud de facturación.
-                        </p>
-                        <a href="{{ url_for('solicitudes.nueva') }}" class="btn btn-primary">
+            <a href="{{ url_for('solicitudes.nueva') }}" class="btn btn-primary">
+                <i class="bi bi-file-earmark-plus" aria-hidden="true"></i>
+                Nueva solicitud
+            </a>
+            {% endif %}
+        </header>
+
+        {% if resumen %}
+        <section aria-labelledby="titulo-resumen">
+            <h2 id="titulo-resumen" class="seccion-titulo">Resumen general</h2>
+
+            <div class="metricas">
+                {{ metrica(resumen.solicitudes_total, 'Solicitudes', 'bi-files',
+                           url_for('solicitudes.listado')) }}
+
+                {% for estado in resumen.estados.values() %}
+                {{ metrica(estado.total, estado.nombre,
+                           iconos_estado.get(estado.nombre, 'bi-circle'),
+                           url_for('solicitudes.listado', estado_id=estado.id)) }}
+                {% endfor %}
+            </div>
+
+            {% if current_user.role_name == 'Administrador' and resumen.usuarios %}
+            <div class="metricas">
+                {{ metrica(resumen.usuarios.activos, 'Usuarios activos', 'bi-people',
+                           url_for('admin.usuarios'),
+                           'de ' ~ resumen.usuarios.total) }}
+                {{ metrica(resumen.clientes.activos, 'Clientes activos', 'bi-building',
+                           url_for('clientes.listado'),
+                           'de ' ~ resumen.clientes.total) }}
+                {{ metrica(resumen.eventos_total, 'Eventos registrados', 'bi-clock-history',
+                           url_for('admin.auditoria')) }}
+            </div>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        <section aria-labelledby="titulo-accesos">
+            <h2 id="titulo-accesos" class="seccion-titulo">Accesos rápidos</h2>
+
+            <div class="accesos-rapidos">
+                {% if current_user.role_name in ['Administrador', 'Emisor'] %}
+                <article class="acceso-rapido">
+                    <span class="icono-recuadro" aria-hidden="true"><i class="bi bi-plus-circle"></i></span>
+                    <div>
+                        <h3 class="acceso-rapido-titulo">Nueva solicitud</h3>
+                        <p>Crea una nueva solicitud de facturación.</p>
+                        <a href="{{ url_for('solicitudes.nueva') }}" class="acceso-rapido-enlace stretched-link">
                             Crear solicitud
                         </a>
                     </div>
-                </div>
-            </div>
+                    <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                </article>
 
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <i class="bi bi-list-ul"></i>
-                            Ver solicitudes
-                        </h5>
-                        <p class="card-text text-secondary">
-                            Consulta y filtra tus solicitudes de facturación.
-                        </p>
-                        <a href="{{ url_for('solicitudes.listado') }}" class="btn btn-outline-primary">
+                <article class="acceso-rapido">
+                    <span class="icono-recuadro" aria-hidden="true"><i class="bi bi-list-ul"></i></span>
+                    <div>
+                        <h3 class="acceso-rapido-titulo">Ver solicitudes</h3>
+                        <p>Consulta y filtra tus solicitudes de facturación.</p>
+                        <a href="{{ url_for('solicitudes.listado') }}" class="acceso-rapido-enlace stretched-link">
                             Ver listado de solicitudes
                         </a>
                     </div>
-                </div>
-            </div>
-            {% endif %}
-            
-            {% if current_user.role_name == 'Administrador' %}
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <i class="bi bi-people"></i>
-                            Usuarios
-                        </h5>
-                        <p class="card-text text-secondary">
-                            Gestiona usuarios y permisos del sistema.
-                        </p>
-                        <a href="{{ url_for('admin.usuarios') }}"
-                            class="btn btn-outline-primary"
-                        >
+                    <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                </article>
+                {% endif %}
+
+                {% if current_user.role_name == 'Administrador' %}
+                {% set por_validar = resumen.estados.get('En revisión') if resumen else None %}
+                <article class="acceso-rapido acceso-rapido--destacado">
+                    <span class="icono-recuadro" aria-hidden="true"><i class="bi bi-patch-check"></i></span>
+                    <div>
+                        <h3 class="acceso-rapido-titulo">
+                            Facturas por validar
+                            {% if por_validar %}
+                            <span class="badge text-bg-primary">{{ por_validar.total }}</span>
+                            {% endif %}
+                        </h3>
+                        <p>Facturas generadas que esperan su revisión.</p>
+                        <a href="{{ url_for('solicitudes.listado', estado_id=por_validar.id) if por_validar else url_for('solicitudes.listado') }}"
+                           class="acceso-rapido-enlace stretched-link">
+                            Revisar facturas
+                        </a>
+                    </div>
+                    <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                </article>
+
+                <article class="acceso-rapido">
+                    <span class="icono-recuadro" aria-hidden="true"><i class="bi bi-inbox"></i></span>
+                    <div>
+                        <h3 class="acceso-rapido-titulo">
+                            Bandeja de correos
+                            {% if resumen and resumen.correos_por_revisar %}
+                            <span class="badge text-bg-warning">{{ resumen.correos_por_revisar }}</span>
+                            {% endif %}
+                        </h3>
+                        <p>Solicitudes recibidas por correo y su procesamiento.</p>
+                        <a href="{{ url_for('admin.correos') }}" class="acceso-rapido-enlace stretched-link">
+                            Ver bandeja
+                        </a>
+                    </div>
+                    <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                </article>
+
+                <article class="acceso-rapido">
+                    <span class="icono-recuadro" aria-hidden="true"><i class="bi bi-clock-history"></i></span>
+                    <div>
+                        <h3 class="acceso-rapido-titulo">Auditoría</h3>
+                        <p>Historial de acciones y versiones de factura.</p>
+                        <a href="{{ url_for('admin.auditoria') }}" class="acceso-rapido-enlace stretched-link">
+                            Ver auditoría
+                        </a>
+                    </div>
+                    <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                </article>
+
+                <article class="acceso-rapido">
+                    <span class="icono-recuadro" aria-hidden="true"><i class="bi bi-people"></i></span>
+                    <div>
+                        <h3 class="acceso-rapido-titulo">Usuarios</h3>
+                        <p>Gestiona usuarios y permisos del sistema.</p>
+                        <a href="{{ url_for('admin.usuarios') }}" class="acceso-rapido-enlace stretched-link">
                             Administrar usuarios
                         </a>
                     </div>
-                </div>
-            </div>
+                    <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                </article>
 
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <i class="bi bi-building"></i>
-                            Clientes
-                        </h5>
-                        <p class="card-text text-secondary">
-                            Mantén el registro de clientes y contactos.
-                        </p>
-                        <a href="{{ url_for('clientes.listado') }}" class="btn btn-outline-primary">
+                <article class="acceso-rapido">
+                    <span class="icono-recuadro" aria-hidden="true"><i class="bi bi-building"></i></span>
+                    <div>
+                        <h3 class="acceso-rapido-titulo">Clientes</h3>
+                        <p>Mantén el registro de clientes y contactos.</p>
+                        <a href="{{ url_for('clientes.listado') }}" class="acceso-rapido-enlace stretched-link">
                             Gestionar clientes
                         </a>
                     </div>
-                </div>
+                    <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                </article>
+                {% endif %}
             </div>
-            {% endif %}
-        </div>
+        </section>
 
-        <div class="row mt-5">
-            <div class="col-12">
-                <div class="alert alert-info">
-                    <i class="bi bi-info-circle"></i>
-                    <strong>Próximos módulos:</strong>
-                    <ul class="mb-0 mt-2">
-                        <li>Formulario de solicitud de facturación</li>
-                        <li>Listado y filtros de solicitudes</li>
-                        <li>Gestión de usuarios y clientes</li>
-                        <li>Carga y envío de XML por SMTP</li>
-                    </ul>
+        {% if resumen %}
+        <section class="card" aria-labelledby="titulo-actividad">
+            <div class="card-body p-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                    <h2 id="titulo-actividad" class="h5 mb-0">Actividad reciente</h2>
+
+                    {% if current_user.role_name == 'Administrador' %}
+                    <a href="{{ url_for('admin.auditoria') }}" class="small">Ver todas</a>
+                    {% else %}
+                    <a href="{{ url_for('solicitudes.listado') }}" class="small">Ver todas</a>
+                    {% endif %}
                 </div>
+
+                {% if resumen.actividad %}
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">Fecha</th>
+                                {% if current_user.role_name == 'Administrador' %}
+                                <th scope="col">Evento</th>
+                                <th scope="col">Responsable</th>
+                                {% else %}
+                                <th scope="col">Cliente</th>
+                                <th scope="col">Estado</th>
+                                {% endif %}
+                                <th scope="col"><span class="visually-hidden">Enlace</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in resumen.actividad %}
+                            <tr>
+                                {% if current_user.role_name == 'Administrador' %}
+                                <td class="text-nowrap small text-body-secondary">{{ item.creado_en }}</td>
+                                <td class="fw-semibold">{{ item.etiqueta }}</td>
+                                <td>{{ item.usuario_nombre or 'Usuario no disponible' }}</td>
+                                {% else %}
+                                <td class="text-nowrap small text-body-secondary">{{ item.actualizado_en }}</td>
+                                <td class="fw-semibold">{{ item.nombre }}</td>
+                                <td>{{ estado_solicitud(item.estado_nombre) }}</td>
+                                {% endif %}
+                                <td class="text-end">
+                                    {% if item.public_id %}
+                                    <a href="{{ url_for('solicitudes.detalle', public_id=item.public_id) }}"
+                                       class="btn btn-outline-primary btn-sm">
+                                        Ver solicitud
+                                    </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-body-secondary mb-0">Sin actividad registrada.</p>
+                {% endif %}
             </div>
-        </div>
+        </section>
+        {% endif %}
+
+        <p class="d-flex gap-2 small text-body-secondary mt-4 mb-0">
+            <i class="bi bi-info-circle" aria-hidden="true"></i>
+            <span>
+                <strong>Flujo:</strong>
+                correo de facturación (IMAP) → repositorio → factura generada
+                → aviso al Administrador → validación → archivo DTE para el SII.
+                Si la factura se devuelve a corrección, al reenviarla se crea
+                una nueva versión con registro de cambios.
+            </span>
+        </p>
     </div>
 </main>
 {% endblock %}

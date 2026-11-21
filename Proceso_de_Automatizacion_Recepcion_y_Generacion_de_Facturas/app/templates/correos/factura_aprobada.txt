@@ -1,0 +1,23 @@
+Estimado/a Administrador/a:
+
+La versión {{ factura.version }} de la factura fue validada y el archivo
+DTE para el SII quedó generado. Se adjunta a este correo.
+
+  Receptor:           {{ datos.receptor.razon_social }} ({{ datos.receptor.rut }})
+  Concepto:           {{ datos.detalle.concepto }}
+  Total:              {{ total }} CLP ({{ datos.tipo_afectacion }})
+  Fecha de emisión:   {{ datos.fecha_emision }}
+{% if datos.detalle.nro_orden_compra %}  Orden de compra:    {{ datos.detalle.nro_orden_compra }}
+{% endif %}  Referencia:         {{ solicitud.public_id[:8] }}
+  SHA-256 del DTE:    {{ factura.archivo_sii_sha256 }}
+
+Importante: el archivo no incluye firma electrónica ni timbre (TED) y su
+folio es provisional. Debe firmarse con el certificado digital y un
+folio CAF antes de enviarse al SII.
+
+Detalle de la factura:
+{{ enlace }}
+
+--
+Mensaje generado automáticamente por Facturaciones SpA. Este correo y su
+adjunto son confidenciales.

@@ -1,42 +1,107 @@
 {% extends "base.html" %}
+{% from "_ui.html" import iniciales, metrica %}
+
+{% set migas = [('Panel', url_for('dashboard')), ('Usuarios', None)] %}
 
 {% block title %}
 Usuarios | Facturaciones SpA
 {% endblock %}
 
 {% block content %}
-<main class="container py-4 py-lg-5">
-    <header
-        class="d-flex flex-wrap justify-content-between
-               align-items-center gap-3 mb-4"
-    >
-        <div>
-            <h1 class="h2 mb-1">Gestión de usuarios</h1>
-            <p class="text-body-secondary mb-0">
-                Crea cuentas y consulta sus perfiles de acceso.
-            </p>
-        </div>
-
-        <a
-            href="{{ url_for('admin.auditoria') }}"
-            class="btn btn-outline-primary"
-        >
-            Ver auditoría
-        </a>
-
-        <a
-            href="{{ url_for('dashboard') }}"
-            class="btn btn-outline-secondary"
-        >
-            Volver al panel
-        </a>
+{% set total_usuarios = usuarios | length %}
+{% set usuarios_activos = usuarios | selectattr('activo') | list | length %}
+{% set iconos_perfil = {
+    'Administrador': 'bi-shield-lock',
+    'Emisor': 'bi-file-earmark-text',
+    'Lector': 'bi-eye',
+} %}
+<main class="container pt-3 pb-5">
+    <header class="mb-4">
+        <h1 class="h2 mb-1">Gestión de usuarios</h1>
+        <p class="text-body-secondary mb-0">
+            Crea cuentas y consulta sus perfiles de acceso.
+        </p>
     </header>
+
+    <div class="metricas">
+        {{ metrica(total_usuarios, 'Usuarios registrados', 'bi-people') }}
+        {{ metrica(usuarios_activos, 'Activos', 'bi-person-check') }}
+        {{ metrica(total_usuarios - usuarios_activos, 'Inactivos', 'bi-person-dash') }}
+    </div>
+
+    {% if recuperaciones is none %}
+    <div class="alert alert-secondary small">
+        <i class="bi bi-info-circle" aria-hidden="true"></i>
+        La recuperación de contraseñas no está disponible: ejecute la
+        migración <code>005_gestion_contrasenas.sql</code>.
+    </div>
+    {% elif recuperaciones %}
+    <section class="card border-warning mb-4" aria-labelledby="titulo-recuperaciones">
+        <div class="card-body p-4">
+            <h2 id="titulo-recuperaciones" class="h5 d-flex align-items-center gap-2 mb-1">
+                <i class="bi bi-key text-warning-emphasis" aria-hidden="true"></i>
+                Solicitudes de recuperación de contraseña
+                <span class="badge text-bg-warning">{{ recuperaciones | length }}</span>
+            </h2>
+            <p class="text-body-secondary small">
+                Confirme la identidad de la persona por otro medio (teléfono o en
+                persona) antes de restablecer su contraseña.
+            </p>
+
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Usuario</th>
+                            <th scope="col">Correo</th>
+                            <th scope="col">Solicitada</th>
+                            <th scope="col">IP</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in recuperaciones %}
+                        <tr>
+                            <td class="fw-semibold">{{ r.nombre }}</td>
+                            <td class="text-break">{{ r.email }}</td>
+                            <td class="small text-nowrap">{{ r.solicitada_en }}</td>
+                            <td class="small">{{ r.ip or '—' }}</td>
+                            <td>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a href="{{ url_for('admin.usuario_editar', usuario_id=r.usuario_id) }}#restablecer"
+                                       class="btn btn-warning btn-sm">
+                                        <i class="bi bi-key" aria-hidden="true"></i>
+                                        Restablecer
+                                    </a>
+                                    <form method="post"
+                                          action="{{ url_for('admin.recuperacion_descartar', recuperacion_id=r.id) }}"
+                                          data-confirmar="¿Descartar la solicitud de {{ r.nombre }}? La contraseña no cambiará.">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                            Descartar
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    {% endif %}
 
     <div class="row g-4">
         <section class="col-12 col-xl-4">
             <div class="card">
                 <div class="card-body p-4">
-                    <h2 class="h5 mb-3">Crear usuario</h2>
+                    <h2 class="h5 d-flex align-items-center gap-2 mb-3">
+                        <span class="icono-recuadro" aria-hidden="true">
+                            <i class="bi bi-person-plus"></i>
+                        </span>
+                        Crear usuario
+                    </h2>
 
                     {% if errors %}
                     <div class="alert alert-danger" role="alert">
@@ -158,6 +223,7 @@ Usuarios | Facturaciones SpA
                             type="submit"
                             class="btn btn-primary w-100"
                         >
+                            <i class="bi bi-person-plus" aria-hidden="true"></i>
                             Crear usuario
                         </button>
                     </form>
@@ -187,9 +253,16 @@ Usuarios | Facturaciones SpA
                             <tbody>
                                 {% for usuario in usuarios %}
                                 <tr>
-                                    <td>{{ usuario.nombre }}</td>
-                                    <td>{{ usuario.email }}</td>
-                                    <td>{{ usuario.rol_nombre }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="avatar avatar-sm" aria-hidden="true">{{ iniciales(usuario.nombre) }}</span>
+                                            <span class="fw-semibold">{{ usuario.nombre }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-break">{{ usuario.email }}</td>
+                                    <td>
+                                        <span class="badge text-bg-secondary">{{ usuario.rol_nombre }}</span>
+                                    </td>
                                     <td>
                                         {% if usuario.activo %}
                                         <span class="badge text-bg-success">
@@ -198,6 +271,11 @@ Usuarios | Facturaciones SpA
                                         {% else %}
                                         <span class="badge text-bg-secondary">
                                             Inactivo
+                                        </span>
+                                        {% endif %}
+                                        {% if usuario.id in con_recuperacion %}
+                                        <span class="badge text-bg-warning">
+                                            Pide recuperar contraseña
                                         </span>
                                         {% endif %}
                                     </td>
@@ -210,8 +288,22 @@ Usuarios | Facturaciones SpA
                                                 ) }}"
                                                 class="btn btn-outline-primary btn-sm"
                                             >
+                                                <i class="bi bi-pencil" aria-hidden="true"></i>
                                                 Editar
                                             </a>
+
+                                            {% if usuario.id != current_user.id|int %}
+                                            <a
+                                                href="{{ url_for(
+                                                    'admin.usuario_editar',
+                                                    usuario_id=usuario.id
+                                                ) }}#restablecer"
+                                                class="btn btn-outline-secondary btn-sm"
+                                            >
+                                                <i class="bi bi-key" aria-hidden="true"></i>
+                                                Contraseña
+                                            </a>
+                                            {% endif %}
 
                                             {% if usuario.id != current_user.id|int %}
                                             <form
@@ -220,9 +312,7 @@ Usuarios | Facturaciones SpA
                                                     'admin.usuario_estado',
                                                     usuario_id=usuario.id
                                                 ) }}"
-                                                onsubmit="return confirm(
-                                                    '¿Confirma el cambio de estado de esta cuenta?'
-                                                );"
+                                                data-confirmar="¿Confirma el cambio de estado de esta cuenta?"
                                             >
                                                 <input
                                                     type="hidden"
@@ -252,7 +342,7 @@ Usuarios | Facturaciones SpA
                                 </tr>
                                 {% else %}
                                 <tr>
-                                    <td colspan="5">
+                                    <td colspan="5" class="text-center text-body-secondary py-4">
                                         No hay usuarios registrados.
                                     </td>
                                 </tr>
@@ -264,5 +354,74 @@ Usuarios | Facturaciones SpA
             </div>
         </section>
     </div>
+
+    <section class="mt-5" aria-labelledby="titulo-perfiles">
+        <h2 id="titulo-perfiles" class="h4 mb-1">Perfiles y permisos</h2>
+        <p class="text-body-secondary mb-3">
+            Permisos vigentes de cada perfil. Esta sección es informativa y
+            no permite modificarlos.
+        </p>
+
+        <div class="row g-3 mb-4">
+            {% for perfil in perfiles %}
+            <div class="col-md-4">
+                <article class="tarjeta-perfil">
+                    <span class="tarjeta-perfil-icono" aria-hidden="true">
+                        <i class="bi {{ iconos_perfil.get(perfil.nombre, 'bi-person-badge') }}"></i>
+                    </span>
+
+                    <div>
+                        <h3 class="h6 mb-1">{{ perfil.nombre }}</h3>
+                        <p class="text-body-secondary small mb-2">
+                            {{ perfil.descripcion or 'Sin descripción.' }}
+                        </p>
+                        <p class="small mb-0">
+                            <span class="badge text-bg-primary">
+                                {{ perfil.usuarios_activos }}
+                            </span>
+                            usuario(s) activo(s)
+                        </p>
+                    </div>
+                </article>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="card">
+            <div class="card-body p-4">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0 matriz-permisos">
+                        <caption>Capacidades por perfil.</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Capacidad</th>
+                                {% for perfil in perfiles %}
+                                <th scope="col" class="text-center">{{ perfil.nombre }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for texto, permitidos, _ruta in capacidades %}
+                            <tr>
+                                <th scope="row" class="fw-normal">{{ texto }}</th>
+                                {% for perfil in perfiles %}
+                                <td class="text-center">
+                                    {% if perfil.nombre in permitidos %}
+                                    <i class="bi bi-check-lg" role="img"
+                                       aria-label="Permitido"></i>
+                                    {% else %}
+                                    <span aria-hidden="true">—</span>
+                                    <span class="visually-hidden">No permitido</span>
+                                    {% endif %}
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
 </main>
 {% endblock %}

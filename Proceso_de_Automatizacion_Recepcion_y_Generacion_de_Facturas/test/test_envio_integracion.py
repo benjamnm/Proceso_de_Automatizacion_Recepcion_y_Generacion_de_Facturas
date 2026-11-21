@@ -19,8 +19,6 @@ from app.services.correos_solicitud import (
 XML = b'<?xml version="1.0"?><DTE><Documento ID="F1"/></DTE>'
 
 
-# --- Servidor SMTP mínimo ------------------------------------------------
-
 class ServidorSMTP:
     def __init__(self, rechazar_rcpt=False):
         self.rechazar_rcpt = rechazar_rcpt
@@ -66,8 +64,6 @@ class ServidorSMTP:
         conn.close()
         self.sock.close()
 
-
-# --- BD simulada ------------------------------------------------------------
 
 class Estado:
     def __init__(self, rol="Emisor", emisor_id=7, estado="Pendiente",

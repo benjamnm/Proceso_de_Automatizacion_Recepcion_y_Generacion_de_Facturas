@@ -4,7 +4,9 @@ import json
 from email_validator import EmailNotValidError, validate_email
 from flask import (
     current_app,
+    send_file,
     flash,
+    jsonify,
     redirect,
     render_template,
     request,
@@ -21,8 +23,30 @@ from ..services.usuarios import (
 
 from werkzeug.security import generate_password_hash
 
+from ..services.contrasenas import (
+    ErrorPassword,
+    descartar_recuperacion,
+    enviar_temporal_al_usuario,
+    listar_pendientes,
+    restablecer,
+)
+
+from ..services.correo_entrante import (
+    ErrorCorreoEntrante,
+    descartar_correo,
+    firma_bandeja,
+    listar_correos,
+    obtener_eml_autorizado,
+    reprocesar_correo,
+    revisar_bandeja,
+)
+
+from ..services import revision_automatica
+
 from . import admin_bp
+from ..auditoria_acciones import ACCIONES_VISIBLES, marcadores_acciones
 from ..models import get_db_connection
+from ..permisos import CAPACIDADES
 from ..security import admin_required
 
 
@@ -129,7 +153,7 @@ def usuarios():
                                 1,
                             ),
                         )
-                        
+
                         nuevo_usuario_id = cursor.lastrowid
                         registrar_evento(
                             connection,
@@ -186,17 +210,55 @@ def usuarios():
             )
             users = cursor.fetchall()
 
+            # Solo lectura: perfiles con su cantidad de usuarios activos.
+            cursor.execute(
+                """
+                SELECT
+                    r.id,
+                    r.nombre,
+                    r.descripcion,
+                    COUNT(u.id) AS usuarios_activos
+                FROM roles AS r
+                LEFT JOIN usuarios AS u
+                    ON u.rol_id = r.id AND u.activo = 1
+                GROUP BY r.id, r.nombre, r.descripcion
+                ORDER BY r.id
+                """
+            )
+            perfiles = cursor.fetchall()
+
+        recuperaciones = recuperaciones_pendientes()
+
         return render_template(
             "admin/usuarios.html",
             usuarios=users,
             roles=roles,
             errors=errors,
             values=values,
+            perfiles=perfiles,
+            capacidades=CAPACIDADES,
+            recuperaciones=recuperaciones,
+            con_recuperacion={
+                r["usuario_id"] for r in (recuperaciones or [])
+            },
         )
 
     finally:
         connection.close()
-        
+
+
+def recuperaciones_pendientes():
+    """Solicitudes de recuperación pendientes; None sin la migración 005."""
+    try:
+        return listar_pendientes()
+    except pymysql.MySQLError:
+        current_app.logger.warning(
+            "No se pudieron listar las recuperaciones de contraseña "
+            "(¿falta la migración 005?)."
+        )
+        return None
+
+
 @admin_bp.route(
     "/usuarios/<int:usuario_id>/editar",
     methods=["GET", "POST"],
@@ -204,43 +266,43 @@ def usuarios():
 @admin_required
 def usuario_editar(usuario_id):
     connection = get_db_connection()
-    
+
     try:
         with connection.cursor() as cursor:
             cursor.execute(
                 """
-                SELECT id,  nombre, email, rol_id, activo
+                SELECT id, nombre, email, rol_id, activo
                 FROM usuarios
                 WHERE id = %s
                 """,
                 (usuario_id,),
             )
             usuario = cursor.fetchone()
-            
+
             if usuario is None:
                 abort(404, description="Usuario no encontrado.")
-                
+
             cursor.execute(
                 "SELECT id, nombre FROM roles ORDER BY nombre"
             )
             roles = cursor.fetchall()
     finally:
         connection.close()
-    
+
     error = None
     values = {
         "nombre": usuario["nombre"],
         "email": usuario["email"],
         "rol_id": str(usuario["rol_id"])
     }
-    
+
     if request.method == "POST":
         values = {
             "nombre": request.form.get("nombre", "").strip(),
             "email": request.form.get("email", "").strip().lower(),
             "rol_id": request.form.get("rol_id", ""),
         }
-        
+
         try:
             changed = modificar_usuario(
                 actor_id=int(current_user.id),
@@ -249,16 +311,16 @@ def usuario_editar(usuario_id):
                 datos=values,
                 ip=request.remote_addr,
             )
-        
+
         except ErrorGestionUsuario as exc:
             error = str(exc)
-        
+
         except pymysql.err.IntegrityError:
-            error = ( 
+            error = (
                 "No se pudo guardar, reintente nuevamente. "
                 "Compruebe que el correo no esté registrado."
             )
-        
+
         except pymysql.MySQLError:
             current_app.logger.exception(
                 "Error al editar el usuario %s", usuario_id,
@@ -270,13 +332,119 @@ def usuario_editar(usuario_id):
                   else "No se realizaron cambios.", "success" if changed else "info",
                   )
             return redirect(url_for("admin.usuarios"))
+    return render_editar(usuario, roles, values, error=error)
+
+
+def render_editar(usuario, roles, values, error=None, error_password=None):
+    recuperaciones = recuperaciones_pendientes()
+
     return render_template(
         "admin/usuario_editar.html",
         usuario=usuario,
         roles=roles,
         values=values,
         error=error,
+        error_password=error_password,
+        recuperacion=next(
+            (r for r in recuperaciones or [] if r["usuario_id"] == usuario["id"]),
+            None,
+        ),
+        gestion_password_disponible=recuperaciones is not None,
+        smtp_configurado=bool(current_app.config.get("SMTP_HOST")),
     )
+
+
+@admin_bp.post("/usuarios/<int:usuario_id>/password")
+@admin_required
+def usuario_password(usuario_id):
+    """El Administrador restablece la contraseña de otra cuenta."""
+    try:
+        resultado = restablecer(
+            actor_id=int(current_user.id),
+            usuario_id=usuario_id,
+            modo=request.form.get("modo", ""),
+            password=request.form.get("password", ""),
+            confirmacion=request.form.get("password_confirm", ""),
+            exigir_cambio=request.form.get("exigir_cambio") == "1",
+            ip=request.remote_addr,
+        )
+
+    except ErrorPassword as exc:
+        error_password = str(exc)
+
+    except pymysql.MySQLError:
+        current_app.logger.exception(
+            "Error al restablecer la contraseña del usuario %s", usuario_id,
+        )
+        error_password = (
+            "No se pudo restablecer la contraseña. Intente nuevamente "
+            "(si persiste, verifique que se ejecutó la migración 005)."
+        )
+
+    else:
+        error_correo = None
+        enviado = False
+        if resultado["password"] and request.form.get("enviar_correo") == "1":
+            error_correo = enviar_temporal_al_usuario(
+                resultado["usuario"], resultado["password"]
+            )
+            enviado = error_correo is None
+
+        # Se muestra en la respuesta (no en un flash) para que la
+        # contraseña temporal no quede guardada en la cookie de sesión.
+        return render_template(
+            "admin/password_restablecida.html",
+            usuario=resultado["usuario"],
+            password=resultado["password"],
+            exigir_cambio=resultado["exigir_cambio"],
+            enviado=enviado,
+            error_correo=error_correo,
+        )
+
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT id, nombre, email, rol_id, activo FROM usuarios WHERE id = %s",
+                (usuario_id,),
+            )
+            usuario = cursor.fetchone()
+            if usuario is None:
+                abort(404, description="Usuario no encontrado.")
+            cursor.execute("SELECT id, nombre FROM roles ORDER BY nombre")
+            roles = cursor.fetchall()
+    finally:
+        connection.close()
+
+    values = {
+        "nombre": usuario["nombre"],
+        "email": usuario["email"],
+        "rol_id": str(usuario["rol_id"]),
+    }
+    return render_editar(
+        usuario, roles, values, error_password=error_password,
+    ), 400
+
+
+@admin_bp.post("/recuperaciones/<int:recuperacion_id>/descartar")
+@admin_required
+def recuperacion_descartar(recuperacion_id):
+    try:
+        descartar_recuperacion(
+            int(current_user.id), recuperacion_id, request.remote_addr,
+        )
+    except ErrorPassword as exc:
+        flash(str(exc), "warning")
+    except pymysql.MySQLError:
+        current_app.logger.exception(
+            "Error al descartar la recuperación %s", recuperacion_id,
+        )
+        flash("No se pudo descartar la solicitud. Intente nuevamente.", "danger")
+    else:
+        flash("Solicitud de recuperación descartada.", "success")
+
+    return redirect(url_for("admin.usuarios"))
+
 
 @admin_bp.post("/usuarios/<int:usuario_id>/estado")
 @admin_required
@@ -291,10 +459,10 @@ def usuario_estado(usuario_id):
             },
             ip=request.remote_addr,
         )
-    
+
     except ErrorGestionUsuario as exc:
         flash(str(exc), "danger")
-        
+
     except pymysql.MySQLError:
         current_app.logger.exception(
             "Error al cambiar el estado del usuario %s", usuario_id,
@@ -302,7 +470,7 @@ def usuario_estado(usuario_id):
         flash(
             "No se logro cambiar el estado, reintente nuevamente.", "danger",
         )
-        
+
     else:
         flash(
             "Estado actualizado correctamente."
@@ -310,8 +478,9 @@ def usuario_estado(usuario_id):
             else "La cuenta ya tenia ese estado.",
             "success" if changed else "info",
         )
-    
+
     return redirect(url_for("admin.usuarios"))
+
 
 @admin_bp.get("/auditoria")
 @admin_required
@@ -320,8 +489,10 @@ def auditoria():
 
     try:
         with connection.cursor() as cursor:
+            # Solo se interpolan marcadores %s fijos; las acciones van
+            # como parámetros.
             cursor.execute(
-                """
+                f"""
                 SELECT
                     a.id,
                     a.accion,
@@ -332,25 +503,11 @@ def auditoria():
                 FROM auditoria AS a
                 LEFT JOIN usuarios AS u
                     ON u.id = a.usuario_id
-                WHERE a.accion IN (
-                    'USUARIO_CREADO',
-                    'USUARIO_EDITADO',
-                    'USUARIO_DESACTIVADO',
-                    'USUARIO_REACTIVADO',
-                    'CLIENTE_CREADO',
-                    'CLIENTE_EDITADO',
-                    'SOLICITUD_CREADA',
-                    'SOLICITUD_EDITADA',
-                    'SOLICITUD_ESTADO_CAMBIADO',
-                    'XML_CARGADO',
-                    'XML_REEMPLAZADO',
-                    'XML_DESCARGADO',
-                    'CORREO_ENVIADO',
-                    'CORREO_FALLIDO'
-                )
+                WHERE a.accion IN ({marcadores_acciones()})
                 ORDER BY a.id DESC
                 LIMIT 100
-                """
+                """,
+                ACCIONES_VISIBLES,
             )
             eventos = cursor.fetchall()
 
@@ -368,4 +525,165 @@ def auditoria():
     return render_template(
         "admin/auditoria.html",
         eventos=eventos,
+    )
+
+
+ESTADOS_CORREO = (
+    "RECIBIDO", "PROCESADO", "REQUIERE_REVISION", "DESCARTADO", "ERROR",
+)
+
+
+@admin_bp.get("/correos")
+@admin_required
+def correos():
+    estado = request.args.get("estado", "")
+    if estado and estado not in ESTADOS_CORREO:
+        estado = ""
+
+    try:
+        firma = firma_bandeja()["firma"]
+    except pymysql.MySQLError:
+        current_app.logger.warning("No se pudo calcular la firma de la bandeja.")
+        firma = ""
+
+    return render_template(
+        "admin/correos.html",
+        correos=listar_correos(estado or None),
+        estado=estado,
+        estados=ESTADOS_CORREO,
+        imap_configurado=bool(current_app.config.get("IMAP_HOST")),
+        firma=firma,
+        refresco_segundos=_refresco_segundos(),
+        revision=revision_automatica.estado(),
+    )
+
+
+def _refresco_segundos():
+    try:
+        segundos = int(current_app.config.get("BANDEJA_REFRESCO_SEGUNDOS") or 0)
+    except (TypeError, ValueError):
+        return 0
+    return max(10, segundos) if segundos > 0 else 0
+
+
+@admin_bp.get("/correos/novedades")
+@admin_required
+def correos_novedades():
+    """Sondeo de la página de la bandeja (no renueva la inactividad)."""
+    try:
+        return jsonify(firma_bandeja())
+    except pymysql.MySQLError:
+        current_app.logger.warning("No se pudo consultar novedades de la bandeja.")
+        return jsonify({"error": "Base de datos no disponible."}), 503
+
+
+@admin_bp.post("/correos/revisar")
+@admin_required
+def correos_revisar():
+    try:
+        resultado = revisar_bandeja()
+    except ErrorCorreoEntrante as exc:
+        flash(str(exc), "warning")
+    except pymysql.MySQLError:
+        current_app.logger.exception("Error de BD al revisar la bandeja")
+        flash("No se pudo revisar la bandeja. Intente nuevamente.", "danger")
+    else:
+        if resultado["error_descarga"]:
+            flash(f"Bandeja IMAP: {resultado['error_descarga']}", "danger")
+        if resultado["descarga"]:
+            d = resultado["descarga"]
+            flash(
+                f"Correos revisados: {d['revisados']} · de facturación "
+                f"guardados: {d['guardados']} · ignorados: {d['ignorados']} · "
+                f"omitidos por tamaño: {d['omitidos_tamano']}.",
+                "info",
+            )
+        p = resultado["proceso"]
+        flash(
+            f"Facturas generadas: {p['procesados']} · requieren revisión: "
+            f"{p['requieren_revision']} · errores: {p['errores']} · avisos "
+            f"enviados: {p['avisos_enviados']}.",
+            "success" if not p["errores"] else "warning",
+        )
+
+    return redirect(url_for("admin.correos"))
+
+
+@admin_bp.post("/correos/<int:correo_id>/reprocesar")
+@admin_required
+def correo_reprocesar(correo_id):
+    try:
+        resultado = reprocesar_correo(
+            int(current_user.id), correo_id, request.remote_addr
+        )
+    except ErrorCorreoEntrante as exc:
+        flash(str(exc), "danger")
+    except pymysql.MySQLError:
+        current_app.logger.exception("Error al reprocesar el correo %s", correo_id)
+        flash("No se pudo reprocesar el correo.", "danger")
+    else:
+        if resultado["estado"] == "PROCESADO":
+            flash("Factura generada desde el correo.", "success")
+            return redirect(url_for(
+                "solicitudes.factura", public_id=resultado["public_id"]
+            ))
+        flash(
+            "El correo sigue requiriendo revisión: "
+            + " ".join(resultado["motivos"]),
+            "warning",
+        )
+
+    return redirect(url_for("admin.correos"))
+
+
+@admin_bp.post("/correos/<int:correo_id>/descartar")
+@admin_required
+def correo_descartar(correo_id):
+    try:
+        descartar_correo(
+            int(current_user.id), correo_id,
+            request.form.get("motivo", ""), request.remote_addr,
+        )
+    except ErrorCorreoEntrante as exc:
+        flash(str(exc), "danger")
+    except pymysql.MySQLError:
+        current_app.logger.exception("Error al descartar el correo %s", correo_id)
+        flash("No se pudo descartar el correo.", "danger")
+    else:
+        flash("Correo descartado.", "success")
+
+    return redirect(url_for("admin.correos"))
+
+
+@admin_bp.get("/correos/<int:correo_id>/eml")
+@admin_required
+def correo_eml(correo_id):
+    try:
+        actor, correo, ruta = obtener_eml_autorizado(int(current_user.id), correo_id)
+    except ErrorCorreoEntrante as exc:
+        flash(str(exc), "danger")
+        return redirect(url_for("admin.correos"))
+
+    connection = get_db_connection()
+    try:
+        registrar_evento(
+            connection, actor["id"], "CORREO_ENTRANTE_DESCARGADO",
+            {"correo_entrante_id": correo_id, "sha256": correo["sha256"]},
+            request.remote_addr,
+        )
+        connection.commit()
+    except pymysql.MySQLError:
+        connection.rollback()
+        current_app.logger.exception("No se pudo auditar la descarga del .eml.")
+        flash("No se pudo registrar la descarga.", "danger")
+        return redirect(url_for("admin.correos"))
+    finally:
+        connection.close()
+
+    return send_file(
+        ruta,
+        mimetype="message/rfc822",
+        as_attachment=True,
+        download_name=f"correo_{correo_id}.eml",
+        max_age=0,
     )

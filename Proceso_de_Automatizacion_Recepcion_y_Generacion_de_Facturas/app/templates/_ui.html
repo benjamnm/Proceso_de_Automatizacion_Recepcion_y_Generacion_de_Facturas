@@ -1,0 +1,39 @@
+{% macro estado_solicitud(nombre) -%}
+{%- set clases = {
+    'Pendiente': 'secondary',
+    'En revisión': 'primary',
+    'En corrección': 'warning',
+    'Aprobada': 'success',
+    'Rechazada': 'danger',
+} -%}
+<span class="badge text-bg-{{ clases.get(nombre, 'secondary') }}">{{ nombre }}</span>
+{%- endmacro %}
+
+{# Hasta dos iniciales, solo de palabras que empiezan con letra o número. #}
+{% macro iniciales(nombre) -%}
+{%- set letras = [] -%}
+{%- for palabra in (nombre or '').split() if palabra[:1].isalnum() and letras | length < 2 -%}
+{%- set _ = letras.append(palabra[0]) -%}
+{%- endfor -%}
+{{ (letras | join('') or '?') | upper }}
+{%- endmacro %}
+
+{# Tarjeta de resumen: icono, valor, etiqueta y, si se da, un enlace existente.
+   detalle: texto corto junto al valor (p. ej. "de 12"). #}
+{% macro metrica(valor, etiqueta, icono, url=None, detalle=None) -%}
+<div class="metrica">
+    <span class="metrica-icono" aria-hidden="true"><i class="bi {{ icono }}"></i></span>
+    <div class="metrica-texto">
+        <span class="metrica-valor">{{ valor }}{% if detalle %} <span class="metrica-detalle">{{ detalle }}</span>{% endif %}</span>
+        {% if url %}<a class="metrica-etiqueta stretched-link" href="{{ url }}">{{ etiqueta }}</a>
+        {% else %}<span class="metrica-etiqueta">{{ etiqueta }}</span>{% endif %}
+    </div>
+</div>
+{%- endmacro %}
+
+{# Mensaje de error bajo un campo del formulario (enlazado por aria-describedby). #}
+{% macro error_campo(errores, campo) -%}
+{%- if errores and errores.get(campo) -%}
+<div id="error-{{ campo }}" class="invalid-feedback d-block">{{ errores[campo] }}</div>
+{%- endif -%}
+{%- endmacro %}

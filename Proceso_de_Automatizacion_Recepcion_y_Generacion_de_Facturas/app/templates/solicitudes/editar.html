@@ -1,26 +1,43 @@
 {% extends "base.html" %}
+{% from "_ui.html" import error_campo %}
+
+{% set migas = [
+    ('Panel', url_for('dashboard')),
+    ('Solicitudes', url_for('solicitudes.listado')),
+    ('Solicitud ' ~ solicitud.public_id[:8],
+     url_for('solicitudes.detalle', public_id=solicitud.public_id)),
+    ('Editar', None),
+] %}
 
 {% block title %}
 Editar solicitud | Facturaciones SpA
 {% endblock %}
 
 {% block content %}
-<main class="container py-4 py-lg-5">
-    <div class="row justify-content-center">
-        <section class="col-12 col-lg-9">
+{% from "solicitudes/_proceso.html" import navegacion_proceso %}
+{% from "_ui.html" import estado_solicitud %}
+<main class="container pt-3 pb-5">
+    {{ navegacion_proceso(solicitud, 'editar', True) }}
+
+    <div class="row">
+        <section class="col-12 col-xl-10">
             <div class="card">
                 <div class="card-body p-4">
-                    <header class="mb-4">
-                        <h1 class="h3 mb-2">Editar solicitud</h1>
+                    <header class="d-flex align-items-start gap-3 mb-4">
+                        <span class="icono-recuadro" aria-hidden="true">
+                            <i class="bi bi-pencil-square"></i>
+                        </span>
 
-                        <div class="d-flex flex-wrap gap-2 align-items-center">
-                            <span class="badge text-bg-warning">
-                                {{ solicitud.estado_nombre }}
-                            </span>
+                        <div>
+                            <h1 class="h3 mb-2">Editar solicitud</h1>
 
-                            <span class="small text-body-secondary">
-                                Versión del formulario: {{ version }}
-                            </span>
+                            <div class="d-flex flex-wrap gap-2 align-items-center">
+                                {{ estado_solicitud(solicitud.estado_nombre) }}
+
+                                <span class="small text-body-secondary">
+                                    Versión del formulario: {{ version }}
+                                </span>
+                            </div>
                         </div>
                     </header>
 
@@ -34,23 +51,43 @@ Editar solicitud | Facturaciones SpA
                     </div>
                     {% endif %}
 
-                    <section class="border rounded p-3 mb-4">
-                        <h2 class="h6 mb-2">Receptor histórico</h2>
+                    <section class="seccion-formulario" aria-labelledby="seccion-receptor">
+                        <h2 id="seccion-receptor" class="seccion-formulario-titulo">
+                            <span class="seccion-formulario-numero" aria-hidden="true">1</span>
+                            Receptor histórico
+                        </h2>
 
-                        <p class="mb-1">{{ solicitud.nombre }}</p>
-                        <p class="mb-1">RUT: {{ solicitud.rut }}</p>
-                        <p class="mb-1">{{ solicitud.direccion }}</p>
-                        <p class="mb-1">{{ solicitud.giro }}</p>
-                        <p class="mb-0">
-                            {{ solicitud.email_contacto_receptor
-                               or 'Correo no registrado' }}
+                        <dl class="detalle-rejilla">
+                            <div>
+                                <dt>Razón social</dt>
+                                <dd>{{ solicitud.nombre }}</dd>
+                            </div>
+                            <div>
+                                <dt>RUT</dt>
+                                <dd>{{ solicitud.rut }}</dd>
+                            </div>
+                            <div>
+                                <dt>Dirección</dt>
+                                <dd>{{ solicitud.direccion }}</dd>
+                            </div>
+                            <div>
+                                <dt>Giro</dt>
+                                <dd>{{ solicitud.giro }}</dd>
+                            </div>
+                            <div>
+                                <dt>Correo de contacto</dt>
+                                <dd>
+                                    {{ solicitud.email_contacto_receptor
+                                       or 'Correo no registrado' }}
+                                </dd>
+                            </div>
+                        </dl>
+
+                        <p class="small text-body-secondary mt-3 mb-0">
+                            El cliente y los datos históricos del receptor
+                            permanecerán sin cambios.
                         </p>
                     </section>
-
-                    <p class="small text-body-secondary">
-                        El cliente y los datos históricos del receptor
-                        permanecerán sin cambios.
-                    </p>
 
                     <form
                         method="post"
@@ -77,119 +114,148 @@ Editar solicitud | Facturaciones SpA
                             value="{{ solicitud.cliente_id }}"
                         >
 
-                        <div class="mb-3">
-                            <label for="concepto" class="form-label">
-                                Concepto de facturación
-                            </label>
+                        <section class="seccion-formulario" aria-labelledby="seccion-datos">
+                            <h2 id="seccion-datos" class="seccion-formulario-titulo">
+                                <span class="seccion-formulario-numero" aria-hidden="true">2</span>
+                                Datos de facturación
+                            </h2>
 
-                            <textarea
-                                id="concepto"
-                                name="concepto"
-                                class="form-control"
-                                rows="4"
-                                maxlength="500"
-                                required
-                            >{{ values.concepto }}</textarea>
-                        </div>
-
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="monto_bruto" class="form-label">
-                                    Monto bruto — CLP
+                            <div class="mb-3">
+                                <label for="concepto" class="form-label">
+                                    Concepto de facturación
                                 </label>
 
-                                <input
-                                    id="monto_bruto"
-                                    name="monto_bruto"
-                                    type="text"
-                                    inputmode="numeric"
-                                    pattern="[0-9]{1,14}"
-                                    maxlength="14"
-                                    class="form-control"
-                                    value="{{ values.monto_bruto }}"
+                                <textarea
+                                    id="concepto"
+                                    name="concepto"
+                                    class="form-control{% if errores.get('concepto') %} is-invalid{% endif %}"
+                                    rows="4"
+                                    maxlength="500"
+                                    aria-describedby="ayuda-concepto{% if errores.get('concepto') %} error-concepto{% endif %}"
                                     required
-                                >
+                                    {% if errores.get('concepto') %}aria-invalid="true"{% endif %}
+                                >{{ values.concepto }}</textarea>
+                                {{ error_campo(errores, 'concepto') }}
 
-                                <div class="form-text">
-                                    Ingrese pesos enteros,
-                                    sin puntos ni comas.
+                                <div id="ayuda-concepto" class="ayuda-campo">
+                                    <span id="contador-concepto" class="contador">{{ values.concepto|length }} / 500</span>
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
-                                <label for="fecha_emision" class="form-label">
-                                    Fecha de emisión solicitada
-                                </label>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="monto_bruto" class="form-label">
+                                        Monto bruto — CLP
+                                    </label>
 
-                                <input
-                                    id="fecha_emision"
-                                    name="fecha_emision"
-                                    type="date"
-                                    class="form-control"
-                                    value="{{ values.fecha_emision }}"
-                                    required
-                                >
-                            </div>
-
-                            <div class="col-md-6">
-                                <label
-                                    for="tipo_afectacion"
-                                    class="form-label"
-                                >
-                                    Afectación tributaria
-                                </label>
-
-                                <select
-                                    id="tipo_afectacion"
-                                    name="tipo_afectacion"
-                                    class="form-select"
-                                    required
-                                >
-                                    <option
-                                        value="AFECTA"
-                                        {% if values.tipo_afectacion == 'AFECTA' %}
-                                        selected
-                                        {% endif %}
+                                    <input
+                                        id="monto_bruto"
+                                        name="monto_bruto"
+                                        type="text"
+                                        inputmode="numeric"
+                                        pattern="[0-9]{1,14}"
+                                        maxlength="14"
+                                        class="form-control{% if errores.get('monto_bruto') %} is-invalid{% endif %}"
+                                        value="{{ values.monto_bruto }}"
+                                        required
+                                        {% if errores.get('monto_bruto') %}aria-describedby="error-monto_bruto"{% endif %}
+                                        {% if errores.get('monto_bruto') %}aria-invalid="true"{% endif %}
                                     >
-                                        Afecta
-                                    </option>
+                                    {{ error_campo(errores, 'monto_bruto') }}
 
-                                    <option
-                                        value="EXENTA"
-                                        {% if values.tipo_afectacion == 'EXENTA' %}
-                                        selected
-                                        {% endif %}
+                                    <div class="form-text">
+                                        Ingrese pesos enteros,
+                                        sin puntos ni comas.
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="fecha_emision" class="form-label">
+                                        Fecha de emisión solicitada
+                                    </label>
+
+                                    <input
+                                        id="fecha_emision"
+                                        name="fecha_emision"
+                                        type="date"
+                                        class="form-control{% if errores.get('fecha_emision') %} is-invalid{% endif %}"
+                                        value="{{ values.fecha_emision }}"
+                                        required
+                                        {% if errores.get('fecha_emision') %}aria-describedby="error-fecha_emision"{% endif %}
+                                        {% if errores.get('fecha_emision') %}aria-invalid="true"{% endif %}
                                     >
-                                        Exenta
-                                    </option>
-                                </select>
+                                    {{ error_campo(errores, 'fecha_emision') }}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label
+                                        for="tipo_afectacion"
+                                        class="form-label"
+                                    >
+                                        Afectación tributaria
+                                    </label>
+
+                                    <select
+                                        id="tipo_afectacion"
+                                        name="tipo_afectacion"
+                                        class="form-select{% if errores.get('tipo_afectacion') %} is-invalid{% endif %}"
+                                        required
+                                        {% if errores.get('tipo_afectacion') %}aria-describedby="error-tipo_afectacion"{% endif %}
+                                        {% if errores.get('tipo_afectacion') %}aria-invalid="true"{% endif %}
+                                    >
+                                        <option
+                                            value="AFECTA"
+                                            {% if values.tipo_afectacion == 'AFECTA' %}
+                                            selected
+                                            {% endif %}
+                                        >
+                                            Afecta
+                                        </option>
+
+                                        <option
+                                            value="EXENTA"
+                                            {% if values.tipo_afectacion == 'EXENTA' %}
+                                            selected
+                                            {% endif %}
+                                        >
+                                            Exenta
+                                        </option>
+                                    </select>
+                                    {{ error_campo(errores, 'tipo_afectacion') }}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label
+                                        for="nro_orden_compra"
+                                        class="form-label"
+                                    >
+                                        Orden de compra — opcional
+                                    </label>
+
+                                    <input
+                                        id="nro_orden_compra"
+                                        name="nro_orden_compra"
+                                        class="form-control{% if errores.get('nro_orden_compra') %} is-invalid{% endif %}"
+                                        maxlength="40"
+                                        value="{{ values.nro_orden_compra }}"
+                                        {% if errores.get('nro_orden_compra') %}aria-describedby="error-nro_orden_compra"{% endif %}
+                                        {% if errores.get('nro_orden_compra') %}aria-invalid="true"{% endif %}
+                                    >
+                                    {{ error_campo(errores, 'nro_orden_compra') }}
+                                </div>
                             </div>
+                        </section>
 
-                            <div class="col-md-6">
-                                <label
-                                    for="nro_orden_compra"
-                                    class="form-label"
-                                >
-                                    Orden de compra — opcional
-                                </label>
-
-                                <input
-                                    id="nro_orden_compra"
-                                    name="nro_orden_compra"
-                                    class="form-control"
-                                    maxlength="40"
-                                    value="{{ values.nro_orden_compra }}"
-                                >
-                            </div>
-                        </div>
-
-                        <div class="d-flex flex-wrap gap-2 mt-4">
-                            <button
-                                type="submit"
-                                class="btn btn-primary"
+                        <div class="d-flex flex-wrap justify-content-end gap-2 mt-4">
+                            <a
+                                href="{{ url_for(
+                                    'solicitudes.editar',
+                                    public_id=solicitud.public_id
+                                ) }}"
+                                class="btn btn-outline-secondary"
                             >
-                                Guardar cambios
-                            </button>
+                                Recargar datos guardados
+                            </a>
 
                             <a
                                 href="{{ url_for(
@@ -201,18 +267,16 @@ Editar solicitud | Facturaciones SpA
                                 Cancelar
                             </a>
 
-                            <a
-                                href="{{ url_for(
-                                    'solicitudes.editar',
-                                    public_id=solicitud.public_id
-                                ) }}"
-                                class="btn btn-outline-secondary"
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
                             >
-                                Recargar datos guardados
-                            </a>
+                                <i class="bi bi-check-lg" aria-hidden="true"></i>
+                                Guardar cambios
+                            </button>
                         </div>
 
-                        <p class="small text-body-secondary mt-3 mb-0">
+                        <p class="small text-body-secondary text-end mt-3 mb-0">
                             Recargar descarta los cambios que todavía
                             no haya guardado.
                         </p>
@@ -222,4 +286,8 @@ Editar solicitud | Facturaciones SpA
         </section>
     </div>
 </main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/ui.js') }}"></script>
 {% endblock %}

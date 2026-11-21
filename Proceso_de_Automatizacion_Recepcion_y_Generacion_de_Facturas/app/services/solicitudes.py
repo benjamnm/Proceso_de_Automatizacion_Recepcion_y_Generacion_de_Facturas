@@ -11,41 +11,52 @@ from .usuarios import registrar_evento
 from .validaciones import validar_cliente
 
 
+# Flujo de la factura:
+#   Pendiente ----(generar factura vN)----> En revisión
+#   En revisión --(Admin valida OK)-------> Aprobada (genera archivo SII)
+#   En revisión --(Admin observa)---------> En corrección
+#   En corrección (editar + reenviar) ----> En revisión (factura vN+1)
+#   Cualquiera no final ------------------> Rechazada
 TRANSICIONES_ESTADO = {
-    "Pendiente": (
-        "En revisión",
-        "Rechazada",
-    ),
-    "En revisión": (
-        "Pendiente",
-        "Rechazada",
-    ),
+    "Pendiente": ("En revisión", "Rechazada"),
+    "En revisión": ("Aprobada", "En corrección", "Rechazada"),
+    "En corrección": ("En revisión", "Rechazada"),
+    "Aprobada": (),
     "Rechazada": (),
 }
+
+# Estados que se modifican con cambiar_estado_solicitud(). El resto pasa
+# por services/facturas.py, porque generan versiones o archivos.
+ESTADOS_CAMBIO_DIRECTO = ("Rechazada",)
+
+ESTADOS_EDITABLES = ("Pendiente", "En corrección")
+
+COLUMNAS_INSERCION = (
+    "public_id", "emisor_id", "cliente_id", "estado_id", "origen_id",
+    "rut", "nombre", "direccion", "giro", "email_contacto_receptor",
+    "concepto", "nro_orden_compra", "fecha_emision", "monto_bruto",
+    "tipo_afectacion", "email_emisor", "clave_idempotencia",
+    "huella_creacion",
+)
+
 
 class ErrorGestionSolicitud(Exception):
     pass
 
+
+def _texto(datos, campo):
+    """Valor como texto; "" si falta o es de un tipo no admitido."""
+    valor = datos.get(campo)
+    if isinstance(valor, bool) or not isinstance(valor, (str, int, Decimal, date)):
+        return ""
+    return str(valor).strip()
+
+
 def validar_solicitud(datos):
-    """Valida sin modificar los valores originales del formulario."""
     limpio = {}
     errores = {}
 
-    def texto(campo):
-        valor = datos.get(campo, "")
-
-        if valor is None:
-            return ""
-
-        if isinstance(valor, bool):
-            return ""
-
-        if not isinstance(valor, (str, int, Decimal, date)):
-            return ""
-
-        return str(valor).strip()
-
-    cliente_id = texto("cliente_id")
+    cliente_id = _texto(datos, "cliente_id")
 
     if not cliente_id:
         errores["cliente_id"] = "Seleccione un cliente receptor."
@@ -56,7 +67,7 @@ def validar_solicitud(datos):
     else:
         limpio["cliente_id"] = int(cliente_id)
 
-    concepto = texto("concepto")
+    concepto = _texto(datos, "concepto")
 
     if not concepto:
         errores["concepto"] = "Ingrese el concepto de facturación."
@@ -67,7 +78,7 @@ def validar_solicitud(datos):
     else:
         limpio["concepto"] = concepto
 
-    monto = texto("monto_bruto")
+    monto = _texto(datos, "monto_bruto")
 
     if not monto:
         errores["monto_bruto"] = "Ingrese el monto bruto."
@@ -81,49 +92,26 @@ def validar_solicitud(datos):
     else:
         limpio["monto_bruto"] = Decimal(monto)
 
-    fecha_principal = datos.get("fecha_emision")
-    fecha_alternativa = datos.get("fecha_emision_solicitada")
+    fecha = _texto(datos, "fecha_emision")
 
-    if (
-        fecha_principal is not None
-        and fecha_alternativa is not None
-        and str(fecha_principal) != str(fecha_alternativa)
-    ):
-        errores["fecha_emision"] = (
-            "Se recibieron dos fechas de emisión diferentes."
-        )
+    if not fecha:
+        errores["fecha_emision"] = "Ingrese la fecha de emisión solicitada."
     else:
-        campo_fecha = (
-            "fecha_emision"
-            if fecha_principal is not None
-            else "fecha_emision_solicitada"
-        )
-        fecha = texto(campo_fecha)
+        try:
+            if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", fecha):
+                raise ValueError
 
-        if not fecha:
+            limpio["fecha_emision"] = date.fromisoformat(fecha)
+
+        except ValueError:
             errores["fecha_emision"] = (
-                "Ingrese la fecha de emisión solicitada."
+                "Ingrese una fecha válida con formato AAAA-MM-DD."
             )
-        else:
-            try:
-                if not re.fullmatch(
-                    r"[0-9]{4}-[0-9]{2}-[0-9]{2}", fecha
-                ):
-                    raise ValueError
 
-                limpio["fecha_emision"] = date.fromisoformat(fecha)
-
-            except ValueError:
-                errores["fecha_emision"] = (
-                    "Ingrese una fecha válida con formato AAAA-MM-DD."
-                )
-
-    afectacion = texto("tipo_afectacion")
+    afectacion = _texto(datos, "tipo_afectacion")
 
     if not afectacion:
-        errores["tipo_afectacion"] = (
-            "Seleccione la afectación tributaria."
-        )
+        errores["tipo_afectacion"] = "Seleccione la afectación tributaria."
     elif afectacion not in {"AFECTA", "EXENTA"}:
         errores["tipo_afectacion"] = (
             "Seleccione una afectación tributaria válida."
@@ -131,27 +119,14 @@ def validar_solicitud(datos):
     else:
         limpio["tipo_afectacion"] = afectacion
 
-    orden_original = datos.get("nro_orden_compra")
+    orden = _texto(datos, "nro_orden_compra")
 
-    if (
-        isinstance(orden_original, bool)
-        or (
-            orden_original is not None
-            and not isinstance(orden_original, (str, int))
-        )
-    ):
+    if len(orden) > 40:
         errores["nro_orden_compra"] = (
-            "Ingrese una orden de compra válida."
+            "La orden de compra no puede superar 40 caracteres."
         )
     else:
-        orden = texto("nro_orden_compra")
-
-        if len(orden) > 40:
-            errores["nro_orden_compra"] = (
-                "La orden de compra no puede superar 40 caracteres."
-            )
-        else:
-            limpio["nro_orden_compra"] = orden or None
+        limpio["nro_orden_compra"] = orden or None
 
     return limpio, errores
 
@@ -228,12 +203,42 @@ def comprobar_actor(cursor, actor_id):
     return actor
 
 
+def insertar_solicitud(cursor, registro):
+    """INSERT común a la creación web y a la creación desde correo."""
+    columnas = ", ".join(COLUMNAS_INSERCION)
+    valores = ", ".join(f"%({c})s" for c in COLUMNAS_INSERCION)
+    cursor.execute(
+        f"INSERT INTO solicitudes ({columnas}) VALUES ({valores})",
+        registro,
+    )
+    return cursor.lastrowid
+
+
+def huella_con_adjuntos(huella, adjuntos):
+    """Sin adjuntos, la huella es la de siempre."""
+    if not adjuntos:
+        return huella
+
+    shas = ",".join(sorted(a["sha256"] for a in adjuntos))
+    return hashlib.sha256(
+        (huella + "|" + shas).encode("utf-8")
+    ).hexdigest()
+
+
 def crear_solicitud(
     actor_id,
     datos,
     clave_idempotencia,
     ip=None,
+    adjuntos=None,
 ):
+    """Crea la solicitud. Con adjuntos=None se comporta como siempre.
+
+    adjuntos: lista devuelta por services.adjuntos.leer_adjuntos().
+    """
+    # Import local: adjuntos -> registros_xml -> solicitudes (ciclo).
+    from .adjuntos import eliminar_rutas, guardar_adjuntos
+
     limpio, errores = validar_solicitud(datos)
 
     if errores:
@@ -252,7 +257,8 @@ def crear_solicitud(
             "La clave de creación no es válida."
         )
 
-    huella = huella_de_creacion(limpio)
+    huella = huella_con_adjuntos(huella_de_creacion(limpio), adjuntos)
+    rutas_escritas = []
     connection = get_db_connection()
 
     try:
@@ -360,85 +366,67 @@ def crear_solicitud(
                 "huella_creacion": huella,
             }
 
-            cursor.execute(
-                """
-                INSERT INTO solicitudes (
-                    public_id,
-                    emisor_id,
-                    cliente_id,
-                    estado_id,
-                    origen_id,
-                    rut,
-                    nombre,
-                    direccion,
-                    giro,
-                    email_contacto_receptor,
-                    concepto,
-                    nro_orden_compra,
-                    fecha_emision,
-                    monto_bruto,
-                    tipo_afectacion,
-                    email_emisor,
-                    clave_idempotencia,
-                    huella_creacion
-                )
-                VALUES (
-                    %(public_id)s,
-                    %(emisor_id)s,
-                    %(cliente_id)s,
-                    %(estado_id)s,
-                    %(origen_id)s,
-                    %(rut)s,
-                    %(nombre)s,
-                    %(direccion)s,
-                    %(giro)s,
-                    %(email_contacto_receptor)s,
-                    %(concepto)s,
-                    %(nro_orden_compra)s,
-                    %(fecha_emision)s,
-                    %(monto_bruto)s,
-                    %(tipo_afectacion)s,
-                    %(email_emisor)s,
-                    %(clave_idempotencia)s,
-                    %(huella_creacion)s
-                )
-                """,
-                registro,
-            )
+            solicitud_id = insertar_solicitud(cursor, registro)
 
-            solicitud_id = cursor.lastrowid
+            ids_adjuntos = []
+            if adjuntos:
+                ids_adjuntos, rutas_escritas = guardar_adjuntos(
+                    cursor, solicitud_id, actor["id"], adjuntos
+                )
+
+        detalle_creacion = {
+            "solicitud_afectada_id": solicitud_id,
+            "public_id": registro["public_id"],
+            "cliente_id": cliente["id"],
+            "estado": "Pendiente",
+            "origen": "Web",
+            "concepto": limpio["concepto"],
+            "monto_bruto": str(limpio["monto_bruto"]),
+            "fecha_emision": limpio["fecha_emision"].isoformat(),
+            "tipo_afectacion": limpio["tipo_afectacion"],
+            "nro_orden_compra": limpio["nro_orden_compra"],
+            "receptor_historico": {
+                "rut": receptor["rut"],
+                "nombre": receptor["razon_social"],
+                "direccion": receptor["direccion"],
+                "giro": receptor["giro"],
+                "email": receptor["email_contacto"],
+            },
+        }
+        if adjuntos:
+            detalle_creacion["adjuntos"] = len(adjuntos)
 
         registrar_evento(
             connection,
             actor["id"],
             "SOLICITUD_CREADA",
-            {
-                "solicitud_afectada_id": solicitud_id,
-                "public_id": registro["public_id"],
-                "cliente_id": cliente["id"],
-                "estado": "Pendiente",
-                "origen": "Web",
-                "concepto": limpio["concepto"],
-                "monto_bruto": str(limpio["monto_bruto"]),
-                "fecha_emision": limpio["fecha_emision"].isoformat(),
-                "tipo_afectacion": limpio["tipo_afectacion"],
-                "nro_orden_compra": limpio["nro_orden_compra"],
-                "receptor_historico": {
-                    "rut": receptor["rut"],
-                    "nombre": receptor["razon_social"],
-                    "direccion": receptor["direccion"],
-                    "giro": receptor["giro"],
-                    "email": receptor["email_contacto"],
-                },
-            },
+            detalle_creacion,
             ip,
         )
+
+        for adjunto_id, adjunto in zip(ids_adjuntos, adjuntos or ()):
+            registrar_evento(
+                connection,
+                actor["id"],
+                "ADJUNTO_CARGADO",
+                {
+                    "solicitud_afectada_id": solicitud_id,
+                    "public_id": registro["public_id"],
+                    "adjunto_id": adjunto_id,
+                    "nombre_original": adjunto["nombre_original"],
+                    "tamano": adjunto["tamano"],
+                    "sha256": adjunto["sha256"],
+                },
+                ip,
+            )
 
         connection.commit()
         return registro["public_id"]
 
     except Exception:
         connection.rollback()
+        # Nunca un archivo sin su fila.
+        eliminar_rutas(rutas_escritas)
         raise
 
     finally:
@@ -513,9 +501,10 @@ def editar_solicitud(
             )
             estado = cursor.fetchone()
 
-            if estado is None or estado["nombre"] != "Pendiente":
+            if estado is None or estado["nombre"] not in ESTADOS_EDITABLES:
                 raise ErrorGestionSolicitud(
-                    "Solo se pueden editar solicitudes Pendientes."
+                    "Solo se pueden editar solicitudes Pendientes "
+                    "o En corrección."
                 )
 
             if solicitud["version"] != version_esperada:
@@ -596,6 +585,7 @@ def editar_solicitud(
             {
                 "solicitud_afectada_id": solicitud["id"],
                 "public_id": public_id,
+                "estado": estado["nombre"],
                 "version_anterior": version_esperada,
                 "version_nueva": version_esperada + 1,
                 "cambios": cambios,
@@ -612,6 +602,7 @@ def editar_solicitud(
 
     finally:
         connection.close()
+
 
 def cambiar_estado_solicitud(
     actor_id,
@@ -638,6 +629,11 @@ def cambiar_estado_solicitud(
     if len(motivo_rechazo) > 300:
         raise ErrorGestionSolicitud(
             "El motivo no puede superar 300 caracteres."
+        )
+
+    if estado_destino not in ESTADOS_CAMBIO_DIRECTO:
+        raise ErrorGestionSolicitud(
+            "Este cambio se realiza desde la revisión de la factura."
         )
 
     if estado_destino == "Rechazada" and not motivo_rechazo:
@@ -699,7 +695,7 @@ def cambiar_estado_solicitud(
                 raise ErrorGestionSolicitud(
                     "El estado actual no está disponible."
                 )
-                
+
             permitidos = TRANSICIONES_ESTADO.get(
                 estado_actual["nombre"],
                 (),
@@ -754,6 +750,20 @@ def cambiar_estado_solicitud(
                 raise ErrorGestionSolicitud(
                     "No se pudo aplicar el cambio. "
                     "Recargue el detalle."
+                )
+
+            if destino["nombre"] == "Rechazada":
+                cursor.execute(
+                    """
+                    UPDATE facturas
+                    SET estado = 'RECHAZADA',
+                        revisada_por = %s,
+                        revisada_en = NOW(),
+                        observacion = %s
+                    WHERE solicitud_id = %s
+                      AND estado IN ('EN_REVISION', 'OBSERVADA')
+                    """,
+                    (actor["id"], nuevo_motivo, solicitud["id"]),
                 )
 
         registrar_evento(

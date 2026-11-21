@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% macro clp(valor) -%}
+{%- if valor is not none -%}$ {{ "{:,.0f}".format(valor | int).replace(",", ".") }}{%- else -%}—{%- endif -%}
+{%- endmacro %}
+
+{% set migas = [
+    ('Panel', url_for('dashboard')),
+    ('Solicitudes', url_for('solicitudes.listado')),
+    ('Solicitud ' ~ public_id[:8], url_for('solicitudes.detalle', public_id=public_id)),
+    ('Vista previa XML', None),
+] %}
+
+{% block title %}
+Vista previa XML | Facturaciones SpA
+{% endblock %}
+
+{% block content %}
+<main class="container pt-3 pb-5">
+    <header class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3 no-imprimir">
+        <div>
+            <h1 class="h2 mb-1">Vista previa de la factura</h1>
+            <p class="text-body-secondary small mb-0 text-break">
+                {{ info.titulo }} · {{ info.nombre }} · {{ tamano }} bytes
+                {% if info.sha256 %}<br>SHA-256: <code>{{ info.sha256 }}</code>{% endif %}
+            </p>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+            {% if dte %}
+            <button type="button" class="btn btn-outline-secondary btn-sm" data-imprimir>
+                <i class="bi bi-printer" aria-hidden="true"></i> Imprimir / PDF
+            </button>
+            {% endif %}
+            {% if info.descarga_url %}
+            <a href="{{ info.descarga_url }}" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-download" aria-hidden="true"></i> Descargar XML
+            </a>
+            {% endif %}
+        </div>
+    </header>
+
+    {% if info.es_borrador %}
+    <div class="alert alert-warning no-imprimir">
+        <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+        Vista previa de un <strong>borrador</strong>: así quedará el archivo
+        para el SII si el Administrador aprueba esta versión. Aún no ha sido emitido.
+    </div>
+    {% endif %}
+
+    <ul class="nav nav-tabs mb-3 no-imprimir" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link{{ ' active' if dte }}" id="pestana-diseno"
+                    data-bs-toggle="tab" data-bs-target="#panel-diseno" type="button"
+                    role="tab" aria-controls="panel-diseno"
+                    aria-selected="{{ 'true' if dte else 'false' }}"
+                    {% if not dte %}disabled{% endif %}>
+                <i class="bi bi-file-earmark-richtext" aria-hidden="true"></i> Diseño
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link{{ ' active' if not dte }}" id="pestana-xml"
+                    data-bs-toggle="tab" data-bs-target="#panel-xml" type="button"
+                    role="tab" aria-controls="panel-xml"
+                    aria-selected="{{ 'false' if dte else 'true' }}">
+                <i class="bi bi-code-slash" aria-hidden="true"></i> Formato XML
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        {# ---------------- Diseño ---------------- #}
+        <section class="tab-pane fade{{ ' show active' if dte }}" id="panel-diseno"
+                 role="tabpanel" aria-labelledby="pestana-diseno" tabindex="0">
+            {% if dte %}
+            <article class="hoja-factura{{ ' hoja-borrador' if info.es_borrador }}"
+                     aria-label="Diseño de la factura">
+                {% if info.es_borrador %}
+                <span class="hoja-marca-agua" aria-hidden="true">BORRADOR</span>
+                {% endif %}
+
+                <header class="hoja-cabecera">
+                    <div class="hoja-emisor">
+                        <h2 class="hoja-emisor-nombre">{{ dte.emisor.razon_social or '—' }}</h2>
+                        <p class="mb-1">{{ dte.emisor.giro }}</p>
+                        <p class="mb-1">
+                            {{ dte.emisor.direccion }}{% if dte.emisor.comuna %}, {{ dte.emisor.comuna }}{% endif %}
+                            {% if dte.emisor.ciudad %}, {{ dte.emisor.ciudad }}{% endif %}
+                        </p>
+                        {% if dte.emisor.acteco %}
+                        <p class="mb-0 small">Actividad económica: {{ dte.emisor.acteco | join(', ') }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="hoja-recuadro">
+                        <p>R.U.T.: {{ dte.emisor.rut or '—' }}</p>
+                        <p class="hoja-recuadro-tipo">{{ dte.tipo_nombre | upper }}</p>
+                        <p>N° {{ dte.folio or '—' }}</p>
+                        <p class="hoja-recuadro-sii">S.I.I. – {{ (dte.emisor.comuna or 'Chile') | upper }}</p>
+                    </div>
+                </header>
+
+                <section class="hoja-bloque">
+                    <dl class="hoja-datos">
+                        <div><dt>Señor(es)</dt><dd>{{ dte.receptor.razon_social or '—' }}</dd></div>
+                        <div><dt>R.U.T.</dt><dd>{{ dte.receptor.rut or '—' }}</dd></div>
+                        <div><dt>Giro</dt><dd>{{ dte.receptor.giro or '—' }}</dd></div>
+                        <div><dt>Fecha de emisión</dt><dd>{{ dte.fecha_emision or '—' }}</dd></div>
+                        <div><dt>Dirección</dt>
+                            <dd>{{ dte.receptor.direccion or '—' }}{% if dte.receptor.comuna %}, {{ dte.receptor.comuna }}{% endif %}</dd></div>
+                        {% if dte.fecha_vencimiento %}
+                        <div><dt>Vencimiento</dt><dd>{{ dte.fecha_vencimiento }}</dd></div>
+                        {% endif %}
+                        {% if dte.receptor.correo %}
+                        <div><dt>Correo</dt><dd class="text-break">{{ dte.receptor.correo }}</dd></div>
+                        {% endif %}
+                        {% if dte.receptor.contacto %}
+                        <div><dt>Contacto</dt><dd>{{ dte.receptor.contacto }}</dd></div>
+                        {% endif %}
+                    </dl>
+                </section>
+
+                <div class="table-responsive">
+                    <table class="table table-sm hoja-tabla">
+                        <caption class="visually-hidden">Detalle de la factura</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Descripción</th>
+                                <th scope="col" class="text-end">Cant.</th>
+                                <th scope="col" class="text-end">Precio unit.</th>
+                                <th scope="col" class="text-end">Desc.</th>
+                                <th scope="col" class="text-end">Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for linea in dte.detalle %}
+                            <tr>
+                                <td>{{ linea.linea or loop.index }}</td>
+                                <td>
+                                    {{ linea.nombre }}
+                                    {% if linea.exento %}<span class="badge text-bg-secondary">Exento</span>{% endif %}
+                                    {% if linea.descripcion and linea.descripcion != linea.nombre %}
+                                    <div class="small text-body-secondary texto-preformateado">{{ linea.descripcion }}</div>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">{{ linea.cantidad or '—' }} {{ linea.unidad }}</td>
+                                <td class="text-end text-nowrap">{{ clp(linea.precio) }}</td>
+                                <td class="text-end text-nowrap">{{ clp(linea.descuento) if linea.descuento else '—' }}</td>
+                                <td class="text-end text-nowrap">{{ clp(linea.monto) }}</td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="6" class="text-center text-body-secondary">Sin líneas de detalle.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="hoja-pie">
+                    <div class="hoja-pie-izquierda">
+                        {% if dte.referencias %}
+                        <h3 class="hoja-subtitulo">Referencias</h3>
+                        <ul class="hoja-referencias">
+                            {% for ref in dte.referencias %}
+                            <li>
+                                {{ ref.tipo_nombre }} N° {{ ref.folio or '—' }}
+                                {% if ref.fecha %}del {{ ref.fecha }}{% endif %}
+                                {% if ref.razon %}· {{ ref.razon }}{% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+
+                        <div class="hoja-timbre{{ ' hoja-timbre-ok' if dte.timbrado }}">
+                            {% if dte.timbrado %}
+                            <i class="bi bi-upc-scan" aria-hidden="true"></i>
+                            <span>Timbre electrónico SII (TED) incluido{% if dte.firmado %} · documento firmado{% endif %}.</span>
+                            {% else %}
+                            <i class="bi bi-exclamation-octagon" aria-hidden="true"></i>
+                            <span>
+                                Documento sin timbre electrónico (TED) ni firma: folio
+                                provisional. No válido como documento tributario hasta
+                                firmarse con el certificado digital y un folio CAF.
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <table class="table table-sm hoja-totales">
+                        <tbody>
+                            {% if dte.totales.neto is not none %}
+                            <tr><th scope="row">Monto neto</th><td class="text-end">{{ clp(dte.totales.neto) }}</td></tr>
+                            {% endif %}
+                            {% if dte.totales.exento is not none %}
+                            <tr><th scope="row">Monto exento</th><td class="text-end">{{ clp(dte.totales.exento) }}</td></tr>
+                            {% endif %}
+                            {% if dte.totales.iva is not none %}
+                            <tr><th scope="row">I.V.A. {{ dte.totales.tasa_iva }}%</th><td class="text-end">{{ clp(dte.totales.iva) }}</td></tr>
+                            {% endif %}
+                            <tr class="hoja-total"><th scope="row">Total</th><td class="text-end">{{ clp(dte.totales.total) }}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+            {% endif %}
+        </section>
+
+        {# ---------------- Formato XML ---------------- #}
+        <section class="tab-pane fade{{ ' show active' if not dte }}" id="panel-xml"
+                 role="tabpanel" aria-labelledby="pestana-xml" tabindex="0">
+            {% if not dte %}
+            <div class="alert alert-info">
+                El archivo no tiene la estructura de un DTE del SII; se muestra
+                solo su contenido.
+            </div>
+            {% endif %}
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom small text-body-secondary">
+                        <span>{{ formato.lineas | length }} líneas{% if not formato.coloreado %} · archivo extenso, sin colorear{% endif %}</span>
+                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                data-copiar="#codigo-xml">
+                            <i class="bi bi-clipboard" aria-hidden="true"></i> Copiar
+                        </button>
+                    </div>
+                    <pre class="codigo-xml mb-0" id="codigo-xml"><code>
+                        {%- for linea in formato.lineas -%}
+                        <span class="codigo-linea">
+                            {%- for tipo, texto in linea -%}
+                            {%- if tipo == 'texto' -%}{{ texto }}{%- else -%}<span class="xml-{{ tipo }}">{{ texto }}</span>{%- endif -%}
+                            {%- endfor -%}
+                        </span>{{ '\n' }}
+                        {%- endfor -%}
+                    </code></pre>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock %}

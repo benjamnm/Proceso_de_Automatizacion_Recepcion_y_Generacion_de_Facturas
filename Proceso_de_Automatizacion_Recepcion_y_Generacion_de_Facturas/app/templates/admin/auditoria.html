@@ -1,40 +1,31 @@
 {% extends "base.html" %}
 
+{% set migas = [('Panel', url_for('dashboard')), ('Auditoría', None)] %}
+
 {% block title %}
-Auditoría de usuarios | Facturaciones SpA
+Auditoría | Facturaciones SpA
 {% endblock %}
 
 {% block content %}
-<main class="container py-5">
-    <header
-        class="d-flex flex-wrap justify-content-between
-               align-items-center gap-3 mb-4"
-    >
-        <div>
-            <h1 class="h3 mb-1">Auditoría administrativa</h1>
-            <p class="text-body-secondary mb-0">
-                Últimos 100 eventos registrados.
-            </p>
-        </div>
-
-        <a
-            href="{{ url_for('admin.usuarios') }}"
-            class="btn btn-outline-secondary"
-        >
-            Volver a usuarios
-        </a>
+<main class="container pt-3 pb-5">
+    <header class="mb-4">
+        <h1 class="h2 mb-1">Auditoría administrativa</h1>
+        <p class="text-body-secondary mb-0">
+            Últimos 100 eventos registrados.
+        </p>
     </header>
 
     <div class="card">
-        <div class="card-body">
+        <div class="card-body p-4">
             <div class="table-responsive">
-                <table class="table align-middle">
+                <table class="table align-middle mb-0">
                     <thead>
                         <tr>
                             <th scope="col">Fecha</th>
                             <th scope="col">Responsable</th>
                             <th scope="col">Acción</th>
                             <th scope="col">Registro afectado</th>
+                            <th scope="col">Resumen</th>
                             <th scope="col">Detalle</th>
                         </tr>
                     </thead>
@@ -42,37 +33,45 @@ Auditoría de usuarios | Facturaciones SpA
                     <tbody>
                         {% for evento in eventos %}
                         <tr>
-                            <td>{{ evento.creado_en }}</td>
-                            <td>
+                            <td class="small text-body-secondary text-nowrap">{{ evento.creado_en }}</td>
+                            <td class="fw-semibold">
                                 {{ evento.usuario_nombre or 'Usuario no disponible' }}
                             </td>
-                            <td>{{ evento.accion }}</td>
-                            <td>
-                                {% if evento.detalle.get('cliente_afectado_id') %}
-                                    Cliente #{{ evento.detalle['cliente_afectado_id'] }}
-                                {% else %}
-                                     Usuario #{{ evento.detalle.get('usuario_afectado_id', '') }}
-                                {% endif %}
-                            </td>
+                            <td><code class="small">{{ evento.accion }}</code></td>
                             <td>
                                 {% if evento.detalle.get('solicitud_afectada_id') %}
                                     Solicitud #{{ evento.detalle['solicitud_afectada_id'] }}
+                                    {% if evento.detalle.get('version_factura') %}
+                                    <span class="badge text-bg-primary">
+                                        Factura v{{ evento.detalle['version_factura'] }}
+                                    </span>
+                                    {% endif %}
+                                {% elif evento.detalle.get('correo_entrante_id') %}
+                                    Correo #{{ evento.detalle['correo_entrante_id'] }}
                                 {% elif evento.detalle.get('cliente_afectado_id') %}
-                                     Cliente #{{ evento.detalle['cliente_afectado_id'] }}
+                                    Cliente #{{ evento.detalle['cliente_afectado_id'] }}
                                 {% else %}
                                     Usuario #{{ evento.detalle.get('usuario_afectado_id', '') }}
                                 {% endif %}
                             </td>
                             <td>
+                                {% if evento.detalle.get('cambios') and evento.accion == 'FACTURA_GENERADA' %}
+                                    {{ evento.detalle['cambios'] | length }} cambio(s) respecto de
+                                    v{{ evento.detalle.get('version_factura_anterior') }}
+                                {% elif evento.detalle.get('motivo') or evento.detalle.get('observacion') %}
+                                    {{ evento.detalle.get('observacion') or evento.detalle.get('motivo') }}
+                                {% endif %}
+                            </td>
+                            <td>
                                 <details>
-                                    <summary>Ver detalle</summary>
+                                    <summary class="small">Ver detalle</summary>
                                     <pre class="small mt-2 mb-0">{{ evento.detalle | tojson(indent=2) }}</pre>
                                 </details>
                             </td>
                         </tr>
                         {% else %}
                         <tr>
-                            <td colspan="5">
+                            <td colspan="6" class="text-center text-body-secondary py-4">
                                 Todavía no hay eventos.
                             </td>
                         </tr>

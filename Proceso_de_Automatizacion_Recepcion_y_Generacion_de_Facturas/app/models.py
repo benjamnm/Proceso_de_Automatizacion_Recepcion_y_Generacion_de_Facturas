@@ -1,7 +1,7 @@
 import pymysql
 from flask import current_app
 from flask_login import UserMixin
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import check_password_hash
 
 
 def get_db_connection():
@@ -21,7 +21,8 @@ def get_db_connection():
 
 class User(UserMixin):
     def __init__(self, id, rol_id, rut, nombre, email, telefono,
-                 password_hash, activo, ultimo_login, creado_en, role=None):
+                 password_hash, activo, ultimo_login, creado_en, role=None,
+                 debe_cambiar_password=0):
         self.id = id
         self.rol_id = rol_id
         self.rut = rut
@@ -33,6 +34,8 @@ class User(UserMixin):
         self.ultimo_login = ultimo_login
         self.creado_en = creado_en
         self.role = role
+        # Contraseña temporal: debe cambiarla antes de usar el sistema.
+        self.debe_cambiar_password = bool(debe_cambiar_password)
 
     @classmethod
     def _desde_fila(cls, fila):
@@ -51,6 +54,8 @@ class User(UserMixin):
             ultimo_login=fila["ultimo_login"],
             creado_en=fila["creado_en"],
             role={"nombre": fila["role_nombre"]},
+            # Sin la migración 005 la columna no existe: se asume 0.
+            debe_cambiar_password=fila.get("debe_cambiar_password", 0),
         )
 
     @classmethod
@@ -92,9 +97,6 @@ class User(UserMixin):
             conn.commit()
         finally:
             conn.close()
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)

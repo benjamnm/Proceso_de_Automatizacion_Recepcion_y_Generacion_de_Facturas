@@ -1,0 +1,47 @@
+{% macro navegacion_proceso(solicitud, activa, editable) %}
+{% set estado = solicitud.estado_nombre %}
+{% set paso_actual = {'Pendiente': 0, 'En revisión': 1, 'En corrección': 1,
+                      'Aprobada': 2}.get(estado, -1) %}
+{% set pasos = ['Pendiente',
+                'En corrección' if estado == 'En corrección' else 'En revisión',
+                'Aprobada'] %}
+
+<ol class="pasos-proceso" aria-label="Etapa del proceso">
+    {% for paso in pasos %}
+    <li>
+        {% if loop.index0 == paso_actual %}
+        <span class="badge text-bg-{{ 'warning' if estado == 'En corrección' else 'primary' }}"
+              aria-current="step">{{ paso }}</span>
+        {% elif loop.index0 < paso_actual %}
+        <span class="badge text-bg-success">
+            <i class="bi bi-check" aria-hidden="true"></i> {{ paso }}
+        </span>
+        {% else %}
+        <span class="badge text-bg-secondary opacity-50">{{ paso }}</span>
+        {% endif %}
+    </li>
+    {% endfor %}
+    {% if estado == 'Rechazada' %}
+    <li><span class="badge text-bg-danger" aria-current="step">Rechazada</span></li>
+    {% endif %}
+</ol>
+
+<ul class="nav nav-tabs mb-4">
+    {% for clave, texto, endpoint, icono in [
+        ('detalle', 'Solicitud', 'solicitudes.detalle', 'bi-file-text'),
+        ('factura', 'Factura', 'solicitudes.factura', 'bi-receipt'),
+        ('editar', 'Editar datos', 'solicitudes.editar', 'bi-pencil'),
+    ] if clave != 'editar' or editable %}
+    <li class="nav-item">
+        <a
+            class="nav-link{{ ' active' if clave == activa }}"
+            href="{{ url_for(endpoint, public_id=solicitud.public_id) }}"
+            {% if clave == activa %}aria-current="page"{% endif %}
+        >
+            <i class="bi {{ icono }}" aria-hidden="true"></i>
+            {{ texto }}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% endmacro %}
