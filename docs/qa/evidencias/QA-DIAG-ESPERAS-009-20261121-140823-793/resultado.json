@@ -1,0 +1,178 @@
+{
+  "id": "QA-DIAG-ESPERAS-009",
+  "inicio": "2026-11-21T14:08:24.035270-03:00",
+  "solo_lectura": true,
+  "muestras": [
+    {
+      "momento": "2026-11-21T14:09:08.431089-03:00",
+      "procesos": {
+        "estado": "OK",
+        "filas": [
+          {
+            "Id": 151,
+            "User": "qa_facturaciones",
+            "Command": "Query",
+            "Time": 361,
+            "State": "Statistics",
+            "base": "facturaciones_spa_qa",
+            "tipo_sql": "SELECT",
+            "tablas_qa_mencionadas": [
+              "usuarios",
+              "roles"
+            ],
+            "sha256_sql": "4f9356bf60b65ecb347c490ee0cdcc9a6464763edf7ea0d89a8a216c2bf14c3f"
+          },
+          {
+            "Id": 152,
+            "User": "qa_facturaciones",
+            "Command": "Query",
+            "Time": 182,
+            "State": "Opening tables",
+            "base": "facturaciones_spa_qa",
+            "tipo_sql": "SELECT",
+            "tablas_qa_mencionadas": [
+              "usuarios",
+              "roles"
+            ],
+            "sha256_sql": "4f9356bf60b65ecb347c490ee0cdcc9a6464763edf7ea0d89a8a216c2bf14c3f"
+          },
+          {
+            "Id": 153,
+            "User": "qa_facturaciones",
+            "Command": "Query",
+            "Time": 0,
+            "State": "Init",
+            "base": "facturaciones_spa_qa",
+            "tipo_sql": "SHOW",
+            "tablas_qa_mencionadas": [],
+            "sha256_sql": "c9ad5577942525cc832b42c57c0ea748deb3d5eb9281dbc6f59128ea23e781e0"
+          },
+          {
+            "Id": 154,
+            "User": "qa_facturaciones",
+            "Command": "Query",
+            "Time": 1,
+            "State": "Opening tables",
+            "base": "facturaciones_spa_qa",
+            "tipo_sql": "SELECT",
+            "tablas_qa_mencionadas": [
+              "usuarios",
+              "roles"
+            ],
+            "sha256_sql": "4f9356bf60b65ecb347c490ee0cdcc9a6464763edf7ea0d89a8a216c2bf14c3f"
+          }
+        ]
+      },
+      "transacciones": {
+        "estado": "NO_DISPONIBLE",
+        "tipo": "OperationalError",
+        "codigo_error_bd": 1227
+      },
+      "esperas_innodb": {
+        "estado": "NO_DISPONIBLE",
+        "tipo": "OperationalError",
+        "codigo_error_bd": 1227
+      },
+      "metadata_qa": {
+        "estado": "NO_DISPONIBLE",
+        "tipo": "OperationalError",
+        "codigo_error_bd": 1109
+      }
+    },
+    {
+      "momento": "2026-11-21T14:09:10.436956-03:00",
+      "procesos": {
+        "estado": "OK",
+        "filas": [
+          {
+            "Id": 151,
+            "User": "qa_facturaciones",
+            "Command": "Query",
+            "Time": 363,
+            "State": "Statistics",
+            "base": "facturaciones_spa_qa",
+            "tipo_sql": "SELECT",
+            "tablas_qa_mencionadas": [
+              "usuarios",
+              "roles"
+            ],
+            "sha256_sql": "4f9356bf60b65ecb347c490ee0cdcc9a6464763edf7ea0d89a8a216c2bf14c3f"
+          },
+          {
+            "Id": 152,
+            "User": "qa_facturaciones",
+            "Command": "Query",
+            "Time": 184,
+            "State": "Opening tables",
+            "base": "facturaciones_spa_qa",
+            "tipo_sql": "SELECT",
+            "tablas_qa_mencionadas": [
+              "usuarios",
+              "roles"
+            ],
+            "sha256_sql": "4f9356bf60b65ecb347c490ee0cdcc9a6464763edf7ea0d89a8a216c2bf14c3f"
+          },
+          {
+            "Id": 153,
+            "User": "qa_facturaciones",
+            "Command": "Query",
+            "Time": 0,
+            "State": "Init",
+            "base": "facturaciones_spa_qa",
+            "tipo_sql": "SHOW",
+            "tablas_qa_mencionadas": [],
+            "sha256_sql": "c9ad5577942525cc832b42c57c0ea748deb3d5eb9281dbc6f59128ea23e781e0"
+          },
+          {
+            "Id": 154,
+            "User": "qa_facturaciones",
+            "Command": "Query",
+            "Time": 3,
+            "State": "Opening tables",
+            "base": "facturaciones_spa_qa",
+            "tipo_sql": "SELECT",
+            "tablas_qa_mencionadas": [
+              "usuarios",
+              "roles"
+            ],
+            "sha256_sql": "4f9356bf60b65ecb347c490ee0cdcc9a6464763edf7ea0d89a8a216c2bf14c3f"
+          }
+        ]
+      },
+      "transacciones": {
+        "estado": "NO_DISPONIBLE",
+        "tipo": "OperationalError",
+        "codigo_error_bd": 1227
+      },
+      "esperas_innodb": {
+        "estado": "NO_DISPONIBLE",
+        "tipo": "OperationalError",
+        "codigo_error_bd": 1227
+      },
+      "metadata_qa": {
+        "estado": "NO_DISPONIBLE",
+        "tipo": "OperationalError",
+        "codigo_error_bd": 1109
+      }
+    }
+  ],
+  "consulta_actor": {
+    "conexion_id": 154,
+    "estado": "ERROR",
+    "fase": "lectura_actor",
+    "tipo": "OperationalError",
+    "segundos": 15.0076,
+    "codigo_error_bd": 2013
+  },
+  "limitacion": "No registra texto SQL ni hashes de password; visibilidad depende de PROCESS",
+  "observador": {
+    "bd": "facturaciones_spa_qa",
+    "cuenta": "qa_facturaciones@127.0.0.1",
+    "id": 153,
+    "version_servidor": "10.4.32-MariaDB"
+  },
+  "process_global_detectado": false,
+  "lector_finalizado": true,
+  "estado": "CAPTURA_REALIZADA_NO_ES_RESULTADO_FUNCIONAL",
+  "fin": "2026-11-21T14:09:22.439309-03:00"
+}

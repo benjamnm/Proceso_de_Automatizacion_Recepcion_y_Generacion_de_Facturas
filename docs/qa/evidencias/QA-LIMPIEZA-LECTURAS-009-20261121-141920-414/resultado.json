@@ -1,0 +1,31 @@
+{
+  "id": "QA-LIMPIEZA-LECTURAS-009",
+  "inicio": "2026-11-21T14:19:20.731996-03:00",
+  "solo_lectura": false,
+  "accion": "cancelacion acotada de conexiones de lecturas QA identificadas",
+  "ids_permitidos": [
+    151,
+    152,
+    154
+  ],
+  "acciones": [],
+  "identidad": {
+    "bd": "facturaciones_spa_qa",
+    "cuenta": "qa_facturaciones@127.0.0.1",
+    "id": 8
+  },
+  "procesos_antes": [
+    {
+      "Id": 8,
+      "User": "qa_facturaciones",
+      "base": "facturaciones_spa_qa",
+      "Command": "Query",
+      "Time": 0,
+      "State": "Init",
+      "sha256_sql": "c9ad5577942525cc832b42c57c0ea748deb3d5eb9281dbc6f59128ea23e781e0"
+    }
+  ],
+  "candidatos_verificados": [],
+  "estado": "SIN_CANDIDATOS_NO_SE_EJECUTO_KILL",
+  "fin": "2026-11-21T14:19:23.031980-03:00"
+}

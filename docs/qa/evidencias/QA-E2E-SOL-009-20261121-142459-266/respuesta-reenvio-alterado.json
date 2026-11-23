@@ -1,0 +1,9 @@
+{
+  "concepto_respuesta": "QA-CLAVE-CONFLICTO-WEB-ee042ebf-ALTERADO",
+  "error": "Este formulario ya se utiliz\u00f3 con otros datos. Abra una solicitud nueva. Si hab\u00eda seleccionado documentos adjuntos, vuelva a seleccionarlos antes de enviar.",
+  "mismo_token_creacion": true,
+  "monto_respuesta": "999000",
+  "redirected": false,
+  "ruta_final": "/solicitudes/nueva",
+  "status": 200
+}

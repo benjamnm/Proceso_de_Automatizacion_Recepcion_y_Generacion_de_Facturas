@@ -1,0 +1,41 @@
+def descargar_sii(public_id):
+    if current_user.role_name != "Administrador":
+        abort(403)
+
+    try:
+        actor, fila, ruta = obtener_archivo_sii(int(current_user.id), public_id)
+    except ErrorFactura as exc:
+        flash(str(exc), "danger")
+        return redirect(url_for("solicitudes.factura", public_id=public_id))
+
+    connection = get_db_connection()
+    try:
+        registrar_evento(
+            connection, actor["id"], "ARCHIVO_SII_DESCARGADO",
+            {
+                "solicitud_afectada_id": fila["id"],
+                "public_id": public_id,
+                "factura_id": fila["factura_id"],
+                "version_factura": fila["version"],
+                "sha256": fila["archivo_sii_sha256"],
+            },
+            request.remote_addr,
+        )
+        connection.commit()
+    except pymysql.MySQLError:
+        connection.rollback()
+        current_app.logger.exception("No se pudo auditar la descarga SII.")
+        flash("No se pudo registrar la descarga.", "danger")
+        return redirect(url_for("solicitudes.factura", public_id=public_id))
+    finally:
+        connection.close()
+
+    return send_file(
+        ruta,
+        mimetype="application/xml",
+        as_attachment=True,
+        download_name=(
+            f"DTE_{fila['tipo_dte']}_{public_id[:8]}_v{fila['version']}.xml"
+        ),
+        max_age=0,
+    )

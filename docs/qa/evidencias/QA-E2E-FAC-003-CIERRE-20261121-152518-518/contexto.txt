@@ -1,0 +1,8 @@
+﻿ejecucion=QA-E2E-FAC-003-CIERRE
+rama=qa/facturaciones-v2-20261120
+commit_base=a3ac7e86f9672da9fc4710123680471a7b405713
+base=facturaciones_spa_qa
+alcance=verifica delta archivado, correccion existente, factura historica y logout; sin guardar ni reenviar
+ajuste=solo test e2e/test_correccion_emisor_qa.py; no modifica aplicacion; no reejecuta el POST original
+limite=no convierte el JUnit fallido en aprobado; no repite redireccion historica
+referencia=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-E2E-FAC-003-20261121-152211-237

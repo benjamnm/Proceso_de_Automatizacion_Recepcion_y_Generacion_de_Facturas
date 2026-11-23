@@ -1,0 +1,11 @@
+{
+  "base_url": "http://127.0.0.1:54708",
+  "base_datos": "facturaciones_spa_qa",
+  "csrf_activo": true,
+  "smtp_host_y_from": "vacios en proceso QA",
+  "smtp_imap": "bloqueados",
+  "revision_automatica_segundos": 0,
+  "testing": false,
+  "debug": false,
+  "alcance_correo": "no prueba entrega ni notificaciones exitosas"
+}

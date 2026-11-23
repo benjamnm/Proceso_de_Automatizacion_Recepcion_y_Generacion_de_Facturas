@@ -1,0 +1,10 @@
+{
+  "aceptado": {
+    "concepto": "QA-VIGENTE-WEB-5ecd1f03",
+    "monto_bruto": "459000"
+  },
+  "obsoleto": {
+    "concepto": "QA-OBSOLETA-WEB-5ecd1f03",
+    "monto_bruto": "999000"
+  }
+}

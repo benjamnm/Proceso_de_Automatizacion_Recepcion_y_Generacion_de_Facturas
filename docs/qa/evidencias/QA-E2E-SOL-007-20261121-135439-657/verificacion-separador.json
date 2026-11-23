@@ -1,0 +1,8 @@
+{
+  "monto_enviado": "1.000",
+  "post_edicion_observados": 1,
+  "validacion": "servidor; POST desde navegador con sesion y CSRF originales",
+  "estado_comparado_sin_cambios": true,
+  "version": 3,
+  "monto_persistido": "459000"
+}

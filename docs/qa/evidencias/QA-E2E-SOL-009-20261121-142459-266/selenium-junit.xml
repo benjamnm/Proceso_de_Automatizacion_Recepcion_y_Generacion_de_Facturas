@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="8.676" timestamp="2026-11-21T14:25:31.268307-03:00" hostname="Vins"><testcase classname="e2e.test_conflicto_clave_creacion_qa" name="test_misma_clave_datos_distintos_rechazados" time="8.421" /></testsuite></testsuites>

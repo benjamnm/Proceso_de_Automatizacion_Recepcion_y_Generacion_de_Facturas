@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="10.825" timestamp="2026-11-21T13:41:07.006076-03:00" hostname="Vins"><testcase classname="e2e.test_version_obsoleta_solicitud_qa" name="test_rechazar_formulario_desactualizado" time="10.403" /></testsuite></testsuites>

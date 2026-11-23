@@ -1,0 +1,210 @@
+{
+  "ejecucion": "QA-E2E-FAC-002",
+  "caso": "E2E-FAC-002",
+  "inicio": "2026-11-21T15:18:07.704597-03:00",
+  "base": "facturaciones_spa_qa",
+  "pruebas_iniciadas": true,
+  "codigo_pytest": 0,
+  "alcance": "Administrador devuelve factura v1 a correccion; solicitud v4 a v5; auditoria y contenido inmutable",
+  "fase": "ejecucion_selenium",
+  "referencia_estado_sha256": "b42d8fba23f1c7efa5f5773a15cd49e51e516cc7a435115e51d2437ca4b25ceb",
+  "cuenta_bd_verificada": "qa_facturaciones@127.0.0.1",
+  "http_login": 200,
+  "servidor_qa_detenido": true,
+  "total_solicitudes_despues": 5,
+  "total_auditoria_despues": 7,
+  "total_facturas_despues": 1,
+  "solicitud_version_despues": 5,
+  "solicitud_estado_despues": "En correcci\u00f3n",
+  "devolucion_correccion_verificada": true,
+  "intentos_smtp": 0,
+  "notificacion_correo": "deshabilitada por configuracion QA; no se acredita entrega",
+  "verificacion": {
+    "estado_igual_al_inicial": false,
+    "contenido_factura_conservado": true,
+    "total_solicitudes": 5,
+    "total_auditoria": 7,
+    "total_facturas": 1,
+    "solicitud": {
+      "id": 3,
+      "public_id": "ee2e8fdb51290c59ae0ab6457a3ba001",
+      "emisor_id": 2,
+      "cliente_id": 1,
+      "estado_id": 3,
+      "origen_id": 1,
+      "rut": "11111111-1",
+      "nombre": "Cliente Sintetico QA Aislamiento",
+      "direccion": "Direccion ficticia QA 123",
+      "giro": "Servicios de prueba QA",
+      "email_contacto_receptor": "cliente.qa@example.com",
+      "concepto": "QA-VIGENTE-WEB-5ecd1f03",
+      "nro_orden_compra": "QA-OC-ED-ab64f2c7",
+      "fecha_emision": "2026-11-21",
+      "monto_bruto": "459000",
+      "tipo_afectacion": "EXENTA",
+      "email_emisor": "qa.emisor@example.invalid",
+      "motivo_rechazo": null,
+      "creado_en": "2026-11-21 03:10:06",
+      "actualizado_en": "2026-11-21 15:18:38",
+      "version": 5,
+      "estado_nombre": "En correcci\u00f3n",
+      "origen_nombre": "Web"
+    },
+    "factura": {
+      "id": 1,
+      "solicitud_id": 3,
+      "version": 1,
+      "estado": "OBSERVADA",
+      "tipo_dte": 34,
+      "monto_neto": "0",
+      "monto_exento": "459000",
+      "iva": "0",
+      "monto_total": "459000",
+      "datos": {
+        "solicitud_public_id": "ee2e8fdb51290c59ae0ab6457a3ba001",
+        "fecha_emision": "2026-11-21",
+        "tipo_afectacion": "EXENTA",
+        "receptor": {
+          "rut": "11111111-1",
+          "razon_social": "Cliente Sintetico QA Aislamiento",
+          "giro": "Servicios de prueba QA",
+          "direccion": "Direccion ficticia QA 123",
+          "email": "cliente.qa@example.com"
+        },
+        "detalle": {
+          "concepto": "QA-VIGENTE-WEB-5ecd1f03",
+          "nro_orden_compra": "QA-OC-ED-ab64f2c7"
+        },
+        "totales": {
+          "tipo_dte": 34,
+          "monto_bruto": 459000,
+          "monto_neto": 0,
+          "monto_exento": 459000,
+          "tasa_iva": 0,
+          "iva": 0,
+          "monto_total": 459000,
+          "diferencia_redondeo": 0
+        }
+      },
+      "cambios": null,
+      "huella": "f90912b21b217c6f5ae328b9df00b7cc23f091a71a304d80424c203866324ec0",
+      "generada_por": 2,
+      "generada_en": "2026-11-21 14:29:05",
+      "revisada_por": 1,
+      "revisada_en": "2026-11-21 15:18:38",
+      "observacion": "QA: precisar el alcance del servicio antes de aprobar.",
+      "archivo_sii": null,
+      "archivo_sii_sha256": null
+    },
+    "otras_solicitudes_sin_cambios": true,
+    "campos_conservados": true,
+    "auditorias_previas_sin_cambios": true,
+    "auditorias_nuevas": [
+      {
+        "id": 7,
+        "usuario_id": 1,
+        "accion": "FACTURA_OBSERVADA",
+        "detalle": {
+          "solicitud_afectada_id": 3,
+          "public_id": "ee2e8fdb51290c59ae0ab6457a3ba001",
+          "factura_id": 1,
+          "version_factura": 1,
+          "observacion": "QA: precisar el alcance del servicio antes de aprobar.",
+          "estado_anterior": "En revisi\u00f3n",
+          "estado_nuevo": "En correcci\u00f3n",
+          "version_anterior": 4,
+          "version_nueva": 5
+        },
+        "creado_en": "2026-11-21 15:18:38"
+      }
+    ],
+    "conteos": {
+      "facturas": 1,
+      "registros_xml": 0,
+      "adjuntos_solicitud": 0,
+      "envios_correo": 0,
+      "correos_entrantes": 0
+    },
+    "archivos_sii_en_carpeta_qa": 0
+  },
+  "eventos_http": [
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "POST",
+      "status": 302,
+      "location": "/dashboard",
+      "version_formulario": null,
+      "usuario_id": 1
+    },
+    {
+      "ruta": "/dashboard",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": 1
+    },
+    {
+      "ruta": "/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": 1
+    },
+    {
+      "ruta": "/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura/observar",
+      "metodo": "POST",
+      "status": 302,
+      "location": "/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura",
+      "version_formulario": "4",
+      "usuario_id": 1
+    },
+    {
+      "ruta": "/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": 1
+    },
+    {
+      "ruta": "/auth/logout",
+      "metodo": "POST",
+      "status": 302,
+      "location": "/auth/login",
+      "version_formulario": null,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": null
+    }
+  ],
+  "error_cierre_navegador": null,
+  "alertas_cerradas_logout": 1,
+  "alcance_caso": "Devolucion a correccion; no aprueba ni regenera factura ni genera XML SII",
+  "estado_final_igual_al_inicial": false,
+  "fin": "2026-11-21T15:18:42.029191-03:00",
+  "junit_generado": true
+}

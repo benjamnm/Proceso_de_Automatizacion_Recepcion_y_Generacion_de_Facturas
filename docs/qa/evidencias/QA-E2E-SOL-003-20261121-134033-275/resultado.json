@@ -1,0 +1,222 @@
+{
+  "ejecucion": "QA-E2E-SOL-003",
+  "caso": "E2E-SOL-003",
+  "inicio": "2026-11-21T13:40:35.975516-03:00",
+  "base": "facturaciones_spa_qa",
+  "pruebas_iniciadas": true,
+  "codigo_pytest": 0,
+  "alcance": "dos formularios v2; primer guardado v3; rechazo del segundo sin sobrescritura ni auditoria adicional",
+  "fase": "ejecucion_selenium",
+  "cuenta_bd_verificada": "qa_facturaciones@127.0.0.1",
+  "http_login": 200,
+  "servidor_qa_detenido": true,
+  "total_solicitudes_despues": 3,
+  "total_auditoria_despues": 3,
+  "version_despues": 3,
+  "sin_cambios_tras_guardado_aceptado": true,
+  "conflicto_verificado": true,
+  "verificacion_aceptado": {
+    "total_solicitudes": 3,
+    "total_auditoria": 3,
+    "solicitud": {
+      "id": 3,
+      "public_id": "ee2e8fdb51290c59ae0ab6457a3ba001",
+      "emisor_id": 2,
+      "cliente_id": 1,
+      "estado_id": 1,
+      "origen_id": 1,
+      "rut": "11111111-1",
+      "nombre": "Cliente Sintetico QA Aislamiento",
+      "direccion": "Direccion ficticia QA 123",
+      "giro": "Servicios de prueba QA",
+      "email_contacto_receptor": "cliente.qa@example.com",
+      "concepto": "QA-VIGENTE-WEB-5ecd1f03",
+      "nro_orden_compra": "QA-OC-ED-ab64f2c7",
+      "fecha_emision": "2026-11-21",
+      "monto_bruto": "459000",
+      "tipo_afectacion": "EXENTA",
+      "email_emisor": "qa.emisor@example.invalid",
+      "motivo_rechazo": null,
+      "creado_en": "2026-11-21 03:10:06",
+      "actualizado_en": "2026-11-21 13:41:13",
+      "version": 3,
+      "estado_nombre": "Pendiente",
+      "origen_nombre": "Web"
+    },
+    "originales_sin_cambios": true,
+    "inmutables_sin_cambios": true,
+    "auditorias_previas_sin_cambios": true,
+    "auditorias_nuevas": [
+      {
+        "id": 3,
+        "usuario_id": 2,
+        "accion": "SOLICITUD_EDITADA",
+        "detalle": {
+          "solicitud_afectada_id": 3,
+          "public_id": "ee2e8fdb51290c59ae0ab6457a3ba001",
+          "estado": "Pendiente",
+          "version_anterior": 2,
+          "version_nueva": 3,
+          "cambios": {
+            "concepto": {
+              "anterior": "QA-EDITADA-WEB-ab64f2c7",
+              "nuevo": "QA-VIGENTE-WEB-5ecd1f03"
+            },
+            "monto_bruto": {
+              "anterior": "412000",
+              "nuevo": "459000"
+            }
+          }
+        },
+        "creado_en": "2026-11-21 13:41:13"
+      }
+    ]
+  },
+  "verificacion_tras_obsoleto": {
+    "total_solicitudes": 3,
+    "total_auditoria": 3,
+    "solicitud": {
+      "id": 3,
+      "public_id": "ee2e8fdb51290c59ae0ab6457a3ba001",
+      "emisor_id": 2,
+      "cliente_id": 1,
+      "estado_id": 1,
+      "origen_id": 1,
+      "rut": "11111111-1",
+      "nombre": "Cliente Sintetico QA Aislamiento",
+      "direccion": "Direccion ficticia QA 123",
+      "giro": "Servicios de prueba QA",
+      "email_contacto_receptor": "cliente.qa@example.com",
+      "concepto": "QA-VIGENTE-WEB-5ecd1f03",
+      "nro_orden_compra": "QA-OC-ED-ab64f2c7",
+      "fecha_emision": "2026-11-21",
+      "monto_bruto": "459000",
+      "tipo_afectacion": "EXENTA",
+      "email_emisor": "qa.emisor@example.invalid",
+      "motivo_rechazo": null,
+      "creado_en": "2026-11-21 03:10:06",
+      "actualizado_en": "2026-11-21 13:41:13",
+      "version": 3,
+      "estado_nombre": "Pendiente",
+      "origen_nombre": "Web"
+    },
+    "originales_sin_cambios": true,
+    "inmutables_sin_cambios": true,
+    "auditorias_previas_sin_cambios": true,
+    "auditorias_nuevas": [
+      {
+        "id": 3,
+        "usuario_id": 2,
+        "accion": "SOLICITUD_EDITADA",
+        "detalle": {
+          "solicitud_afectada_id": 3,
+          "public_id": "ee2e8fdb51290c59ae0ab6457a3ba001",
+          "estado": "Pendiente",
+          "version_anterior": 2,
+          "version_nueva": 3,
+          "cambios": {
+            "concepto": {
+              "anterior": "QA-EDITADA-WEB-ab64f2c7",
+              "nuevo": "QA-VIGENTE-WEB-5ecd1f03"
+            },
+            "monto_bruto": {
+              "anterior": "412000",
+              "nuevo": "459000"
+            }
+          }
+        },
+        "creado_en": "2026-11-21 13:41:13"
+      }
+    ],
+    "sin_cambios_desde_aceptado": true
+  },
+  "eventos_http": [
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "version_formulario": null,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "version_formulario": null,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "POST",
+      "status": 302,
+      "version_formulario": null,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/dashboard",
+      "metodo": "GET",
+      "status": 200,
+      "version_formulario": null,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/editar",
+      "metodo": "GET",
+      "status": 200,
+      "version_formulario": null,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/editar",
+      "metodo": "GET",
+      "status": 200,
+      "version_formulario": null,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/editar",
+      "metodo": "POST",
+      "status": 302,
+      "version_formulario": "2",
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001",
+      "metodo": "GET",
+      "status": 200,
+      "version_formulario": null,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/editar",
+      "metodo": "POST",
+      "status": 200,
+      "version_formulario": "2",
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001",
+      "metodo": "GET",
+      "status": 200,
+      "version_formulario": null,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/auth/logout",
+      "metodo": "POST",
+      "status": 302,
+      "version_formulario": null,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "version_formulario": null,
+      "usuario_id": null
+    }
+  ],
+  "error_cierre_navegador": null,
+  "fin": "2026-11-21T13:41:18.174711-03:00",
+  "junit_generado": true
+}

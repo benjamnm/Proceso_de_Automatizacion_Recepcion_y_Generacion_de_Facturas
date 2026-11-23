@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="7.250" timestamp="2026-11-21T13:59:47.555334-03:00" hostname="Vins"><testcase classname="e2e.test_idempotencia_creacion_qa" name="test_reenvio_identico_no_duplica_solicitud" time="6.993" /></testsuite></testsuites>

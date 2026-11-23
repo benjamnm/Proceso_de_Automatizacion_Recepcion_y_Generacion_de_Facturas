@@ -1,0 +1,2 @@
+﻿Ejecutable: C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Scripts\python.exe
+Argumentos: -X utf8 ejecutar_guardado_sin_cambios_qa.py <carpeta_aplicacion> <referencia_SOL_003>

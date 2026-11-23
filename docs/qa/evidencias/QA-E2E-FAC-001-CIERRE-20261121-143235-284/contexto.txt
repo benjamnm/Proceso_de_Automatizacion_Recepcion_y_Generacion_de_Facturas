@@ -1,0 +1,8 @@
+﻿ejecucion=QA-E2E-FAC-001-CIERRE
+rama=qa/facturaciones-v2-20261120
+commit_base=a3ac7e86f9672da9fc4710123680471a7b405713
+base=facturaciones_spa_qa
+alcance=verifica factura existente, conserva datos y prueba logout real; no genera otra factura
+ajuste=modifica solo e2e/test_factura_revision_qa.py para futuros ciclos; no reejecuta ese caso
+limite=no reproduce la transicion ni las alertas historicas de generacion; no cambia el JUnit fallido
+referencia=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-E2E-FAC-001-20261121-142826-381

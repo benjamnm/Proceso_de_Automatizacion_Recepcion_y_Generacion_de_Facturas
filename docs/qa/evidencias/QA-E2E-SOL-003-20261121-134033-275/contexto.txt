@@ -1,0 +1,15 @@
+﻿ejecucion=QA-E2E-SOL-003
+caso=E2E-SOL-003
+rama=qa/facturaciones-v2-20261120
+commit_base=a3ac7e86f9672da9fc4710123680471a7b405713
+base=facturaciones_spa_qa
+alcance=dos pestanas misma sesion v2; primer POST aceptado v3; segundo POST obsoleto rechazado
+efecto=conserva primera edicion y una auditoria nueva; no restaura datos
+referencia=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-E2E-SOL-002-20261121-031624-842
+limitacion=ediciones secuenciales de formularios abiertos; no carrera simultanea entre transacciones
+python=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Scripts\python.exe
+
+Estado Git:
+## qa/facturaciones-v2-20261120...origin/qa/facturaciones-v2-20261120
+?? e2e/test_version_obsoleta_solicitud_qa.py
+?? ../docs/qa/evidencias/QA-E2E-SOL-003-20261121-134033-275/

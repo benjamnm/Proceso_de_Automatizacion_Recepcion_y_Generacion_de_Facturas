@@ -1,0 +1,57 @@
+{
+  "referencia": "C:\\GitHub\\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\\docs\\qa\\evidencias\\QA-E2E-FAC-003-CIERRE-20261121-152518-518",
+  "transformaciones": [
+    {
+      "anterior": "E2E-FAC-003-CIERRE",
+      "nuevo": "E2E-FAC-004",
+      "ocurrencias": 2
+    },
+    {
+      "anterior": "test_correccion_existente_logout_qa.py",
+      "nuevo": "test_reenvio_factura_v2_qa.py",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "verificacion_complementaria_y_logout",
+      "nuevo": "reenvio_v2_verificado",
+      "ocurrencias": 3
+    },
+    {
+      "anterior": "Verifica correccion existente y factura historica; logout; sin editar ni reenviar; complementa intento fallido",
+      "nuevo": "Emisor reenvia solicitud corregida; genera factura v2; conserva v1 observada y auditorias previas",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Solo QA. Verificacion de correccion ya persistida y factura historica, seguida de logout. No se guarda ni reenvia.",
+      "nuevo": "Solo QA. Reenvio persistido: solicitud 3 v6 a v7 En revision; factura v2 nueva; v1 observada intacta.",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Autorizar comprobacion sin guardar. Escribe VERIFICAR CORRECCION QA: ",
+      "nuevo": "Autorizar reenvio y factura v2. Escribe REENVIAR FACTURA QA: ",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "VERIFICAR CORRECCION QA",
+      "nuevo": "REENVIAR FACTURA QA",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Comprobacion complementaria sin guardar ni reenviar; original conserva JUnit fallido",
+      "nuevo": "Genera v2 por reenvio; conserva v1 y su observacion; no aprueba ni genera XML SII; no acredita entrega SMTP",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "    resultado[\"delta_edicion_archivada_verificado\"]=True\n",
+      "nuevo": "",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "    resultado[\"caso_original_corregido_reejecutado\"]=False\n",
+      "nuevo": "",
+      "ocurrencias": 1
+    }
+  ],
+  "verificador": "reemplazado por verificador multiversion v1/v2",
+  "helper_logout": "extraido del caso previo con hash verificado"
+}

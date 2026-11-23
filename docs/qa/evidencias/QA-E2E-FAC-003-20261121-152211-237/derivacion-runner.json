@@ -1,0 +1,86 @@
+{
+  "referencia": "C:\\GitHub\\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\\docs\\qa\\evidencias\\QA-E2E-FAC-002-20261121-151803-737",
+  "transformaciones": [
+    {
+      "anterior": "E2E-FAC-002",
+      "nuevo": "E2E-FAC-003",
+      "ocurrencias": 2
+    },
+    {
+      "anterior": "test_factura_observada_qa.py",
+      "nuevo": "test_correccion_emisor_qa.py",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "devolucion_correccion_verificada",
+      "nuevo": "correccion_emisor_verificada",
+      "ocurrencias": 3
+    },
+    {
+      "anterior": "qa.admin@example.invalid",
+      "nuevo": "qa.emisor@example.invalid",
+      "ocurrencias": 2
+    },
+    {
+      "anterior": "actor[\"id\"]!=1 or actor[\"rol\"]!=\"Administrador\"",
+      "nuevo": "actor[\"id\"]!=2 or actor[\"rol\"]!=\"Emisor\"",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "len(antes[\"auditoria\"])!=6",
+      "nuevo": "len(antes[\"auditoria\"])!=7",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "original[\"version\"]!=4",
+      "nuevo": "original[\"version\"]!=5",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "original[\"estado_nombre\"]!=\"En revisi\u00f3n\"",
+      "nuevo": "original[\"estado_nombre\"]!=\"En correcci\u00f3n\"",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Administrador devuelve factura v1 a correccion; solicitud v4 a v5; auditoria y contenido inmutable",
+      "nuevo": "Emisor corrige concepto en solicitud observada; version 5 a 6; factura v1 sin cambios; no reenvio",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Solo QA. Administrador observa factura 1; solicitud 3 pasa a En correccion v5. No se genera otra factura.",
+      "nuevo": "Solo QA. Emisor corrige concepto de solicitud 3; sigue En correccion y pasa de v5 a v6; factura 1 intacta.",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Autorizar devolucion persistida. Escribe DEVOLVER FACTURA QA: ",
+      "nuevo": "Autorizar edicion persistida. Escribe CORREGIR SOLICITUD QA: ",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "DEVOLVER FACTURA QA",
+      "nuevo": "CORREGIR SOLICITUD QA",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "if k not in {\"estado_id\",\"estado_nombre\",\"version\",\"actualizado_en\"}",
+      "nuevo": "if k not in {\"concepto\",\"version\",\"actualizado_en\"}",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "\"campos_conservados\":conservados",
+      "nuevo": "\"campos_no_editados_conservados\":conservados",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "\"contenido_factura_conservado\":len(d[\"facturas\"])==1 and all(d[\"facturas\"][0][k]==antes[\"facturas\"][0][k] for k in antes[\"facturas\"][0] if k not in {\"estado\",\"revisada_por\",\"revisada_en\",\"observacion\"})",
+      "nuevo": "\"facturas_previas_sin_cambios\":d[\"facturas\"]==antes[\"facturas\"]",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Devolucion a correccion; no aprueba ni regenera factura ni genera XML SII",
+      "nuevo": "Corrige solo concepto en solicitud; conserva factura observada; no reenvia ni aprueba ni genera XML SII",
+      "ocurrencias": 1
+    }
+  ],
+  "helper_logout": "extraido del caso previo con hash verificado"
+}

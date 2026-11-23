@@ -1,0 +1,65 @@
+{
+  "referencia": "C:\\GitHub\\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\\docs\\qa\\evidencias\\QA-E2E-FAC-003-20261121-152211-237",
+  "transformaciones": [
+    {
+      "anterior": "E2E-FAC-003",
+      "nuevo": "E2E-FAC-003-CIERRE",
+      "ocurrencias": 2
+    },
+    {
+      "anterior": "test_correccion_emisor_qa.py",
+      "nuevo": "test_correccion_existente_logout_qa.py",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "correccion_emisor_verificada",
+      "nuevo": "verificacion_complementaria_y_logout",
+      "ocurrencias": 3
+    },
+    {
+      "anterior": "len(antes[\"auditoria\"])!=7",
+      "nuevo": "len(antes[\"auditoria\"])!=8",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "original[\"version\"]!=5",
+      "nuevo": "original[\"version\"]!=6",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Emisor corrige concepto en solicitud observada; version 5 a 6; factura v1 sin cambios; no reenvio",
+      "nuevo": "Verifica correccion existente y factura historica; logout; sin editar ni reenviar; complementa intento fallido",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Solo QA. Emisor corrige concepto de solicitud 3; sigue En correccion y pasa de v5 a v6; factura 1 intacta.",
+      "nuevo": "Solo QA. Verificacion de correccion ya persistida y factura historica, seguida de logout. No se guarda ni reenvia.",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Autorizar edicion persistida. Escribe CORREGIR SOLICITUD QA: ",
+      "nuevo": "Autorizar comprobacion sin guardar. Escribe VERIFICAR CORRECCION QA: ",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "CORREGIR SOLICITUD QA",
+      "nuevo": "VERIFICAR CORRECCION QA",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Corrige solo concepto en solicitud; conserva factura observada; no reenvia ni aprueba ni genera XML SII",
+      "nuevo": "Comprobacion complementaria sin guardar ni reenviar; original conserva JUnit fallido",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "    resultado[\"fin\"]=datetime.now().astimezone().isoformat()",
+      "nuevo": "    resultado[\"delta_edicion_archivada_verificado\"]=True\n    resultado[\"caso_original_corregido_reejecutado\"]=False\n    resultado[\"fin\"]=datetime.now().astimezone().isoformat()",
+      "ocurrencias": 1
+    }
+  ],
+  "ajustes_caso_original": [
+    "espera redireccion a factura",
+    "verifica concepto historico en factura; concepto nuevo se comprueba en SQL"
+  ],
+  "caso_original_reejecutado": false
+}

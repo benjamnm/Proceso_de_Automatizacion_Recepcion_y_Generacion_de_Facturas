@@ -1,0 +1,79 @@
+import hashlib
+import json
+from pathlib import Path
+from urllib.parse import urlsplit
+from xml.etree import ElementTree as ET
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
+
+__HELPERS__def test_xml_existente_descarga_en_chrome_y_logout(request):
+    ctx=request.config._qa_invoice_context
+    ev=Path(ctx["evidencia"])
+    emisor=json.loads((ev/"emisor-sintetico-qa.json").read_text(encoding="utf-8"))
+    driver=None;fallo=False
+    try:
+        opciones=webdriver.ChromeOptions();opciones.add_argument("--window-size=1440,1000")
+        driver=webdriver.Chrome(options=opciones)
+        driver.set_window_size(1440,1000);driver.set_page_load_timeout(30)
+        wait=WebDriverWait(driver,20)
+        caps=driver.capabilities
+        (ev/"navegador.json").write_text(json.dumps({"browser":caps.get("browserName"),"browser_version":caps.get("browserVersion")},indent=2),encoding="utf-8")
+        base=ctx["base_url"];pid=ctx["public_id"];ruta="/solicitudes/"+pid+"/factura"
+        driver.get(base+"/auth/login")
+        correo=wait.until(EC.visibility_of_element_located((By.ID,"email")))
+        correo.send_keys(ctx["email"]);driver.find_element(By.ID,"password").send_keys(ctx["password"])
+        correo.find_element(By.XPATH,"./ancestor::form").find_element(By.CSS_SELECTOR,"button[type='submit']").click()
+        wait.until(lambda d:urlsplit(d.current_url).path!="/auth/login" or bool(d.find_elements(By.CSS_SELECTOR,".alert-danger")))
+        assert urlsplit(driver.current_url).path=="/dashboard"
+        driver.get(base+ruta)
+        enlace=wait.until(EC.presence_of_element_located((By.PARTIAL_LINK_TEXT,"Descargar DTE")))
+        assert "Aprobada" in driver.find_element(By.TAG_NAME,"body").text
+        assert driver.find_element(By.CSS_SELECTOR,"h1 .badge").text=="v2"
+        assert not driver.find_elements(By.CSS_SELECTOR,"form[data-confirmar]")
+        assert driver.save_screenshot(str(ev/"factura-ya-aprobada-sin-reaprobar.png"))
+        v=ctx["verificar"]()
+        assert v["estado_igual_al_inicial"] is True
+        assert v["total_solicitudes"]==5 and v["total_auditoria"]==10 and v["total_facturas"]==2
+        assert v["solicitud"]["version"]==8 and v["solicitud"]["estado_nombre"]=="Aprobada"
+        assert v["factura_v1_intacta"] and v["contenido_v2_conservado"] and v["sin_facturas_adicionales"]
+        assert v["auditorias_previas_sin_cambios"] and not v["auditorias_nuevas"]
+        f=v["factura_v2"]
+        assert f["estado"]=="APROBADA" and f["version"]==2 and f["revisada_por"]==1
+        assert len(v["archivos_sii"])==1
+        archivo=v["archivos_sii"][0]
+        assert archivo["nombre"]==f["archivo_sii"] and archivo["sha256"]==f["archivo_sii_sha256"]
+        url=enlace.get_attribute("href")
+        inicio=len(ctx["eventos"])
+        contenido,tipo,disposicion=descargar_en_sesion_del_navegador(driver,url,ev)
+        accesos=[e for e in ctx["eventos"][inicio:] if e["ruta"]==urlsplit(url).path and e["metodo"]=="GET"]
+        assert len(accesos)==1 and accesos[0]["status"]==200 and accesos[0]["usuario_id"]==1
+__XML__        assert all(v["conteos"][t]==0 for t in ("registros_xml","adjuntos_solicitud","envios_correo","correos_entrantes"))
+        assert ctx["intentos_smtp"]==0
+        inicio=len(ctx["eventos"])
+        ctx["alertas_cerradas_logout"]=cerrar_alertas_y_logout(driver,wait)
+        wait.until(lambda d:urlsplit(d.current_url).path=="/auth/login")
+        salidas=[e for e in ctx["eventos"][inicio:] if e["metodo"]=="POST" and e["ruta"]=="/auth/logout"]
+        assert len(salidas)==1 and salidas[0]["status"]==302 and salidas[0]["usuario_id"] is None
+        driver.get(base+"/dashboard")
+        wait.until(lambda d:urlsplit(d.current_url).path=="/auth/login")
+        assert all(e["ruta"] in {"/auth/login","/auth/logout"} for e in ctx["eventos"] if e["metodo"]=="POST")
+        assert ctx["verificar"]()["estado_igual_al_inicial"] is True
+        ctx["verificacion_complementaria_y_logout"]=True
+    except Exception:
+        fallo=True
+        if driver is not None:
+            try:
+                for campo in driver.find_elements(By.CSS_SELECTOR,"input[type='password']"):campo.clear()
+                driver.save_screenshot(str(ev/"fallo-complementaria-xml.png"))
+            except Exception:pass
+        raise
+    finally:
+        if driver is not None:
+            try:driver.quit()
+            except Exception as exc:
+                ctx["error_cierre_navegador"]=type(exc).__name__
+                if not fallo:raise

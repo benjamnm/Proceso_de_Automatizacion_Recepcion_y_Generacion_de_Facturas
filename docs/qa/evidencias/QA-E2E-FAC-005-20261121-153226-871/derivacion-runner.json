@@ -1,0 +1,87 @@
+{
+  "referencia": "C:\\GitHub\\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\\docs\\qa\\evidencias\\QA-E2E-FAC-004-20261121-152811-362",
+  "transformaciones": [
+    {
+      "anterior": "E2E-FAC-004",
+      "nuevo": "E2E-FAC-005",
+      "ocurrencias": 2
+    },
+    {
+      "anterior": "test_reenvio_factura_v2_qa.py",
+      "nuevo": "test_aprobacion_xml_local_qa.py",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "reenvio_v2_verificado",
+      "nuevo": "aprobacion_xml_verificada",
+      "ocurrencias": 3
+    },
+    {
+      "anterior": "qa.emisor@example.invalid",
+      "nuevo": "qa.admin@example.invalid",
+      "ocurrencias": 2
+    },
+    {
+      "anterior": "actor[\"id\"]!=2 or actor[\"rol\"]!=\"Emisor\"",
+      "nuevo": "actor[\"id\"]!=1 or actor[\"rol\"]!=\"Administrador\"",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "len(antes[\"auditoria\"])!=8",
+      "nuevo": "len(antes[\"auditoria\"])!=9",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "len(antes[\"facturas\"])!=1",
+      "nuevo": "len(antes[\"facturas\"])!=2",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "original[\"version\"]!=6",
+      "nuevo": "original[\"version\"]!=7",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "original[\"estado_nombre\"]!=\"En correcci\u00f3n\"",
+      "nuevo": "original[\"estado_nombre\"]!=\"En revisi\u00f3n\"",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Emisor reenvia solicitud corregida; genera factura v2; conserva v1 observada y auditorias previas",
+      "nuevo": "Administrador aprueba v2 y genera XML local de prueba; descarga autenticada; v1 intacta; sin emision SII",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Solo QA. Reenvio persistido: solicitud 3 v6 a v7 En revision; factura v2 nueva; v1 observada intacta.",
+      "nuevo": "Solo QA. Aprobacion persistida: solicitud 3 v7 a v8 Aprobada; v2 APROBADA y XML local con emisor sintetico. Sin envio al SII.",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Autorizar reenvio y factura v2. Escribe REENVIAR FACTURA QA: ",
+      "nuevo": "Autorizar aprobacion interna y XML local. Escribe APROBAR FACTURA QA: ",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "REENVIAR FACTURA QA",
+      "nuevo": "APROBAR FACTURA QA",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "        SMTP_HOST=\"\";",
+      "nuevo": "        EMPRESA_RUT='22222222-2'\n        EMPRESA_RAZON_SOCIAL='Emisor Sintetico QA Sin Validez Tributaria'\n        EMPRESA_GIRO='Servicios sinteticos de prueba QA'\n        EMPRESA_ACTECO='620200'\n        EMPRESA_DIRECCION='Direccion sintetica QA 123'\n        EMPRESA_COMUNA='Comuna QA'\n        SMTP_HOST=\"\";",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Genera v2 por reenvio; conserva v1 y su observacion; no aprueba ni genera XML SII; no acredita entrega SMTP",
+      "nuevo": "Aprobacion interna y XML local con datos sinteticos; descarga autenticada; no firma, TED, CAF, validacion XSD ni envio/aceptacion SII",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "    resultado[\"fin\"]=datetime.now().astimezone().isoformat()",
+      "nuevo": "    resultado[\"xml_local_verificado\"]=ctx.get(\"xml_local_verificado\",False)\n    resultado[\"descarga_autenticada_verificada\"]=ctx.get(\"descarga_autenticada_verificada\",False)\n    resultado[\"emisor_xml\"]=\"sintetico QA; sobreescrito solo en proceso; .env intacto\"\n    resultado[\"fin\"]=datetime.now().astimezone().isoformat()",
+      "ocurrencias": 1
+    }
+  ],
+  "verificador": "aprobacion v2, invariancia v1 y lectura de archivo QA",
+  "helper_logout": "extraido del caso previo con hash verificado"
+}

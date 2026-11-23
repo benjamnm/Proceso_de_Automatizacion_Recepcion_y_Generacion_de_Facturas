@@ -1,0 +1,9 @@
+﻿ejecucion=QA-E2E-FAC-002
+rama=qa/facturaciones-v2-20261120
+commit_base=a3ac7e86f9672da9fc4710123680471a7b405713
+base=facturaciones_spa_qa
+alcance=Administrador devuelve factura 1 v1 a correccion con observacion; solicitud 3 v4 a v5
+efecto=estado factura OBSERVADA, revisada_por=1, una auditoria FACTURA_OBSERVADA
+limites=no regenera factura; no aprueba; no XML SII; SMTP/IMAP bloqueados
+logout=cierre de alertas por boton y verificacion de oclusion; no clics JS
+referencia=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-E2E-FAC-001-CIERRE-20261121-143235-284

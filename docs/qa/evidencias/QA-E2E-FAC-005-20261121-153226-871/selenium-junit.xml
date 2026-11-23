@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="8.203" timestamp="2026-11-21T15:32:51.306406-03:00" hostname="Vins"><testcase classname="e2e.test_aprobacion_xml_local_qa" name="test_admin_aprueba_v2_xml_local_y_descarga_autenticada" time="7.712"><failure message="AssertionError">e2e\test_aprobacion_xml_local_qa.py:134: in test_admin_aprueba_v2_xml_local_y_descarga_autenticada
+    assert respuesta.status==200 and respuesta.geturl()==url
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError</failure></testcase></testsuite></testsuites>

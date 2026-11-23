@@ -1,0 +1,36 @@
+{
+  "referencia": "C:\\GitHub\\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\\docs\\qa\\evidencias\\QA-E2E-FAC-005-CIERRE-20261121-153555-640",
+  "verificaciones": {
+    "referencia_fallida_en_cierre": true,
+    "solo_auditoria_cambio": true,
+    "totales_correctos": true,
+    "auditoria_previa_intacta": true,
+    "unico_evento_descarga_correcto": true,
+    "estado_aprobado_conservado": true,
+    "xml_y_descarga_completados": true,
+    "delta_aprobacion_previo_confirmado": true,
+    "descarga_autenticada_http_200": true,
+    "logout_y_panel_protegido": true,
+    "sin_post_de_negocio": true,
+    "sha_original_bd_descarga_y_auditoria": true,
+    "xml_local_tipo_folio_y_total": true,
+    "xml_concepto_y_receptor": true,
+    "xml_sin_firma_ni_ted": true,
+    "evento_explicito_en_ruta_local": true
+  },
+  "evento_nuevo": [
+    {
+      "id": 11,
+      "usuario_id": 1,
+      "accion": "ARCHIVO_SII_DESCARGADO",
+      "detalle": {
+        "solicitud_afectada_id": 3,
+        "public_id": "ee2e8fdb51290c59ae0ab6457a3ba001",
+        "factura_id": 2,
+        "version_factura": 2,
+        "sha256": "ba4bdc56206189bd91c6b387ad60d8d4d72de5d0517408e004fedc7896cd349e"
+      },
+      "creado_en": "2026-11-21 15:36:22"
+    }
+  ]
+}

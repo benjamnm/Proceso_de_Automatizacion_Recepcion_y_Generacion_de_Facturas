@@ -1,0 +1,6 @@
+﻿id=QA-DIAG-BD-009
+motivo=verificacion posterior al arranque informado por el usuario
+solo_lectura=true
+origen=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-DIAG-BD-009-20261121-140548-046\diagnosticar_bd_qa.py
+sha256_script=0CE8F31CB13985D64FA4A1E2C74F09EAB7A76F77CB20CD837096F2FC4A4B6BE0
+referencia=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-E2E-SOL-008-20261121-135919-347

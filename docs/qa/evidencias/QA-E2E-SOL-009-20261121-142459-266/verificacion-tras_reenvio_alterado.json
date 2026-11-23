@@ -1,0 +1,60 @@
+{
+  "total_solicitudes": 5,
+  "total_auditoria": 5,
+  "solicitud_nueva": {
+    "id": 5,
+    "public_id": "b47a5121cb3c85d05a600a5e0579dce5",
+    "emisor_id": 2,
+    "cliente_id": 1,
+    "estado_id": 1,
+    "origen_id": 1,
+    "rut": "11111111-1",
+    "nombre": "Cliente Sintetico QA Aislamiento",
+    "direccion": "Direccion ficticia QA 123",
+    "giro": "Servicios de prueba QA",
+    "email_contacto_receptor": "cliente.qa@example.com",
+    "concepto": "QA-CLAVE-CONFLICTO-WEB-ee042ebf",
+    "nro_orden_compra": "QA-OC-CLAVE-CONFLICTO",
+    "fecha_emision": "2026-11-21",
+    "monto_bruto": "238000",
+    "tipo_afectacion": "EXENTA",
+    "email_emisor": "qa.emisor@example.invalid",
+    "motivo_rechazo": null,
+    "creado_en": "2026-11-21 14:25:35",
+    "actualizado_en": "2026-11-21 14:25:35",
+    "version": 1,
+    "estado_nombre": "Pendiente",
+    "origen_nombre": "Web"
+  },
+  "coincidencias_concepto": 1,
+  "originales_sin_cambios": true,
+  "auditorias_previas_sin_cambios": true,
+  "auditorias_nuevas": [
+    {
+      "id": 5,
+      "usuario_id": 2,
+      "accion": "SOLICITUD_CREADA",
+      "detalle": {
+        "solicitud_afectada_id": 5,
+        "public_id": "b47a5121cb3c85d05a600a5e0579dce5",
+        "cliente_id": 1,
+        "estado": "Pendiente",
+        "origen": "Web",
+        "concepto": "QA-CLAVE-CONFLICTO-WEB-ee042ebf",
+        "monto_bruto": "238000",
+        "fecha_emision": "2026-11-21",
+        "tipo_afectacion": "EXENTA",
+        "nro_orden_compra": "QA-OC-CLAVE-CONFLICTO",
+        "receptor_historico": {
+          "rut": "11111111-1",
+          "nombre": "Cliente Sintetico QA Aislamiento",
+          "direccion": "Direccion ficticia QA 123",
+          "giro": "Servicios de prueba QA",
+          "email": "cliente.qa@example.com"
+        }
+      },
+      "creado_en": "2026-11-21 14:25:35"
+    }
+  ],
+  "igual_al_primer_alta": true
+}

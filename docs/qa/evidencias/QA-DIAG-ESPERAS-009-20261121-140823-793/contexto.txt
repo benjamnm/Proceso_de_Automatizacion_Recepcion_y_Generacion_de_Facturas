@@ -1,0 +1,8 @@
+﻿id=QA-DIAG-ESPERAS-009
+solo_lectura=true
+base=facturaciones_spa_qa
+incidente=lectura_actor agota read_timeout de 15 segundos
+nota=dos conexiones; no KILL, no reinicios, no INSTALL PLUGIN ni cambios de timeout
+privacidad=no guarda texto SQL, password ni hashes de password
+rama=qa/facturaciones-v2-20261120
+commit=a3ac7e86f9672da9fc4710123680471a7b405713

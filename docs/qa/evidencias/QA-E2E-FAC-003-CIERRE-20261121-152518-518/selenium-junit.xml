@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="8.796" timestamp="2026-11-21T15:25:37.798992-03:00" hostname="Vins"><testcase classname="e2e.test_correccion_existente_logout_qa" name="test_correccion_existente_factura_historica_y_logout" time="8.317" /></testsuite></testsuites>

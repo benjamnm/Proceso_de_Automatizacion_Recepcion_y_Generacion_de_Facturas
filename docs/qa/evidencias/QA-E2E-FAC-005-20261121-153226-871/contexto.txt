@@ -1,0 +1,10 @@
+﻿ejecucion=QA-E2E-FAC-005
+rama=qa/facturaciones-v2-20261120
+commit_base=a3ac7e86f9672da9fc4710123680471a7b405713
+base=facturaciones_spa_qa
+alcance=Administrador aprueba v2; solicitud 3 v7 a v8; XML local y descarga HTTP autenticada con sesion del navegador
+integridad=v1 intacta; contenido y huella de v2 conservados; SHA256 archivo/BD/descarga iguales; FACTURA_APROBADA
+aislamiento=EMPRESA_* sinteticos solo en ConfigQA; .env intacto; XML en evidencia de esta ejecucion; SMTP/IMAP bloqueados
+limites=sin firma, TED ni CAF; folio provisional; no validacion XSD ni integracion/envio/aceptacion SII; no entrega SMTP
+descarga=endpoint del enlace real mediante HTTP con cookie solo en memoria; no prueba dialogo de descarga de Chrome
+referencia=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-E2E-FAC-004-20261121-152811-362

@@ -1,0 +1,14 @@
+{
+  "etiqueta": "separador",
+  "monto_intentado": "1.000",
+  "validez_nativa": {
+    "pattern": "[0-9]{1,14}",
+    "patternMismatch": true,
+    "valid": false,
+    "validationMessage": "Utiliza un formato que coincida con el solicitado"
+  },
+  "ventana_observacion_sin_post_segundos": 2,
+  "post_edicion_observados": 0,
+  "estado_comparado_sin_cambios": true,
+  "limitacion": "Valida bloqueo del navegador; no rechazo de este formato en backend"
+}

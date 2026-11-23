@@ -1,0 +1,62 @@
+{
+  "origen": "C:\\GitHub\\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\\docs\\qa\\evidencias\\QA-E2E-SOL-006-20261121-135126-401\\ejecutar_formato_nativo_qa.py",
+  "sha256_origen": "7574decddc0a51f9a12b184fa57132a9b828bb529102fe23bde6afb073d1a000",
+  "sha256_generado": "495d71f58f7b64f3062e92c6b82c1d4c9bb255e38b9fb4739bd0a7cba49d69db",
+  "transformaciones": [
+    {
+      "anterior": "E2E-SOL-006",
+      "nuevo": "E2E-SOL-007",
+      "ocurrencias": 2
+    },
+    {
+      "anterior": "_qa_native_context",
+      "nuevo": "_qa_backendformat_context",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "test_formato_nativo_monto_qa.py",
+      "nuevo": "test_formato_backend_monto_qa.py",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "bloqueo_nativo_verificado",
+      "nuevo": "rechazo_backend_verificado",
+      "ocurrencias": 3
+    },
+    {
+      "anterior": "patron_nativo_verificado",
+      "nuevo": "error_formato_backend_verificado",
+      "ocurrencias": 2
+    },
+    {
+      "anterior": "patrones_completados",
+      "nuevo": "formatos_backend_completados",
+      "ocurrencias": 2
+    },
+    {
+      "anterior": "aviso_verificado",
+      "nuevo": "respuesta_error_verificada",
+      "ocurrencias": 3
+    },
+    {
+      "anterior": "dos formatos invalidos bloqueados por navegador; sin POST de edicion observado ni cambios de negocio",
+      "nuevo": "dos POST de formato invalido desde navegador; rechazo backend con CSRF y sesion; sin cambios de negocio",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Solo QA. Dos casos de formato nativo en ID 3: 1.000 y -1. No se espera POST de edicion.",
+      "nuevo": "Solo QA. Se enviaran dos POST invalidos (1.000 y -1) a ID 3 con sesion y CSRF; se espera rechazo backend.",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Autorizar pruebas nativas de formato. Escribe PROBAR FORMATO QA: ",
+      "nuevo": "Autorizar dos POST invalidos en QA. Escribe PROBAR FORMATO BACKEND QA: ",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "PROBAR FORMATO QA",
+      "nuevo": "PROBAR FORMATO BACKEND QA",
+      "ocurrencias": 1
+    }
+  ]
+}

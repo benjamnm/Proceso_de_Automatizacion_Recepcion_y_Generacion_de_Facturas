@@ -1,0 +1,147 @@
+{
+  "ejecucion": "QA-E2E-SOL-004",
+  "caso": "E2E-SOL-004",
+  "inicio": "2026-11-21T13:43:45.013784-03:00",
+  "base": "facturaciones_spa_qa",
+  "pruebas_iniciadas": true,
+  "codigo_pytest": 0,
+  "alcance": "un POST real sin cambiar valores; aviso, version 3 conservada y sin nueva auditoria",
+  "fase": "ejecucion_selenium",
+  "referencia_estado_sha256": "03335063d59c38e8d0aa1bb00836489c501818d7081ec803b9221da7eaf8f9a7",
+  "cuenta_bd_verificada": "qa_facturaciones@127.0.0.1",
+  "http_login": 200,
+  "servidor_qa_detenido": true,
+  "total_solicitudes_despues": 3,
+  "total_auditoria_despues": 3,
+  "version_despues": 3,
+  "estado_comparado_sin_cambios": true,
+  "guardado_sin_cambios_verificado": true,
+  "aviso_verificado": true,
+  "verificacion": {
+    "total_solicitudes": 3,
+    "total_auditoria": 3,
+    "version": 3,
+    "solicitud": {
+      "id": 3,
+      "public_id": "ee2e8fdb51290c59ae0ab6457a3ba001",
+      "emisor_id": 2,
+      "cliente_id": 1,
+      "estado_id": 1,
+      "origen_id": 1,
+      "rut": "11111111-1",
+      "nombre": "Cliente Sintetico QA Aislamiento",
+      "direccion": "Direccion ficticia QA 123",
+      "giro": "Servicios de prueba QA",
+      "email_contacto_receptor": "cliente.qa@example.com",
+      "concepto": "QA-VIGENTE-WEB-5ecd1f03",
+      "nro_orden_compra": "QA-OC-ED-ab64f2c7",
+      "fecha_emision": "2026-11-21",
+      "monto_bruto": "459000",
+      "tipo_afectacion": "EXENTA",
+      "email_emisor": "qa.emisor@example.invalid",
+      "motivo_rechazo": null,
+      "creado_en": "2026-11-21 03:10:06",
+      "actualizado_en": "2026-11-21 13:41:13",
+      "version": 3,
+      "estado_nombre": "Pendiente",
+      "origen_nombre": "Web"
+    },
+    "solicitudes_sin_cambios": true,
+    "auditoria_sin_cambios": true,
+    "conteos_relacionados_sin_cambios": true,
+    "estado_comparado_sin_cambios": true
+  },
+  "eventos_http": [
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "POST",
+      "status": 302,
+      "location": "/dashboard",
+      "version_formulario": null,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/dashboard",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/editar",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/editar",
+      "metodo": "POST",
+      "status": 302,
+      "location": "/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001",
+      "version_formulario": "3",
+      "usuario_id": 2,
+      "campos_recibidos": {
+        "cliente_id": "1",
+        "concepto": "QA-VIGENTE-WEB-5ecd1f03",
+        "monto_bruto": "459000",
+        "fecha_emision": "2026-11-21",
+        "tipo_afectacion": "EXENTA",
+        "nro_orden_compra": "QA-OC-ED-ab64f2c7"
+      }
+    },
+    {
+      "ruta": "/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/editar",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/auth/logout",
+      "metodo": "POST",
+      "status": 302,
+      "location": "/auth/login",
+      "version_formulario": null,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": null
+    }
+  ],
+  "error_cierre_navegador": null,
+  "fin": "2026-11-21T13:44:14.524148-03:00",
+  "junit_generado": true
+}

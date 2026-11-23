@@ -1,0 +1,57 @@
+{
+  "total_solicitudes": 3,
+  "total_auditoria": 3,
+  "solicitud": {
+    "id": 3,
+    "public_id": "ee2e8fdb51290c59ae0ab6457a3ba001",
+    "emisor_id": 2,
+    "cliente_id": 1,
+    "estado_id": 1,
+    "origen_id": 1,
+    "rut": "11111111-1",
+    "nombre": "Cliente Sintetico QA Aislamiento",
+    "direccion": "Direccion ficticia QA 123",
+    "giro": "Servicios de prueba QA",
+    "email_contacto_receptor": "cliente.qa@example.com",
+    "concepto": "QA-VIGENTE-WEB-5ecd1f03",
+    "nro_orden_compra": "QA-OC-ED-ab64f2c7",
+    "fecha_emision": "2026-11-21",
+    "monto_bruto": "459000",
+    "tipo_afectacion": "EXENTA",
+    "email_emisor": "qa.emisor@example.invalid",
+    "motivo_rechazo": null,
+    "creado_en": "2026-11-21 03:10:06",
+    "actualizado_en": "2026-11-21 13:41:13",
+    "version": 3,
+    "estado_nombre": "Pendiente",
+    "origen_nombre": "Web"
+  },
+  "originales_sin_cambios": true,
+  "inmutables_sin_cambios": true,
+  "auditorias_previas_sin_cambios": true,
+  "auditorias_nuevas": [
+    {
+      "id": 3,
+      "usuario_id": 2,
+      "accion": "SOLICITUD_EDITADA",
+      "detalle": {
+        "solicitud_afectada_id": 3,
+        "public_id": "ee2e8fdb51290c59ae0ab6457a3ba001",
+        "estado": "Pendiente",
+        "version_anterior": 2,
+        "version_nueva": 3,
+        "cambios": {
+          "concepto": {
+            "anterior": "QA-EDITADA-WEB-ab64f2c7",
+            "nuevo": "QA-VIGENTE-WEB-5ecd1f03"
+          },
+          "monto_bruto": {
+            "anterior": "412000",
+            "nuevo": "459000"
+          }
+        }
+      },
+      "creado_en": "2026-11-21 13:41:13"
+    }
+  ]
+}

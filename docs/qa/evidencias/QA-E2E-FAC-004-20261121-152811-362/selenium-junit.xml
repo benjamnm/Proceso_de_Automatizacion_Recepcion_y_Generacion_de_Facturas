@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="8.465" timestamp="2026-11-21T15:28:36.622274-03:00" hostname="Vins"><testcase classname="e2e.test_reenvio_factura_v2_qa" name="test_emisor_reenvia_y_genera_v2_con_v1_intacta" time="8.109" /></testsuite></testsuites>

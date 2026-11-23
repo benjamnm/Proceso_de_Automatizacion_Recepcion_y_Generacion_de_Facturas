@@ -1,0 +1,13 @@
+[
+  "e2e/test_version_obsoleta_solicitud_qa.py",
+  "-o",
+  "addopts=",
+  "-v",
+  "-ra",
+  "--tb=short",
+  "--assert=plain",
+  "--color=no",
+  "-p",
+  "no:cacheprovider",
+  "--junitxml=C:\\GitHub\\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\\docs\\qa\\evidencias\\QA-E2E-SOL-003-20261121-134033-275\\selenium-junit.xml"
+]

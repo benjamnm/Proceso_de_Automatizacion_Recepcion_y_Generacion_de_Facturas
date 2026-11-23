@@ -1,0 +1,57 @@
+{
+  "origen": "C:\\GitHub\\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\\docs\\qa\\evidencias\\QA-E2E-SOL-005-20261121-134813-299\\ejecutar_monto_cero_qa.py",
+  "sha256_origen": "8ed730454dc5fb4dab9f3ff829a2611546e632913edb5e0ccbd09a2349bdb74b",
+  "sha256_generado": "7574decddc0a51f9a12b184fa57132a9b828bb529102fe23bde6afb073d1a000",
+  "transformaciones": [
+    {
+      "anterior": "E2E-SOL-005",
+      "nuevo": "E2E-SOL-006",
+      "ocurrencias": 2
+    },
+    {
+      "anterior": "_qa_zero_context",
+      "nuevo": "_qa_native_context",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "test_monto_cero_solicitud_qa.py",
+      "nuevo": "test_formato_nativo_monto_qa.py",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "monto_cero_rechazado",
+      "nuevo": "bloqueo_nativo_verificado",
+      "ocurrencias": 3
+    },
+    {
+      "anterior": "error_monto_verificado",
+      "nuevo": "patron_nativo_verificado",
+      "ocurrencias": 2
+    },
+    {
+      "anterior": "un POST real con monto cero; error de servidor y de campo; sin cambios de datos ni auditoria",
+      "nuevo": "dos formatos invalidos bloqueados por navegador; sin POST de edicion observado ni cambios de negocio",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Solo QA. Un envio real con monto 0 en ID 3. Se espera rechazo y conservar el monto 459000.",
+      "nuevo": "Solo QA. Dos casos de formato nativo en ID 3: 1.000 y -1. No se espera POST de edicion.",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Autorizar intento con monto cero. Escribe PROBAR MONTO CERO QA: ",
+      "nuevo": "Autorizar pruebas nativas de formato. Escribe PROBAR FORMATO QA: ",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "PROBAR MONTO CERO QA",
+      "nuevo": "PROBAR FORMATO QA",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "resultado[\"aviso_verificado\"]=ctx[\"aviso_verificado\"]",
+      "nuevo": "resultado[\"aviso_verificado\"]=ctx[\"aviso_verificado\"]\n    resultado[\"patrones_completados\"]=ctx.get(\"patrones_completados\",[])",
+      "ocurrencias": 1
+    }
+  ]
+}

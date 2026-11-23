@@ -1,0 +1,10 @@
+{
+  "alerta": "Ingrese un monto entero de hasta 14 d\u00edgitos, sin puntos ni comas.",
+  "aria_invalid": "true",
+  "clase_invalida": true,
+  "descripcion": "Ingrese un monto entero de hasta 14 d\u00edgitos, sin puntos ni comas.",
+  "monto_respuesta": "1.000",
+  "redirected": false,
+  "ruta_final": "/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/editar",
+  "status": 200
+}

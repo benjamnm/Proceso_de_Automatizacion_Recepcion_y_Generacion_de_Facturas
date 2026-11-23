@@ -1,0 +1,121 @@
+{
+  "id": "QA-LIMPIEZA-LECTURAS-009",
+  "inicio": "2026-11-21T14:11:27.875771-03:00",
+  "solo_lectura": false,
+  "accion": "cancelacion acotada de conexiones de lecturas QA identificadas",
+  "ids_permitidos": [
+    151,
+    152,
+    154
+  ],
+  "acciones": [
+    {
+      "id": 151,
+      "comando": "KILL CONNECTION 151",
+      "estado": "ORDEN_ACEPTADA"
+    },
+    {
+      "id": 152,
+      "comando": "KILL CONNECTION 152",
+      "estado": "ORDEN_ACEPTADA"
+    },
+    {
+      "id": 154,
+      "comando": "KILL CONNECTION 154",
+      "estado": "ORDEN_ACEPTADA"
+    }
+  ],
+  "identidad": {
+    "bd": "facturaciones_spa_qa",
+    "cuenta": "qa_facturaciones@127.0.0.1",
+    "id": 155
+  },
+  "procesos_antes": [
+    {
+      "Id": 151,
+      "User": "qa_facturaciones",
+      "base": "facturaciones_spa_qa",
+      "Command": "Query",
+      "Time": 504,
+      "State": "Statistics",
+      "sha256_sql": "4f9356bf60b65ecb347c490ee0cdcc9a6464763edf7ea0d89a8a216c2bf14c3f"
+    },
+    {
+      "Id": 152,
+      "User": "qa_facturaciones",
+      "base": "facturaciones_spa_qa",
+      "Command": "Query",
+      "Time": 325,
+      "State": "Opening tables",
+      "sha256_sql": "4f9356bf60b65ecb347c490ee0cdcc9a6464763edf7ea0d89a8a216c2bf14c3f"
+    },
+    {
+      "Id": 154,
+      "User": "qa_facturaciones",
+      "base": "facturaciones_spa_qa",
+      "Command": "Query",
+      "Time": 143,
+      "State": "Opening tables",
+      "sha256_sql": "4f9356bf60b65ecb347c490ee0cdcc9a6464763edf7ea0d89a8a216c2bf14c3f"
+    },
+    {
+      "Id": 155,
+      "User": "qa_facturaciones",
+      "base": "facturaciones_spa_qa",
+      "Command": "Query",
+      "Time": 0,
+      "State": "Init",
+      "sha256_sql": "c9ad5577942525cc832b42c57c0ea748deb3d5eb9281dbc6f59128ea23e781e0"
+    }
+  ],
+  "candidatos_verificados": [
+    151,
+    152,
+    154
+  ],
+  "procesos_despues": [
+    {
+      "Id": 151,
+      "User": "qa_facturaciones",
+      "base": "facturaciones_spa_qa",
+      "Command": "Killed",
+      "Time": 520,
+      "State": "Statistics",
+      "sha256_sql": "4f9356bf60b65ecb347c490ee0cdcc9a6464763edf7ea0d89a8a216c2bf14c3f"
+    },
+    {
+      "Id": 152,
+      "User": "qa_facturaciones",
+      "base": "facturaciones_spa_qa",
+      "Command": "Killed",
+      "Time": 342,
+      "State": "Opening tables",
+      "sha256_sql": "4f9356bf60b65ecb347c490ee0cdcc9a6464763edf7ea0d89a8a216c2bf14c3f"
+    },
+    {
+      "Id": 154,
+      "User": "qa_facturaciones",
+      "base": "facturaciones_spa_qa",
+      "Command": "Killed",
+      "Time": 160,
+      "State": "Opening tables",
+      "sha256_sql": "4f9356bf60b65ecb347c490ee0cdcc9a6464763edf7ea0d89a8a216c2bf14c3f"
+    },
+    {
+      "Id": 155,
+      "User": "qa_facturaciones",
+      "base": "facturaciones_spa_qa",
+      "Command": "Query",
+      "Time": 0,
+      "State": "Init",
+      "sha256_sql": "c9ad5577942525cc832b42c57c0ea748deb3d5eb9281dbc6f59128ea23e781e0"
+    }
+  ],
+  "ids_objetivo_aun_visibles": [
+    151,
+    152,
+    154
+  ],
+  "estado": "ORDENES_REGISTRADAS_REVISAR_PROCESOS_DESPUES",
+  "fin": "2026-11-21T14:11:47.565789-03:00"
+}

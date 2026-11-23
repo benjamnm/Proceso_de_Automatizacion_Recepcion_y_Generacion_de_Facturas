@@ -1,0 +1,7 @@
+﻿id=QA-LIMPIEZA-LECTURAS-009
+solo_lectura=false
+accion=KILL CONNECTION solo IDs 151,152,154 tras verificar usuario, base, hash SQL y antiguedad
+nota=no ejecuta nuevos SELECT de usuarios/roles, no reinicia, no cambia permisos, no toca tablas
+origen=QA-DIAG-ESPERAS-009-20261121-140823-793
+rama=qa/facturaciones-v2-20261120
+commit=a3ac7e86f9672da9fc4710123680471a7b405713

@@ -1,0 +1,197 @@
+{
+  "ejecucion": "QA-E2E-SOL-009",
+  "caso": "E2E-SOL-009",
+  "inicio": "2026-11-21T14:25:02.546590-03:00",
+  "base": "facturaciones_spa_qa",
+  "pruebas_iniciadas": true,
+  "codigo_pytest": 0,
+  "alcance": "alta web; misma clave con concepto y monto distintos rechazada sin alterar datos ni agregar auditoria",
+  "fase": "ejecucion_selenium",
+  "referencia_estado_sha256": "18429f11176c1645d6adc6d1a08821fb2d446123bee60639934627de6b1586c3",
+  "cuenta_bd_verificada": "qa_facturaciones@127.0.0.1",
+  "http_login": 200,
+  "servidor_qa_detenido": true,
+  "total_solicitudes_despues": 5,
+  "total_auditoria_despues": 5,
+  "version_solicitud_original_3": 3,
+  "estado_igual_al_inicial": false,
+  "conflicto_clave_verificado": true,
+  "creacion_web_verificada": true,
+  "etapas_completadas": [
+    "creacion",
+    "rechazo_datos_distintos"
+  ],
+  "persistencia_creacion_verificada": true,
+  "verificacion": null,
+  "eventos_http": [
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "POST",
+      "status": 302,
+      "location": "/dashboard",
+      "version_formulario": null,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/dashboard",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/nueva",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/nueva",
+      "metodo": "POST",
+      "status": 302,
+      "location": "/solicitudes/b47a5121cb3c85d05a600a5e0579dce5",
+      "version_formulario": null,
+      "usuario_id": 2,
+      "campos_recibidos": {
+        "cliente_id": "1",
+        "concepto": "QA-CLAVE-CONFLICTO-WEB-ee042ebf",
+        "monto_bruto": "238000",
+        "fecha_emision": "2026-11-21",
+        "tipo_afectacion": "EXENTA",
+        "nro_orden_compra": "QA-OC-CLAVE-CONFLICTO"
+      }
+    },
+    {
+      "ruta": "/solicitudes/b47a5121cb3c85d05a600a5e0579dce5",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/nueva",
+      "metodo": "POST",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": 2,
+      "campos_recibidos": {
+        "cliente_id": "1",
+        "concepto": "QA-CLAVE-CONFLICTO-WEB-ee042ebf-ALTERADO",
+        "monto_bruto": "999000",
+        "fecha_emision": "2026-11-21",
+        "tipo_afectacion": "EXENTA",
+        "nro_orden_compra": "QA-OC-CLAVE-CONFLICTO"
+      }
+    },
+    {
+      "ruta": "/solicitudes/b47a5121cb3c85d05a600a5e0579dce5",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/auth/logout",
+      "metodo": "POST",
+      "status": 302,
+      "location": "/auth/login",
+      "version_formulario": null,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": null
+    }
+  ],
+  "error_cierre_navegador": null,
+  "public_id_nuevo": "b47a5121cb3c85d05a600a5e0579dce5",
+  "conflicto_clave": {
+    "total_solicitudes": 5,
+    "total_auditoria": 5,
+    "solicitud_nueva": {
+      "id": 5,
+      "public_id": "b47a5121cb3c85d05a600a5e0579dce5",
+      "emisor_id": 2,
+      "cliente_id": 1,
+      "estado_id": 1,
+      "origen_id": 1,
+      "rut": "11111111-1",
+      "nombre": "Cliente Sintetico QA Aislamiento",
+      "direccion": "Direccion ficticia QA 123",
+      "giro": "Servicios de prueba QA",
+      "email_contacto_receptor": "cliente.qa@example.com",
+      "concepto": "QA-CLAVE-CONFLICTO-WEB-ee042ebf",
+      "nro_orden_compra": "QA-OC-CLAVE-CONFLICTO",
+      "fecha_emision": "2026-11-21",
+      "monto_bruto": "238000",
+      "tipo_afectacion": "EXENTA",
+      "email_emisor": "qa.emisor@example.invalid",
+      "motivo_rechazo": null,
+      "creado_en": "2026-11-21 14:25:35",
+      "actualizado_en": "2026-11-21 14:25:35",
+      "version": 1,
+      "estado_nombre": "Pendiente",
+      "origen_nombre": "Web"
+    },
+    "coincidencias_concepto": 1,
+    "originales_sin_cambios": true,
+    "auditorias_previas_sin_cambios": true,
+    "auditorias_nuevas": [
+      {
+        "id": 5,
+        "usuario_id": 2,
+        "accion": "SOLICITUD_CREADA",
+        "detalle": {
+          "solicitud_afectada_id": 5,
+          "public_id": "b47a5121cb3c85d05a600a5e0579dce5",
+          "cliente_id": 1,
+          "estado": "Pendiente",
+          "origen": "Web",
+          "concepto": "QA-CLAVE-CONFLICTO-WEB-ee042ebf",
+          "monto_bruto": "238000",
+          "fecha_emision": "2026-11-21",
+          "tipo_afectacion": "EXENTA",
+          "nro_orden_compra": "QA-OC-CLAVE-CONFLICTO",
+          "receptor_historico": {
+            "rut": "11111111-1",
+            "nombre": "Cliente Sintetico QA Aislamiento",
+            "direccion": "Direccion ficticia QA 123",
+            "giro": "Servicios de prueba QA",
+            "email": "cliente.qa@example.com"
+          }
+        },
+        "creado_en": "2026-11-21 14:25:35"
+      }
+    ],
+    "igual_al_primer_alta": true
+  },
+  "estado_final_igual_al_primer_alta": true,
+  "fin": "2026-11-21T14:25:40.277356-03:00",
+  "junit_generado": true
+}

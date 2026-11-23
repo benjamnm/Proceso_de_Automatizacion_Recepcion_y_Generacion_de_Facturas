@@ -1,0 +1,13 @@
+{
+  "http": 200,
+  "content_type": "application/xml; charset=utf-8",
+  "content_disposition": "attachment; filename=DTE_34_ee2e8fdb_v2.xml",
+  "bytes": 1333,
+  "sha256": "ba4bdc56206189bd91c6b387ad60d8d4d72de5d0517408e004fedc7896cd349e",
+  "coincide_bd_y_archivo_local": true,
+  "estructura_y_datos_verificados": true,
+  "tipo_dte": 34,
+  "folio_provisional": 2,
+  "sin_firma_ni_ted": true,
+  "limite": "XML local de prueba; no validacion XSD ni envio/aceptacion SII; cookies no guardadas"
+}

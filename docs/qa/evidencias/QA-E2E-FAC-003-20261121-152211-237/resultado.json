@@ -1,0 +1,95 @@
+{
+  "ejecucion": "QA-E2E-FAC-003",
+  "caso": "E2E-FAC-003",
+  "inicio": "2026-11-21T15:22:15.434093-03:00",
+  "base": "facturaciones_spa_qa",
+  "pruebas_iniciadas": true,
+  "codigo_pytest": 1,
+  "alcance": "Emisor corrige concepto en solicitud observada; version 5 a 6; factura v1 sin cambios; no reenvio",
+  "fase": "ejecucion_selenium",
+  "referencia_estado_sha256": "be280bb7f65a376d22fabadc5e0781d0d42aa3fa909339050c7eb2f585417d61",
+  "cuenta_bd_verificada": "qa_facturaciones@127.0.0.1",
+  "http_login": 200,
+  "servidor_qa_detenido": true,
+  "total_solicitudes_despues": 5,
+  "total_auditoria_despues": 8,
+  "total_facturas_despues": 1,
+  "solicitud_version_despues": 6,
+  "solicitud_estado_despues": "En correcci\u00f3n",
+  "correccion_emisor_verificada": false,
+  "intentos_smtp": 0,
+  "notificacion_correo": "deshabilitada por configuracion QA; no se acredita entrega",
+  "verificacion": null,
+  "eventos_http": [
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": null
+    },
+    {
+      "ruta": "/auth/login",
+      "metodo": "POST",
+      "status": 302,
+      "location": "/dashboard",
+      "version_formulario": null,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/dashboard",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/editar",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/editar",
+      "metodo": "POST",
+      "status": 302,
+      "location": "/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura",
+      "version_formulario": "5",
+      "usuario_id": 2
+    },
+    {
+      "ruta": "/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura",
+      "metodo": "GET",
+      "status": 200,
+      "location": null,
+      "version_formulario": null,
+      "usuario_id": 2
+    }
+  ],
+  "error_cierre_navegador": null,
+  "alertas_cerradas_logout": null,
+  "alcance_caso": "Corrige solo concepto en solicitud; conserva factura observada; no reenvia ni aprueba ni genera XML SII",
+  "estado_final_igual_al_inicial": false,
+  "fin": "2026-11-21T15:22:49.830716-03:00",
+  "junit_generado": true
+}

@@ -1,0 +1,10 @@
+{
+  "ejecucion": "QA-E2E-SOL-006",
+  "codigo_pytest": 0,
+  "patrones_completados": [
+    "separador",
+    "negativo"
+  ],
+  "referencia": "C:\\GitHub\\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\\docs\\qa\\evidencias\\QA-E2E-SOL-006-20261121-135126-401",
+  "sha256_resultado": "ad831bf0c7ac9fdf6ca540d767a71e57406b1d606ffe0f10203acf5ba088b2c4"
+}

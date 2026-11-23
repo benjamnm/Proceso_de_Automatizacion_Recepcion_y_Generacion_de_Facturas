@@ -1,0 +1,59 @@
+{
+  "total_solicitudes": 4,
+  "total_auditoria": 4,
+  "solicitud_nueva": {
+    "id": 4,
+    "public_id": "bb47b94f0696a044961bfce768de3a2a",
+    "emisor_id": 2,
+    "cliente_id": 1,
+    "estado_id": 1,
+    "origen_id": 1,
+    "rut": "11111111-1",
+    "nombre": "Cliente Sintetico QA Aislamiento",
+    "direccion": "Direccion ficticia QA 123",
+    "giro": "Servicios de prueba QA",
+    "email_contacto_receptor": "cliente.qa@example.com",
+    "concepto": "QA-IDEMPOTENCIA-WEB-58354748",
+    "nro_orden_compra": "QA-OC-IDEMPOTENCIA",
+    "fecha_emision": "2026-11-21",
+    "monto_bruto": "238000",
+    "tipo_afectacion": "EXENTA",
+    "email_emisor": "qa.emisor@example.invalid",
+    "motivo_rechazo": null,
+    "creado_en": "2026-11-21 13:59:51",
+    "actualizado_en": "2026-11-21 13:59:51",
+    "version": 1,
+    "estado_nombre": "Pendiente",
+    "origen_nombre": "Web"
+  },
+  "coincidencias_concepto": 1,
+  "originales_sin_cambios": true,
+  "auditorias_previas_sin_cambios": true,
+  "auditorias_nuevas": [
+    {
+      "id": 4,
+      "usuario_id": 2,
+      "accion": "SOLICITUD_CREADA",
+      "detalle": {
+        "solicitud_afectada_id": 4,
+        "public_id": "bb47b94f0696a044961bfce768de3a2a",
+        "cliente_id": 1,
+        "estado": "Pendiente",
+        "origen": "Web",
+        "concepto": "QA-IDEMPOTENCIA-WEB-58354748",
+        "monto_bruto": "238000",
+        "fecha_emision": "2026-11-21",
+        "tipo_afectacion": "EXENTA",
+        "nro_orden_compra": "QA-OC-IDEMPOTENCIA",
+        "receptor_historico": {
+          "rut": "11111111-1",
+          "nombre": "Cliente Sintetico QA Aislamiento",
+          "direccion": "Direccion ficticia QA 123",
+          "giro": "Servicios de prueba QA",
+          "email": "cliente.qa@example.com"
+        }
+      },
+      "creado_en": "2026-11-21 13:59:51"
+    }
+  ]
+}

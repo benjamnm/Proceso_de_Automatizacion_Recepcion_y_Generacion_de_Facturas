@@ -1,0 +1,9 @@
+{
+  "content_disposition": "attachment; filename=DTE_34_ee2e8fdb_v2.xml",
+  "content_type": "application/xml; charset=utf-8",
+  "redirected": false,
+  "status": 200,
+  "url": "http://127.0.0.1:57824/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura/sii",
+  "cliente": "fetch mismo origen en Chrome; credenciales gestionadas por navegador",
+  "proteccion_sesion": "sin cambios; no se exportan cookies"
+}

@@ -1,0 +1,81 @@
+{
+  "referencia": "C:\\GitHub\\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\\docs\\qa\\evidencias\\QA-E2E-FAC-001-CIERRE-20261121-143235-284",
+  "transformaciones": [
+    {
+      "anterior": "E2E-FAC-001-CIERRE",
+      "nuevo": "E2E-FAC-002",
+      "ocurrencias": 2
+    },
+    {
+      "anterior": "test_factura_existente_logout_qa.py",
+      "nuevo": "test_factura_observada_qa.py",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "verificacion_complementaria_y_logout",
+      "nuevo": "devolucion_correccion_verificada",
+      "ocurrencias": 3
+    },
+    {
+      "anterior": "qa.emisor@example.invalid",
+      "nuevo": "qa.admin@example.invalid",
+      "ocurrencias": 2
+    },
+    {
+      "anterior": "actor[\"id\"]!=2 or actor[\"rol\"]!=\"Emisor\"",
+      "nuevo": "actor[\"id\"]!=1 or actor[\"rol\"]!=\"Administrador\"",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "verificacion complementaria de factura existente y logout; no se regenera ni sustituye el resultado fallido",
+      "nuevo": "Administrador devuelve factura v1 a correccion; solicitud v4 a v5; auditoria y contenido inmutable",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Solo QA. Se verificara la factura existente y el logout. No se genera otra factura.",
+      "nuevo": "Solo QA. Administrador observa factura 1; solicitud 3 pasa a En correccion v5. No se genera otra factura.",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Autorizar verificacion sin regenerar. Escribe VERIFICAR FACTURA EXISTENTE QA: ",
+      "nuevo": "Autorizar devolucion persistida. Escribe DEVOLVER FACTURA QA: ",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "VERIFICAR FACTURA EXISTENTE QA",
+      "nuevo": "DEVOLVER FACTURA QA",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "request.method==\"POST\" and request.path.endswith(\"/factura/revision\")",
+      "nuevo": "request.method==\"POST\" and request.path.startswith(\"/solicitudes/\")",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "d[\"auditoria\"]==antes[\"auditoria\"]",
+      "nuevo": "d[\"auditoria\"][:len(antes[\"auditoria\"])]==antes[\"auditoria\"]",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "v={\"estado_comparado_sin_cambios\":d==antes,",
+      "nuevo": "v={\"estado_igual_al_inicial\":d==antes,\"contenido_factura_conservado\":len(d[\"facturas\"])==1 and all(d[\"facturas\"][0][k]==antes[\"facturas\"][0][k] for k in antes[\"facturas\"][0] if k not in {\"estado\",\"revisada_por\",\"revisada_en\",\"observacion\"}),",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "\"estado_final_sin_cambios\"",
+      "nuevo": "\"estado_final_igual_al_inicial\"",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "\"alcance_cierre\"",
+      "nuevo": "\"alcance_caso\"",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Complementa el intento fallido; no reejecuta la generacion ni convierte su JUnit en aprobado",
+      "nuevo": "Devolucion a correccion; no aprueba ni regenera factura ni genera XML SII",
+      "ocurrencias": 1
+    }
+  ],
+  "helper_logout": "extraido del caso previo con hash verificado"
+}

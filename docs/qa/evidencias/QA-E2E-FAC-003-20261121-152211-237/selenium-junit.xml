@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="8.838" timestamp="2026-11-21T15:22:40.465642-03:00" hostname="Vins"><testcase classname="e2e.test_correccion_emisor_qa" name="test_emisor_corrige_solicitud_sin_alterar_factura_observada" time="8.264"><failure message="AssertionError">e2e\test_correccion_emisor_qa.py:104: in test_emisor_corrige_solicitud_sin_alterar_factura_observada
+    assert urlsplit(e["location"]).path in {raiz,raiz+"/editar"}
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError</failure></testcase></testsuite></testsuites>

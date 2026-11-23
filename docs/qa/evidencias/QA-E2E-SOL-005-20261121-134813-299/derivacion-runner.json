@@ -1,0 +1,52 @@
+{
+  "origen": "C:\\GitHub\\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\\docs\\qa\\evidencias\\QA-E2E-SOL-004-20261121-134341-832\\ejecutar_guardado_sin_cambios_qa.py",
+  "sha256_origen": "84ba07229a9aad5966a6100e48c651035ae5f974b703a11e0ce90396509f824d",
+  "sha256_generado": "8ed730454dc5fb4dab9f3ff829a2611546e632913edb5e0ccbd09a2349bdb74b",
+  "transformaciones": [
+    {
+      "anterior": "E2E-SOL-004",
+      "nuevo": "E2E-SOL-005",
+      "ocurrencias": 2
+    },
+    {
+      "anterior": "_qa_nochange_context",
+      "nuevo": "_qa_zero_context",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "test_guardado_sin_cambios_qa.py",
+      "nuevo": "test_monto_cero_solicitud_qa.py",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "guardado_sin_cambios_verificado",
+      "nuevo": "monto_cero_rechazado",
+      "ocurrencias": 3
+    },
+    {
+      "anterior": "un POST real sin cambiar valores; aviso, version 3 conservada y sin nueva auditoria",
+      "nuevo": "un POST real con monto cero; error de servidor y de campo; sin cambios de datos ni auditoria",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Solo QA. Un envio real del formulario ID 3 sin modificar campos. No se espera cambio de negocio.",
+      "nuevo": "Solo QA. Un envio real con monto 0 en ID 3. Se espera rechazo y conservar el monto 459000.",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Autorizar un envio sin cambios. Escribe GUARDAR SIN CAMBIOS QA: ",
+      "nuevo": "Autorizar intento con monto cero. Escribe PROBAR MONTO CERO QA: ",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "GUARDAR SIN CAMBIOS QA",
+      "nuevo": "PROBAR MONTO CERO QA",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "resultado[\"aviso_verificado\"]=ctx[\"aviso_verificado\"]",
+      "nuevo": "resultado[\"aviso_verificado\"]=ctx[\"aviso_verificado\"]\n    resultado[\"error_monto_verificado\"]=ctx.get(\"error_monto_verificado\",False)",
+      "ocurrencias": 1
+    }
+  ]
+}

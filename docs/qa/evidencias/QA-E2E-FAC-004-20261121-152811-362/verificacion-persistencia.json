@@ -1,0 +1,228 @@
+{
+  "estado_igual_al_inicial": false,
+  "total_solicitudes": 5,
+  "total_auditoria": 9,
+  "total_facturas": 2,
+  "solicitud": {
+    "id": 3,
+    "public_id": "ee2e8fdb51290c59ae0ab6457a3ba001",
+    "emisor_id": 2,
+    "cliente_id": 1,
+    "estado_id": 2,
+    "origen_id": 1,
+    "rut": "11111111-1",
+    "nombre": "Cliente Sintetico QA Aislamiento",
+    "direccion": "Direccion ficticia QA 123",
+    "giro": "Servicios de prueba QA",
+    "email_contacto_receptor": "cliente.qa@example.com",
+    "concepto": "QA-VIGENTE-WEB-5ecd1f03 - alcance del servicio precisado para revision QA",
+    "nro_orden_compra": "QA-OC-ED-ab64f2c7",
+    "fecha_emision": "2026-11-21",
+    "monto_bruto": "459000",
+    "tipo_afectacion": "EXENTA",
+    "email_emisor": "qa.emisor@example.invalid",
+    "motivo_rechazo": null,
+    "creado_en": "2026-11-21 03:10:06",
+    "actualizado_en": "2026-11-21 15:28:41",
+    "version": 7,
+    "estado_nombre": "En revisi\u00f3n",
+    "origen_nombre": "Web"
+  },
+  "factura_v1": {
+    "id": 1,
+    "solicitud_id": 3,
+    "version": 1,
+    "estado": "OBSERVADA",
+    "tipo_dte": 34,
+    "monto_neto": "0",
+    "monto_exento": "459000",
+    "iva": "0",
+    "monto_total": "459000",
+    "datos": {
+      "solicitud_public_id": "ee2e8fdb51290c59ae0ab6457a3ba001",
+      "fecha_emision": "2026-11-21",
+      "tipo_afectacion": "EXENTA",
+      "receptor": {
+        "rut": "11111111-1",
+        "razon_social": "Cliente Sintetico QA Aislamiento",
+        "giro": "Servicios de prueba QA",
+        "direccion": "Direccion ficticia QA 123",
+        "email": "cliente.qa@example.com"
+      },
+      "detalle": {
+        "concepto": "QA-VIGENTE-WEB-5ecd1f03",
+        "nro_orden_compra": "QA-OC-ED-ab64f2c7"
+      },
+      "totales": {
+        "tipo_dte": 34,
+        "monto_bruto": 459000,
+        "monto_neto": 0,
+        "monto_exento": 459000,
+        "tasa_iva": 0,
+        "iva": 0,
+        "monto_total": 459000,
+        "diferencia_redondeo": 0
+      }
+    },
+    "cambios": null,
+    "huella": "f90912b21b217c6f5ae328b9df00b7cc23f091a71a304d80424c203866324ec0",
+    "generada_por": 2,
+    "generada_en": "2026-11-21 14:29:05",
+    "revisada_por": 1,
+    "revisada_en": "2026-11-21 15:18:38",
+    "observacion": "QA: precisar el alcance del servicio antes de aprobar.",
+    "archivo_sii": null,
+    "archivo_sii_sha256": null
+  },
+  "factura_v2": {
+    "id": 2,
+    "solicitud_id": 3,
+    "version": 2,
+    "estado": "EN_REVISION",
+    "tipo_dte": 34,
+    "monto_neto": "0",
+    "monto_exento": "459000",
+    "iva": "0",
+    "monto_total": "459000",
+    "datos": {
+      "solicitud_public_id": "ee2e8fdb51290c59ae0ab6457a3ba001",
+      "fecha_emision": "2026-11-21",
+      "tipo_afectacion": "EXENTA",
+      "receptor": {
+        "rut": "11111111-1",
+        "razon_social": "Cliente Sintetico QA Aislamiento",
+        "giro": "Servicios de prueba QA",
+        "direccion": "Direccion ficticia QA 123",
+        "email": "cliente.qa@example.com"
+      },
+      "detalle": {
+        "concepto": "QA-VIGENTE-WEB-5ecd1f03 - alcance del servicio precisado para revision QA",
+        "nro_orden_compra": "QA-OC-ED-ab64f2c7"
+      },
+      "totales": {
+        "tipo_dte": 34,
+        "monto_bruto": 459000,
+        "monto_neto": 0,
+        "monto_exento": 459000,
+        "tasa_iva": 0,
+        "iva": 0,
+        "monto_total": 459000,
+        "diferencia_redondeo": 0
+      }
+    },
+    "cambios": {
+      "detalle.concepto": {
+        "anterior": "QA-VIGENTE-WEB-5ecd1f03",
+        "nuevo": "QA-VIGENTE-WEB-5ecd1f03 - alcance del servicio precisado para revision QA"
+      }
+    },
+    "huella": "be7b94dcc88bbaf37faad17553f427bfefe8d346e15c082db3add9f423e08fe1",
+    "generada_por": 2,
+    "generada_en": "2026-11-21 15:28:41",
+    "revisada_por": null,
+    "revisada_en": null,
+    "observacion": null,
+    "archivo_sii": null,
+    "archivo_sii_sha256": null
+  },
+  "facturas_nuevas": [
+    {
+      "id": 2,
+      "solicitud_id": 3,
+      "version": 2,
+      "estado": "EN_REVISION",
+      "tipo_dte": 34,
+      "monto_neto": "0",
+      "monto_exento": "459000",
+      "iva": "0",
+      "monto_total": "459000",
+      "datos": {
+        "solicitud_public_id": "ee2e8fdb51290c59ae0ab6457a3ba001",
+        "fecha_emision": "2026-11-21",
+        "tipo_afectacion": "EXENTA",
+        "receptor": {
+          "rut": "11111111-1",
+          "razon_social": "Cliente Sintetico QA Aislamiento",
+          "giro": "Servicios de prueba QA",
+          "direccion": "Direccion ficticia QA 123",
+          "email": "cliente.qa@example.com"
+        },
+        "detalle": {
+          "concepto": "QA-VIGENTE-WEB-5ecd1f03 - alcance del servicio precisado para revision QA",
+          "nro_orden_compra": "QA-OC-ED-ab64f2c7"
+        },
+        "totales": {
+          "tipo_dte": 34,
+          "monto_bruto": 459000,
+          "monto_neto": 0,
+          "monto_exento": 459000,
+          "tasa_iva": 0,
+          "iva": 0,
+          "monto_total": 459000,
+          "diferencia_redondeo": 0
+        }
+      },
+      "cambios": {
+        "detalle.concepto": {
+          "anterior": "QA-VIGENTE-WEB-5ecd1f03",
+          "nuevo": "QA-VIGENTE-WEB-5ecd1f03 - alcance del servicio precisado para revision QA"
+        }
+      },
+      "huella": "be7b94dcc88bbaf37faad17553f427bfefe8d346e15c082db3add9f423e08fe1",
+      "generada_por": 2,
+      "generada_en": "2026-11-21 15:28:41",
+      "revisada_por": null,
+      "revisada_en": null,
+      "observacion": null,
+      "archivo_sii": null,
+      "archivo_sii_sha256": null
+    }
+  ],
+  "facturas_previas_sin_cambios": true,
+  "campos_solicitud_conservados": true,
+  "otras_solicitudes_sin_cambios": true,
+  "auditorias_previas_sin_cambios": true,
+  "auditorias_nuevas": [
+    {
+      "id": 9,
+      "usuario_id": 2,
+      "accion": "FACTURA_GENERADA",
+      "detalle": {
+        "solicitud_afectada_id": 3,
+        "public_id": "ee2e8fdb51290c59ae0ab6457a3ba001",
+        "factura_id": 2,
+        "version_factura": 2,
+        "version_factura_anterior": 1,
+        "cambios": {
+          "detalle.concepto": {
+            "anterior": "QA-VIGENTE-WEB-5ecd1f03",
+            "nuevo": "QA-VIGENTE-WEB-5ecd1f03 - alcance del servicio precisado para revision QA"
+          }
+        },
+        "totales": {
+          "tipo_dte": 34,
+          "monto_bruto": 459000,
+          "monto_neto": 0,
+          "monto_exento": 459000,
+          "tasa_iva": 0,
+          "iva": 0,
+          "monto_total": 459000,
+          "diferencia_redondeo": 0
+        },
+        "estado_anterior": "En correcci\u00f3n",
+        "estado_nuevo": "En revisi\u00f3n",
+        "version_anterior": 6,
+        "version_nueva": 7
+      },
+      "creado_en": "2026-11-21 15:28:41"
+    }
+  ],
+  "conteos": {
+    "facturas": 2,
+    "registros_xml": 0,
+    "adjuntos_solicitud": 0,
+    "envios_correo": 0,
+    "correos_entrantes": 0
+  },
+  "archivos_sii_en_carpeta_qa": 0
+}

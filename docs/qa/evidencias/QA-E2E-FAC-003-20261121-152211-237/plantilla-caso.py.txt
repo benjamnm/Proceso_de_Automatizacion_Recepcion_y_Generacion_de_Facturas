@@ -1,0 +1,107 @@
+import json
+from pathlib import Path
+from urllib.parse import urlsplit
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
+
+__HELPER__def test_emisor_corrige_solicitud_sin_alterar_factura_observada(request):
+    ctx=request.config._qa_invoice_context
+    evidencia=Path(ctx["evidencia"])
+    driver=None;fallo=False
+    try:
+        opciones=webdriver.ChromeOptions();opciones.add_argument("--window-size=1440,1000")
+        driver=webdriver.Chrome(options=opciones)
+        driver.set_window_size(1440,1000);driver.set_page_load_timeout(30)
+        wait=WebDriverWait(driver,20)
+        caps=driver.capabilities
+        (evidencia/"navegador.json").write_text(json.dumps({"browser":caps.get("browserName"),"browser_version":caps.get("browserVersion"),"chromedriver_version":caps.get("chrome",{}).get("chromedriverVersion")},indent=2),encoding="utf-8")
+        base=ctx["base_url"];pid=ctx["public_id"]
+        driver.get(base+"/auth/login")
+        correo=wait.until(EC.visibility_of_element_located((By.ID,"email")))
+        correo.send_keys(ctx["email"]);driver.find_element(By.ID,"password").send_keys(ctx["password"])
+        correo.find_element(By.XPATH,"./ancestor::form").find_element(By.CSS_SELECTOR,"button[type='submit']").click()
+        wait.until(lambda d:urlsplit(d.current_url).path!="/auth/login" or bool(d.find_elements(By.CSS_SELECTOR,".alert-danger")))
+        assert urlsplit(driver.current_url).path=="/dashboard"
+        assert driver.find_element(By.CSS_SELECTOR,".topbar-usuario-texto span").text.strip()=="Emisor"
+        raiz="/solicitudes/"+pid
+        driver.get(base+raiz+"/factura")
+        wait.until(EC.text_to_be_present_in_element((By.TAG_NAME,"body"),"En corrección"))
+        cuerpo=driver.find_element(By.TAG_NAME,"body").text
+        assert "OBSERVADA" in cuerpo and "QA: precisar el alcance del servicio antes de aprobar." in cuerpo
+        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,".alert-warning a[href$='/editar']"))).click()
+        campo=wait.until(EC.visibility_of_element_located((By.ID,"concepto")))
+        form=campo.find_element(By.XPATH,"./ancestor::form")
+        accion=urlsplit(form.get_attribute("action")).path
+        assert accion==raiz+"/editar"
+        assert form.find_element(By.NAME,"version").get_attribute("value")=="5"
+        assert form.find_element(By.NAME,"cliente_id").get_attribute("value")=="1"
+        assert form.find_element(By.NAME,"csrf_token").get_attribute("value")
+        original=ctx["solicitud_original"]
+        assert campo.get_attribute("value")==original["concepto"]
+        for k in ("monto_bruto","fecha_emision","tipo_afectacion","nro_orden_compra"):
+            assert form.find_element(By.NAME,k).get_attribute("value")==str(original[k])
+        nuevo=original["concepto"]+" - alcance del servicio precisado para revision QA"
+        assert len(nuevo)<=500
+        campo.clear();campo.send_keys(nuevo)
+        assert driver.execute_script("return arguments[0].checkValidity();",form)
+        (evidencia/"correccion-enviada.json").write_text(json.dumps({"public_id":pid,"version_formulario":5,"concepto_anterior":original["concepto"],"concepto_nuevo":nuevo},indent=2),encoding="utf-8")
+        assert driver.save_screenshot(str(evidencia/"E2E-FAC-003-correccion-formulario.png"))
+        inicio=len(ctx["eventos"])
+        form.find_element(By.CSS_SELECTOR,"button[type='submit']").click()
+        wait.until(lambda d:any(e["metodo"]=="POST" and e["ruta"]==accion for e in ctx["eventos"][inicio:]))
+        envios=[e for e in ctx["eventos"][inicio:] if e["metodo"]=="POST" and e["ruta"]==accion]
+        assert len(envios)==1
+        e=envios[0]
+        assert e["status"]==302 and e["usuario_id"]==2 and e["version_formulario"]=="5"
+        assert urlsplit(e["location"]).path in {raiz,raiz+"/editar"}
+        def guardado(d):
+            if nuevo in d.find_element(By.TAG_NAME,"body").text:return True
+            return any(x.get_attribute("value")==nuevo for x in d.find_elements(By.ID,"concepto"))
+        wait.until(guardado)
+        assert "En corrección" in driver.find_element(By.TAG_NAME,"body").text
+        assert driver.save_screenshot(str(evidencia/"E2E-FAC-003-correccion-guardada.png"))
+        v=ctx["verificar"]()
+        assert v["total_solicitudes"]==5 and v["total_auditoria"]==8 and v["total_facturas"]==1
+        s=v["solicitud"]
+        assert s["version"]==6 and s["estado_nombre"]=="En corrección" and s["estado_id"]==original["estado_id"]
+        assert s["concepto"]==nuevo
+        assert v["campos_no_editados_conservados"] and v["otras_solicitudes_sin_cambios"]
+        assert v["facturas_previas_sin_cambios"] and v["auditorias_previas_sin_cambios"]
+        f=v["factura"]
+        assert f["id"]==1 and f["solicitud_id"]==3 and f["version"]==1 and f["estado"]=="OBSERVADA"
+        assert f["datos"]["detalle"]["concepto"]==original["concepto"]
+        assert f["datos"]["detalle"]["concepto"]!=nuevo
+        assert len(v["auditorias_nuevas"])==1
+        a=v["auditorias_nuevas"][0]
+        assert a["accion"]=="SOLICITUD_EDITADA" and a["usuario_id"]==2
+        d=a["detalle"]
+        assert d["solicitud_afectada_id"]==3 and d["public_id"]==pid and d["estado"]=="En corrección"
+        assert d["version_anterior"]==5 and d["version_nueva"]==6
+        assert d["cambios"]=={"concepto":{"anterior":original["concepto"],"nuevo":nuevo}}
+        assert ctx["intentos_smtp"]==0 and v["archivos_sii_en_carpeta_qa"]==0
+        assert all(v["conteos"][t]==0 for t in ("registros_xml","adjuntos_solicitud","envios_correo","correos_entrantes"))
+        assert not any(e["metodo"]=="POST" and "/factura/" in e["ruta"] for e in ctx["eventos"])
+        inicio=len(ctx["eventos"])
+        ctx["alertas_cerradas_logout"]=cerrar_alertas_y_logout(driver,wait)
+        wait.until(lambda d:urlsplit(d.current_url).path=="/auth/login")
+        salidas=[e for e in ctx["eventos"][inicio:] if e["metodo"]=="POST" and e["ruta"]=="/auth/logout"]
+        assert len(salidas)==1 and salidas[0]["status"]==302 and salidas[0]["usuario_id"] is None
+        ctx["correccion_emisor_verificada"]=True
+    except Exception:
+        fallo=True
+        if driver is not None:
+            try:
+                for campo in driver.find_elements(By.CSS_SELECTOR,"input[type='password']"):campo.clear()
+                driver.save_screenshot(str(evidencia/"E2E-FAC-003-fallo.png"))
+            except Exception:pass
+        raise
+    finally:
+        if driver is not None:
+            try:driver.quit()
+            except Exception as exc:
+                ctx["error_cierre_navegador"]=type(exc).__name__
+                if not fallo:raise

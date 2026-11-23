@@ -1,0 +1,36 @@
+﻿ejecucion=QA-E2E-SOL-009
+motivo=reintento posterior a verificacion de recuperacion
+rama=qa/facturaciones-v2-20261120
+commit_base=a3ac7e86f9672da9fc4710123680471a7b405713
+base=facturaciones_spa_qa
+origen_runner=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-E2E-SOL-009-20261121-140250-009
+sha256_runner=09B325260876F821395C2B28B813422294C8B99DFC3500E7CAF1340F508AB853
+sha256_caso=8221EDAE6B1AF1CAE06DC6ABF9F9950F02D02E004EBEC8C9B3C0BE226A71728C
+diagnostico=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-DIAG-BD-009-20261121-142201-531
+sha256_resultado_diagnostico=CF7F575BD3892E68A161BBA8FCA9C8D79211BAD9CBF37923E0776A723678E12B
+referencia_datos=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-E2E-SOL-008-20261121-135919-347
+efecto=una solicitud nueva y una auditoria; segundo POST alterado debe rechazarse
+nota=se conserva el intento anterior; no se restauran datos
+
+Estado Git:
+## qa/facturaciones-v2-20261120...origin/qa/facturaciones-v2-20261120
+?? e2e/test_conflicto_clave_creacion_qa.py
+?? e2e/test_formato_backend_monto_qa.py
+?? e2e/test_formato_nativo_monto_qa.py
+?? e2e/test_guardado_sin_cambios_qa.py
+?? e2e/test_idempotencia_creacion_qa.py
+?? e2e/test_monto_cero_solicitud_qa.py
+?? e2e/test_version_obsoleta_solicitud_qa.py
+?? ../docs/qa/evidencias/QA-DIAG-BD-009-20261121-140548-046/
+?? ../docs/qa/evidencias/QA-DIAG-BD-009-20261121-142201-531/
+?? ../docs/qa/evidencias/QA-DIAG-ESPERAS-009-20261121-140823-793/
+?? ../docs/qa/evidencias/QA-E2E-SOL-003-20261121-134033-275/
+?? ../docs/qa/evidencias/QA-E2E-SOL-004-20261121-134341-832/
+?? ../docs/qa/evidencias/QA-E2E-SOL-005-20261121-134813-299/
+?? ../docs/qa/evidencias/QA-E2E-SOL-006-20261121-135126-401/
+?? ../docs/qa/evidencias/QA-E2E-SOL-007-20261121-135439-657/
+?? ../docs/qa/evidencias/QA-E2E-SOL-008-20261121-135919-347/
+?? ../docs/qa/evidencias/QA-E2E-SOL-009-20261121-140250-009/
+?? ../docs/qa/evidencias/QA-E2E-SOL-009-20261121-142459-266/
+?? ../docs/qa/evidencias/QA-LIMPIEZA-LECTURAS-009-20261121-141127-619/
+?? ../docs/qa/evidencias/QA-LIMPIEZA-LECTURAS-009-20261121-141920-414/

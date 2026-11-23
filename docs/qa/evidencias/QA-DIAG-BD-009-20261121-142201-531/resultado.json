@@ -1,0 +1,118 @@
+{
+  "id": "QA-DIAG-BD-009",
+  "inicio": "2026-11-21T14:22:01.995908-03:00",
+  "solo_lectura": true,
+  "base": "facturaciones_spa_qa",
+  "pasos": [
+    {
+      "paso": "conexion",
+      "estado": "OK",
+      "segundos": 0.0303
+    },
+    {
+      "paso": "identidad",
+      "estado": "OK",
+      "segundos": 0.0011
+    },
+    {
+      "paso": "timeouts_sesion",
+      "estado": "OK",
+      "segundos": 0.0014
+    },
+    {
+      "paso": "iniciar_transaccion_solo_lectura",
+      "estado": "OK",
+      "segundos": 0.0002
+    },
+    {
+      "paso": "lectura_actor",
+      "estado": "OK",
+      "segundos": 0.0125
+    },
+    {
+      "paso": "comparacion_local_password",
+      "estado": "OK",
+      "segundos": 0.1175
+    },
+    {
+      "paso": "consulta_tras_comparar_hash",
+      "estado": "OK",
+      "segundos": 0.0006
+    },
+    {
+      "paso": "lectura_solicitudes",
+      "estado": "OK",
+      "segundos": 0.0079
+    },
+    {
+      "paso": "lectura_auditoria",
+      "estado": "OK",
+      "segundos": 0.002
+    },
+    {
+      "paso": "conteo_facturas",
+      "estado": "OK",
+      "segundos": 0.0023
+    },
+    {
+      "paso": "conteo_registros_xml",
+      "estado": "OK",
+      "segundos": 0.0018
+    },
+    {
+      "paso": "conteo_adjuntos_solicitud",
+      "estado": "OK",
+      "segundos": 0.0016
+    },
+    {
+      "paso": "conteo_envios_correo",
+      "estado": "OK",
+      "segundos": 0.0024
+    },
+    {
+      "paso": "conteo_correos_entrantes",
+      "estado": "OK",
+      "segundos": 0.0023
+    }
+  ],
+  "pruebas_selenium_iniciadas": false,
+  "identidad": {
+    "bd": "facturaciones_spa_qa",
+    "cuenta": "qa_facturaciones@127.0.0.1",
+    "version_servidor": "10.4.32-MariaDB",
+    "conexion_id": 9
+  },
+  "timeouts_sesion": [
+    {
+      "Variable_name": "interactive_timeout",
+      "Value": "28800"
+    },
+    {
+      "Variable_name": "max_allowed_packet",
+      "Value": "1048576"
+    },
+    {
+      "Variable_name": "net_read_timeout",
+      "Value": "30"
+    },
+    {
+      "Variable_name": "net_write_timeout",
+      "Value": "60"
+    },
+    {
+      "Variable_name": "wait_timeout",
+      "Value": "28800"
+    }
+  ],
+  "actor": {
+    "id": 2,
+    "activo": 1,
+    "debe_cambiar_password": 0,
+    "rol": "Emisor"
+  },
+  "coincide_con_cierre_SOL_008": true,
+  "total_solicitudes": 4,
+  "total_auditoria": 4,
+  "estado": "DIAGNOSTICO_CORRECTO_EN_ESTA_EJECUCION",
+  "fin": "2026-11-21T14:22:15.202342-03:00"
+}

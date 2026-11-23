@@ -1,0 +1,8 @@
+﻿id=QA-DIAG-BD-009
+solo_lectura=true
+referencia=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-E2E-SOL-008-20261121-135919-347
+incidente=QA-E2E-SOL-009-20261121-140250-009; OperationalError 2013 antes de pytest
+nota=no inicia Flask ni Selenium; no cambia timeout ni reinicia servicios
+rama=qa/facturaciones-v2-20261120
+commit=a3ac7e86f9672da9fc4710123680471a7b405713
+python=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Scripts\python.exe

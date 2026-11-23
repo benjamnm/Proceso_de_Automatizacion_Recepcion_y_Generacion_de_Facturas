@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="7.828" timestamp="2026-11-21T15:36:17.955641-03:00" hostname="Vins"><testcase classname="e2e.test_xml_existente_navegador_qa" name="test_xml_existente_descarga_en_chrome_y_logout" time="7.287"><failure message="AssertionError">e2e\test_xml_existente_navegador_qa.py:180: in test_xml_existente_descarga_en_chrome_y_logout
+    assert ctx["verificar"]()["estado_igual_al_inicial"] is True
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError</failure></testcase></testsuite></testsuites>

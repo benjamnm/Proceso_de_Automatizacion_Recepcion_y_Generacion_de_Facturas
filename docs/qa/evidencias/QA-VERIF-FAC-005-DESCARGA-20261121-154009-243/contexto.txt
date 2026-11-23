@@ -1,0 +1,9 @@
+﻿ejecucion=QA-VERIF-FAC-005-DESCARGA
+rama=qa/facturaciones-v2-20261120
+commit_base=a3ac7e86f9672da9fc4710123680471a7b405713
+alcance=verificacion de archivos y consulta BD con transaccion solo lectura; sin Flask, Selenium ni pytest
+esperado=5 solicitudes; 2 facturas; 11 auditorias; unico delta de descarga ARCHIVO_SII_DESCARGADO
+ajuste=solo dos tests e2e, previa confirmacion; no se ejecutan; JUnit fallidos intactos
+limites=no descarga otra vez; no modifica negocio ni auditoria; no aprueba ni regenera XML
+referencia=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-E2E-FAC-005-CIERRE-20261121-153555-640
+xml_original_en=C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-E2E-FAC-005-20261121-153226-871

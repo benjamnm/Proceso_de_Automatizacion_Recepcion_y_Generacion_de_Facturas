@@ -1,0 +1,19 @@
+{
+  "referencia": "C:\\GitHub\\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\\docs\\qa\\evidencias\\QA-E2E-FAC-003-20261121-152211-237",
+  "concepto_anterior": "QA-VIGENTE-WEB-5ecd1f03",
+  "concepto_nuevo": "QA-VIGENTE-WEB-5ecd1f03 - alcance del servicio precisado para revision QA",
+  "comprobaciones": {
+    "totales_esperados": true,
+    "version_y_estado": true,
+    "concepto_corregido": true,
+    "otros_campos_conservados": true,
+    "otras_solicitudes_intactas": true,
+    "facturas_intactas": true,
+    "conteos_auxiliares_intactos": true,
+    "auditoria_previa_intacta": true,
+    "auditoria_edicion_correcta": true,
+    "redireccion_archivada_a_factura": true
+  },
+  "delta_archivado_verificado": true,
+  "limite": "Verifica archivos del intento fallido; no reejecuta el POST ni cambia su JUnit"
+}

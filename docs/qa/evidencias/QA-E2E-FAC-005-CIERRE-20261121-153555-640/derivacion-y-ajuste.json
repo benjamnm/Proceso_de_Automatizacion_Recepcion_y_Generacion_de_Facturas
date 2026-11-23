@@ -1,0 +1,72 @@
+{
+  "referencia": "C:\\GitHub\\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\\docs\\qa\\evidencias\\QA-E2E-FAC-005-20261121-153226-871",
+  "transformaciones": [
+    {
+      "anterior": "E2E-FAC-005",
+      "nuevo": "E2E-FAC-005-CIERRE",
+      "ocurrencias": 2
+    },
+    {
+      "anterior": "test_aprobacion_xml_local_qa.py",
+      "nuevo": "test_xml_existente_navegador_qa.py",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "aprobacion_xml_verificada",
+      "nuevo": "verificacion_complementaria_y_logout",
+      "ocurrencias": 3
+    },
+    {
+      "anterior": "len(antes[\"auditoria\"])!=9",
+      "nuevo": "len(antes[\"auditoria\"])!=10",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "original[\"version\"]!=7",
+      "nuevo": "original[\"version\"]!=8",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "original[\"estado_nombre\"]!=\"En revisi\u00f3n\"",
+      "nuevo": "original[\"estado_nombre\"]!=\"Aprobada\"",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "SII_FOLDER=str(evidencia/\"datos-temporales\"/\"sii\")",
+      "nuevo": "SII_FOLDER=str(referencia/\"datos-temporales\"/\"sii\")",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Administrador aprueba v2 y genera XML local de prueba; descarga autenticada; v1 intacta; sin emision SII",
+      "nuevo": "Verifica aprobacion existente y XML original; descarga desde misma sesion Chrome; sin reaprobar ni regenerar",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Solo QA. Aprobacion persistida: solicitud 3 v7 a v8 Aprobada; v2 APROBADA y XML local con emisor sintetico. Sin envio al SII.",
+      "nuevo": "Solo QA. Lee aprobacion y XML existentes; descarga desde Chrome; no vuelve a aprobar ni genera otro archivo.",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Autorizar aprobacion interna y XML local. Escribe APROBAR FACTURA QA: ",
+      "nuevo": "Autorizar comprobacion sin aprobar ni regenerar. Escribe VERIFICAR XML EXISTENTE QA: ",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "APROBAR FACTURA QA",
+      "nuevo": "VERIFICAR XML EXISTENTE QA",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Aprobacion interna y XML local con datos sinteticos; descarga autenticada; no firma, TED, CAF, validacion XSD ni envio/aceptacion SII",
+      "nuevo": "Complementaria: XML existente y descarga fetch mismo origen; seguridad de sesion intacta; no reaprobar ni regenerar; original sigue fallido",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "    resultado[\"fin\"]=datetime.now().astimezone().isoformat()",
+      "nuevo": "    resultado[\"delta_aprobacion_archivada_verificado\"]=True\n    resultado[\"caso_original_corregido_reejecutado\"]=False\n    resultado[\"xml_original_preservado_sha256\"]='ba4bdc56206189bd91c6b387ad60d8d4d72de5d0517408e004fedc7896cd349e'\n    resultado[\"fin\"]=datetime.now().astimezone().isoformat()",
+      "ocurrencias": 1
+    }
+  ],
+  "ajuste": "descarga fetch mismo origen en navegador; sin exportar cookies ni desactivar proteccion de sesion",
+  "archivo_original": "solo lectura desde evidencia anterior; no se copia para servirlo ni se regenera"
+}

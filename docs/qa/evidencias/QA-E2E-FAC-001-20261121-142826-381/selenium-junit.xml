@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="7.322" timestamp="2026-11-21T14:29:02.198526-03:00" hostname="Vins"><testcase classname="e2e.test_factura_revision_qa" name="test_generar_factura_exenta_y_enviar_revision" time="6.935"><failure message="selenium.common.exceptions.ElementClickInterceptedException: Message: element click intercepted: Element &lt;button type=&quot;submit&quot; class=&quot;btn btn-outline-secondary btn-sm&quot;&gt;...&lt;/button&gt; is not clickable at point (1314, 32). Other element would receive the click: &lt;div class=&quot;alert alert-success alert-dismissible fade show&quot; role=&quot;alert&quot;&gt;...&lt;/div&gt;&#10;  (Session info: chrome=157.0.8103.80); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#elementclickinterceptedexception&#10;Stacktrace:&#10;Symbols not available. Dumping unresolved backtrace:&#10;&#09;(No symbol) [0x7ff74b89d655]&#10;&#09;(No symbol) [0x7ff74b794790]&#10;&#09;(No symbol) [0x7ff74b602fb3]&#10;&#09;(No symbol) [0x7ff74be4c0d2]&#10;&#09;(No symbol) [0x7ff74be4a6f3]&#10;&#09;(No symbol) [0x7ff74be48647]&#10;&#09;(No symbol) [0x7ff74be47dce]&#10;&#09;(No symbol) [0x7ff74be3c9fa]&#10;&#09;(No symbol) [0x7ff74be590da]&#10;&#09;(No symbol) [0x7ff74be3c439]&#10;&#09;(No symbol) [0x7ff74be3c3d0]&#10;&#09;(No symbol) [0x7ff74b636bf1]&#10;&#09;(No symbol) [0x7ff74b61c109]&#10;&#09;(No symbol) [0x7ff74b61d433]&#10;&#09;(No symbol) [0x7ff74bd37041]&#10;&#09;(No symbol) [0x7ff74bd55c76]&#10;&#09;(No symbol) [0x7ff74bd4c340]&#10;&#09;(No symbol) [0x7ff74b9cc9be]&#10;&#09;(No symbol) [0x7ff74b7a2fa5]&#10;&#09;(No symbol) [0x7ff74b79e2d4]&#10;&#09;(No symbol) [0x7ff74b79e464]&#10;&#09;(No symbol) [0x7ff74b78731c]&#10;&#09;(No symbol) [0x7ffb44cddda7]&#10;&#09;(No symbol) [0x7ffb45bf9c5c]">e2e\test_factura_revision_qa.py:91: in test_generar_factura_exenta_y_enviar_revision
+    wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,"form[action='/auth/logout'] button[type='submit']"))).click()
+..\..\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Lib\site-packages\selenium\webdriver\remote\webelement.py:117: in click
+    self._execute(Command.CLICK_ELEMENT)
+..\..\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Lib\site-packages\selenium\webdriver\remote\webelement.py:532: in _execute
+    return self._parent.execute(command, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Lib\site-packages\selenium\webdriver\remote\webdriver.py:569: in execute
+    self.error_handler.check_response(response)
+..\..\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Lib\site-packages\selenium\webdriver\remote\errorhandler.py:234: in check_response
+    raise exception_class(message, screen, stacktrace)
+E   selenium.common.exceptions.ElementClickInterceptedException: Message: element click intercepted: Element &lt;button type="submit" class="btn btn-outline-secondary btn-sm"&gt;...&lt;/button&gt; is not clickable at point (1314, 32). Other element would receive the click: &lt;div class="alert alert-success alert-dismissible fade show" role="alert"&gt;...&lt;/div&gt;
+E     (Session info: chrome=157.0.8103.80); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#elementclickinterceptedexception
+E   Stacktrace:
+E   Symbols not available. Dumping unresolved backtrace:
+E   	(No symbol) [0x7ff74b89d655]
+E   	(No symbol) [0x7ff74b794790]
+E   	(No symbol) [0x7ff74b602fb3]
+E   	(No symbol) [0x7ff74be4c0d2]
+E   	(No symbol) [0x7ff74be4a6f3]
+E   	(No symbol) [0x7ff74be48647]
+E   	(No symbol) [0x7ff74be47dce]
+E   	(No symbol) [0x7ff74be3c9fa]
+E   	(No symbol) [0x7ff74be590da]
+E   	(No symbol) [0x7ff74be3c439]
+E   	(No symbol) [0x7ff74be3c3d0]
+E   	(No symbol) [0x7ff74b636bf1]
+E   	(No symbol) [0x7ff74b61c109]
+E   	(No symbol) [0x7ff74b61d433]
+E   	(No symbol) [0x7ff74bd37041]
+E   	(No symbol) [0x7ff74bd55c76]
+E   	(No symbol) [0x7ff74bd4c340]
+E   	(No symbol) [0x7ff74b9cc9be]
+E   	(No symbol) [0x7ff74b7a2fa5]
+E   	(No symbol) [0x7ff74b79e2d4]
+E   	(No symbol) [0x7ff74b79e464]
+E   	(No symbol) [0x7ff74b78731c]
+E   	(No symbol) [0x7ffb44cddda7]
+E   	(No symbol) [0x7ffb45bf9c5c]</failure></testcase></testsuite></testsuites>

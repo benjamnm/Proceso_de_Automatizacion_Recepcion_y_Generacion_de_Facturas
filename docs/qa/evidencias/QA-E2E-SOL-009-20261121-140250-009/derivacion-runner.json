@@ -1,0 +1,77 @@
+{
+  "origen": "C:\\GitHub\\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\\docs\\qa\\evidencias\\QA-E2E-SOL-008-20261121-135919-347\\ejecutar_idempotencia_qa.py",
+  "sha256_origen": "ae7a9b6ff78410e53714516aa4f2d1df48c9c50a053ffda070ab0eeebce81d3b",
+  "sha256_generado": "09b325260876f821395c2b28b813422294c8b99dfc3500e7caf1340f508ab853",
+  "transformaciones": [
+    {
+      "anterior": "E2E-SOL-008",
+      "nuevo": "E2E-SOL-009",
+      "ocurrencias": 2
+    },
+    {
+      "anterior": "_qa_idempotency_context",
+      "nuevo": "_qa_keyconflict_context",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "test_idempotencia_creacion_qa.py",
+      "nuevo": "test_conflicto_clave_creacion_qa.py",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "reenvio_idempotente_verificado",
+      "nuevo": "conflicto_clave_verificado",
+      "ocurrencias": 3
+    },
+    {
+      "anterior": "\"idempotencia\"",
+      "nuevo": "\"conflicto_clave\"",
+      "ocurrencias": 3
+    },
+    {
+      "anterior": "len(antes[\"solicitudes\"])!=3 or len(antes[\"auditoria\"])!=3",
+      "nuevo": "len(antes[\"solicitudes\"])!=4 or len(antes[\"auditoria\"])!=4",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "estado[\"auditoria\"][:3]",
+      "nuevo": "estado[\"auditoria\"][:4]",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "estado[\"auditoria\"][3:]",
+      "nuevo": "estado[\"auditoria\"][4:]",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "QA-IDEMPOTENCIA-WEB-",
+      "nuevo": "QA-CLAVE-CONFLICTO-WEB-",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "QA-OC-IDEMPOTENCIA",
+      "nuevo": "QA-OC-CLAVE-CONFLICTO",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "alta web y reenvio identico con misma clave; una solicitud y una auditoria nuevas, sin duplicados",
+      "nuevo": "alta web; misma clave con concepto y monto distintos rechazada sin alterar datos ni agregar auditoria",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Solo QA. Se creara UNA solicitud nueva y se reenviara el MISMO formulario. Se conservara el alta.",
+      "nuevo": "Solo QA. Se creara una solicitud nueva y se intentara reutilizar su clave con datos distintos. Se conserva el alta.",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Autorizar alta nueva y reenvio identico. Escribe PROBAR IDEMPOTENCIA QA: ",
+      "nuevo": "Autorizar alta y conflicto de clave. Escribe PROBAR CONFLICTO CLAVE QA: ",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "PROBAR IDEMPOTENCIA QA",
+      "nuevo": "PROBAR CONFLICTO CLAVE QA",
+      "ocurrencias": 1
+    }
+  ]
+}

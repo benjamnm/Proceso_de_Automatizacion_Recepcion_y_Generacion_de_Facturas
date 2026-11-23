@@ -1,0 +1,97 @@
+{
+  "origen": "C:\\GitHub\\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\\docs\\qa\\evidencias\\QA-E2E-SOL-007-20261121-135439-657\\ejecutar_formato_backend_qa.py",
+  "sha256_origen": "495d71f58f7b64f3062e92c6b82c1d4c9bb255e38b9fb4739bd0a7cba49d69db",
+  "sha256_generado": "ae7a9b6ff78410e53714516aa4f2d1df48c9c50a053ffda070ab0eeebce81d3b",
+  "transformaciones": [
+    {
+      "anterior": "E2E-SOL-007",
+      "nuevo": "E2E-SOL-008",
+      "ocurrencias": 2
+    },
+    {
+      "anterior": "_qa_backendformat_context",
+      "nuevo": "_qa_idempotency_context",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "test_formato_backend_monto_qa.py",
+      "nuevo": "test_idempotencia_creacion_qa.py",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "rechazo_backend_verificado",
+      "nuevo": "reenvio_idempotente_verificado",
+      "ocurrencias": 3
+    },
+    {
+      "anterior": "error_formato_backend_verificado",
+      "nuevo": "persistencia_creacion_verificada",
+      "ocurrencias": 2
+    },
+    {
+      "anterior": "formatos_backend_completados",
+      "nuevo": "etapas_completadas",
+      "ocurrencias": 2
+    },
+    {
+      "anterior": "respuesta_error_verificada",
+      "nuevo": "creacion_web_verificada",
+      "ocurrencias": 3
+    },
+    {
+      "anterior": "estado_comparado_sin_cambios",
+      "nuevo": "estado_igual_al_inicial",
+      "ocurrencias": 2
+    },
+    {
+      "anterior": "version_despues",
+      "nuevo": "version_solicitud_original_3",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "dos POST de formato invalido desde navegador; rechazo backend con CSRF y sesion; sin cambios de negocio",
+      "nuevo": "alta web y reenvio identico con misma clave; una solicitud y una auditoria nuevas, sin duplicados",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Solo QA. Se enviaran dos POST invalidos (1.000 y -1) a ID 3 con sesion y CSRF; se espera rechazo backend.",
+      "nuevo": "Solo QA. Se creara UNA solicitud nueva y se reenviara el MISMO formulario. Se conservara el alta.",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Autorizar dos POST invalidos en QA. Escribe PROBAR FORMATO BACKEND QA: ",
+      "nuevo": "Autorizar alta nueva y reenvio identico. Escribe PROBAR IDEMPOTENCIA QA: ",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "PROBAR FORMATO BACKEND QA",
+      "nuevo": "PROBAR IDEMPOTENCIA QA",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "edicion=request.method==\"POST\" and request.path==\"/solicitudes/\"+PID+\"/editar\"",
+      "nuevo": "edicion=request.method==\"POST\" and request.path==\"/solicitudes/\"+PID+\"/editar\"\n            creacion=request.method==\"POST\" and request.path==\"/solicitudes/nueva\"",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "if edicion:",
+      "nuevo": "if edicion or creacion:",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "    if input(\"Autorizar alta nueva y reenvio identico.",
+      "nuevo": "    datos_creacion={\"cliente_id\":original[\"cliente_id\"],\"concepto\":\"QA-IDEMPOTENCIA-WEB-\"+secrets.token_hex(4),\"monto_bruto\":\"238000\",\"fecha_emision\":datetime.now().astimezone().date().isoformat(),\"tipo_afectacion\":\"EXENTA\",\"nro_orden_compra\":\"QA-OC-IDEMPOTENCIA\"}\n    (evidencia/\"datos-creacion.json\").write_text(json.dumps(datos_creacion,indent=2),encoding=\"utf-8\")\n    if input(\"Autorizar alta nueva y reenvio identico.",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "    ctx.update(base_url=base_url,evidencia=str(evidencia),email=EMAIL,password=clave_web,public_id=PID,solicitud=original,verificar=verificar)",
+      "nuevo": "    def verificar_creacion(public_id,etapa):\n        estado=leer_estado()\n        fila=next((s for s in estado[\"solicitudes\"] if s[\"public_id\"]==public_id),None)\n        v={\"total_solicitudes\":len(estado[\"solicitudes\"]),\"total_auditoria\":len(estado[\"auditoria\"]),\n            \"solicitud_nueva\":fila,\"coincidencias_concepto\":sum(s[\"concepto\"]==datos_creacion[\"concepto\"] for s in estado[\"solicitudes\"]),\n            \"originales_sin_cambios\":all(next((s for s in estado[\"solicitudes\"] if s[\"public_id\"]==a[\"public_id\"]),None)==a for a in antes[\"solicitudes\"]),\n            \"auditorias_previas_sin_cambios\":estado[\"auditoria\"][:3]==antes[\"auditoria\"],\n            \"auditorias_nuevas\":estado[\"auditoria\"][3:]}\n        if estado[\"conteos\"]!=antes[\"conteos\"]:raise RuntimeError(\"CONTEOS_RELACIONADOS_CAMBIARON_INESPERADAMENTE\")\n        if etapa==\"primer_alta\":ctx[\"primer_estado\"]=estado\n        else:v[\"igual_al_primer_alta\"]=estado==ctx.get(\"primer_estado\")\n        (evidencia/(\"estado-\"+etapa+\".json\")).write_text(json.dumps(estado,indent=2),encoding=\"utf-8\")\n        (evidencia/(\"verificacion-\"+etapa+\".json\")).write_text(json.dumps(v,indent=2),encoding=\"utf-8\")\n        ctx[\"idempotencia\"]=v\n        return v\n\n    ctx.update(base_url=base_url,evidencia=str(evidencia),email=EMAIL,password=clave_web,public_id=PID,solicitud=original,verificar=verificar,datos_creacion=datos_creacion,verificar_creacion=verificar_creacion)",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "    resultado[\"fin\"]=datetime.now().astimezone().isoformat()",
+      "nuevo": "    resultado[\"public_id_nuevo\"]=ctx.get(\"public_id_nuevo\")\n    resultado[\"idempotencia\"]=ctx.get(\"idempotencia\")\n    resultado[\"estado_final_igual_al_primer_alta\"]=(final==ctx[\"primer_estado\"]) if \"primer_estado\" in ctx and \"final\" in locals() else None\n    resultado[\"fin\"]=datetime.now().astimezone().isoformat()",
+      "ocurrencias": 1
+    }
+  ]
+}

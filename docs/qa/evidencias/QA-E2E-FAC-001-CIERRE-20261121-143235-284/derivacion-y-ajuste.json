@@ -1,0 +1,82 @@
+{
+  "referencia": "C:\\GitHub\\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\\docs\\qa\\evidencias\\QA-E2E-FAC-001-20261121-142826-381",
+  "transformaciones": [
+    {
+      "anterior": "E2E-FAC-001",
+      "nuevo": "E2E-FAC-001-CIERRE",
+      "ocurrencias": 2
+    },
+    {
+      "anterior": "test_factura_revision_qa.py",
+      "nuevo": "test_factura_existente_logout_qa.py",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "factura_revision_verificada",
+      "nuevo": "verificacion_complementaria_y_logout",
+      "ocurrencias": 3
+    },
+    {
+      "anterior": "generacion de factura exenta v1 para solicitud 3; estado En revision y auditoria; sin SMTP ni XML SII",
+      "nuevo": "verificacion complementaria de factura existente y logout; no se regenera ni sustituye el resultado fallido",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Solo QA. ID 3: Pendiente v3 a En revision v4; una factura v1. SMTP vacio; sin aprobacion ni XML SII.",
+      "nuevo": "Solo QA. Se verificara la factura existente y el logout. No se genera otra factura.",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "len(antes[\"auditoria\"])!=5",
+      "nuevo": "len(antes[\"auditoria\"])!=6",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "or antes[\"facturas\"] or not original",
+      "nuevo": "or len(antes[\"facturas\"])!=1 or not original",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "original[\"version\"]!=3",
+      "nuevo": "original[\"version\"]!=4",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "original[\"estado_nombre\"]!=\"Pendiente\"",
+      "nuevo": "original[\"estado_nombre\"]!=\"En revisi\u00f3n\"",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "Autorizar generacion persistida. Escribe GENERAR FACTURA QA: ",
+      "nuevo": "Autorizar verificacion sin regenerar. Escribe VERIFICAR FACTURA EXISTENTE QA: ",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "GENERAR FACTURA QA",
+      "nuevo": "VERIFICAR FACTURA EXISTENTE QA",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "v={\"total_solicitudes\":",
+      "nuevo": "v={\"estado_comparado_sin_cambios\":d==antes,\"total_solicitudes\":",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "d[\"auditoria\"][:5]==antes[\"auditoria\"]",
+      "nuevo": "d[\"auditoria\"]==antes[\"auditoria\"]",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "d[\"auditoria\"][5:]",
+      "nuevo": "d[\"auditoria\"][len(antes[\"auditoria\"]):]",
+      "ocurrencias": 1
+    },
+    {
+      "anterior": "    resultado[\"fin\"]=datetime.now().astimezone().isoformat()",
+      "nuevo": "    resultado[\"alertas_cerradas_logout\"]=ctx.get(\"alertas_cerradas_logout\")\n    resultado[\"alcance_cierre\"]=\"Complementa el intento fallido; no reejecuta la generacion ni convierte su JUnit en aprobado\"\n    resultado[\"estado_final_sin_cambios\"]=(final==antes) if antes is not None and \"final\" in locals() else None\n    resultado[\"fin\"]=datetime.now().astimezone().isoformat()",
+      "ocurrencias": 1
+    }
+  ],
+  "ajuste": "Solo test Selenium; cierre de alertas por boton y comprobacion de oclusion antes de logout",
+  "caso_original_corregido_reejecutado": false
+}
