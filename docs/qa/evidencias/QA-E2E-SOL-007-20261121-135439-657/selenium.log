@@ -1,0 +1,11 @@
+============================================= test session starts =============================================
+platform win32 -- Python 3.15.2, pytest-9.1.1, pluggy-1.7.0 -- C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Scripts\python.exe
+rootdir: C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas
+configfile: pytest.ini
+collecting ... collected 2 items
+
+e2e/test_formato_backend_monto_qa.py::test_backend_rechaza_formato_monto[1.000-separador] PASSED         [ 50%]
+e2e/test_formato_backend_monto_qa.py::test_backend_rechaza_formato_monto[-1-negativo] PASSED             [100%]
+
+- generated xml file: C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-E2E-SOL-007-20261121-135439-657\selenium-junit.xml -
+============================================= 2 passed in 12.54s ==============================================

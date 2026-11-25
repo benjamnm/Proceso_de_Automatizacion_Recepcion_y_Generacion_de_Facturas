@@ -1,0 +1,24 @@
+2026-11-21 14:29:02,125 INFO 127.0.0.1 - - [21/Nov/2026 14:29:02] "GET /auth/login HTTP/1.1" 200 -
+2026-11-21 14:29:04,182 INFO 127.0.0.1 - - [21/Nov/2026 14:29:04] "GET /auth/login HTTP/1.1" 200 -
+2026-11-21 14:29:04,281 INFO 127.0.0.1 - - [21/Nov/2026 14:29:04] "GET /static/css/app.css HTTP/1.1" 200 -
+2026-11-21 14:29:04,287 INFO 127.0.0.1 - - [21/Nov/2026 14:29:04] "GET /static/css/login.css HTTP/1.1" 200 -
+2026-11-21 14:29:04,295 INFO 127.0.0.1 - - [21/Nov/2026 14:29:04] "GET /static/img/logo-facturaciones@2x.png HTTP/1.1" 200 -
+2026-11-21 14:29:04,302 INFO 127.0.0.1 - - [21/Nov/2026 14:29:04] "GET /static/img/login-ilustracion.png HTTP/1.1" 200 -
+2026-11-21 14:29:04,310 INFO 127.0.0.1 - - [21/Nov/2026 14:29:04] "GET /static/js/app.js HTTP/1.1" 200 -
+2026-11-21 14:29:04,319 INFO 127.0.0.1 - - [21/Nov/2026 14:29:04] "GET /static/js/login.js HTTP/1.1" 200 -
+2026-11-21 14:29:04,535 INFO 127.0.0.1 - - [21/Nov/2026 14:29:04] "GET /static/img/favicon-32.png HTTP/1.1" 200 -
+2026-11-21 14:29:04,967 INFO 127.0.0.1 - - [21/Nov/2026 14:29:04] "[32mPOST /auth/login HTTP/1.1[0m" 302 -
+2026-11-21 14:29:05,016 INFO 127.0.0.1 - - [21/Nov/2026 14:29:05] "GET /dashboard HTTP/1.1" 200 -
+2026-11-21 14:29:05,035 INFO 127.0.0.1 - - [21/Nov/2026 14:29:05] "[36mGET /static/css/app.css HTTP/1.1[0m" 304 -
+2026-11-21 14:29:05,042 INFO 127.0.0.1 - - [21/Nov/2026 14:29:05] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+2026-11-21 14:29:05,050 INFO 127.0.0.1 - - [21/Nov/2026 14:29:05] "[36mGET /static/img/logo-facturaciones@2x.png HTTP/1.1[0m" 304 -
+2026-11-21 14:29:05,241 INFO 127.0.0.1 - - [21/Nov/2026 14:29:05] "GET /solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura HTTP/1.1" 200 -
+2026-11-21 14:29:05,252 INFO 127.0.0.1 - - [21/Nov/2026 14:29:05] "[36mGET /static/css/app.css HTTP/1.1[0m" 304 -
+2026-11-21 14:29:05,259 INFO 127.0.0.1 - - [21/Nov/2026 14:29:05] "[36mGET /static/img/logo-facturaciones@2x.png HTTP/1.1[0m" 304 -
+2026-11-21 14:29:05,264 INFO 127.0.0.1 - - [21/Nov/2026 14:29:05] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+2026-11-21 14:29:05,585 WARNING Aviso FACTURA_GENERADA no enviado: El envío de correos no está configurado (SMTP_HOST y SMTP_FROM).
+2026-11-21 14:29:05,586 INFO 127.0.0.1 - - [21/Nov/2026 14:29:05] "[32mPOST /solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura/revision HTTP/1.1[0m" 302 -
+2026-11-21 14:29:05,642 INFO 127.0.0.1 - - [21/Nov/2026 14:29:05] "GET /solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura HTTP/1.1" 200 -
+2026-11-21 14:29:05,663 INFO 127.0.0.1 - - [21/Nov/2026 14:29:05] "[36mGET /static/css/app.css HTTP/1.1[0m" 304 -
+2026-11-21 14:29:05,669 INFO 127.0.0.1 - - [21/Nov/2026 14:29:05] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+2026-11-21 14:29:05,675 INFO 127.0.0.1 - - [21/Nov/2026 14:29:05] "[36mGET /static/img/logo-facturaciones@2x.png HTTP/1.1[0m" 304 -

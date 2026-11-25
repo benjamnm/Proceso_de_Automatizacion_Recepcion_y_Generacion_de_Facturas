@@ -1,0 +1,53 @@
+=========================================================================== test session starts ===========================================================================
+platform win32 -- Python 3.15.2, pytest-9.1.1, pluggy-1.7.0 -- C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Scripts\python.exe
+rootdir: C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas
+configfile: pytest.ini
+collecting ... collected 1 item
+
+e2e/test_xml_existente_navegador_qa.py::test_xml_existente_descarga_en_chrome_y_logout FAILED                                                                        [100%]
+
+================================================================================ FAILURES =================================================================================
+_____________________________________________________________ test_xml_existente_descarga_en_chrome_y_logout ______________________________________________________________
+e2e\test_xml_existente_navegador_qa.py:180: in test_xml_existente_descarga_en_chrome_y_logout
+    assert ctx["verificar"]()["estado_igual_al_inicial"] is True
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError
+---------------------------------------------------------------------------- Captured log call ----------------------------------------------------------------------------
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:20] "GET /auth/login HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:20] "GET /static/css/app.css HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:20] "GET /static/css/login.css HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:20] "GET /static/img/logo-facturaciones@2x.png HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:20] "GET /static/img/login-ilustracion.png HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:20] "GET /static/js/app.js HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:20] "GET /static/js/login.js HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:20] "GET /static/img/favicon-32.png HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:21] "[32mPOST /auth/login HTTP/1.1[0m" 302 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:21] "GET /dashboard HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:21] "[36mGET /static/css/app.css HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:21] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:21] "[36mGET /static/img/logo-facturaciones@2x.png HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:21] "GET /solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:21] "[36mGET /static/css/app.css HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:21] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:21] "[36mGET /static/img/logo-facturaciones@2x.png HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:22] "GET /solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura/sii HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:22] "[32mPOST /auth/logout HTTP/1.1[0m" 302 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:22] "GET /auth/login HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:22] "[36mGET /static/css/app.css HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:22] "[36mGET /static/css/login.css HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:22] "[36mGET /static/img/logo-facturaciones@2x.png HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:22] "[36mGET /static/img/login-ilustracion.png HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:22] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:22] "[36mGET /static/js/login.js HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:22] "[32mGET /dashboard HTTP/1.1[0m" 302 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:22] "GET /auth/login?next=/dashboard HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:22] "[36mGET /static/css/app.css HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:22] "[36mGET /static/css/login.css HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:22] "[36mGET /static/img/logo-facturaciones@2x.png HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:22] "[36mGET /static/img/login-ilustracion.png HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:22] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:36:22] "[36mGET /static/js/login.js HTTP/1.1[0m" 304 -
+- generated xml file: C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-E2E-FAC-005-CIERRE-20261121-153555-640\selenium-junit.xml -
+========================================================================= short test summary info =========================================================================
+FAILED e2e/test_xml_existente_navegador_qa.py::test_xml_existente_descarga_en_chrome_y_logout - AssertionError
+============================================================================ 1 failed in 7.83s ============================================================================

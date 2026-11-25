@@ -1,0 +1,44 @@
+=========================================================================== test session starts ===========================================================================
+platform win32 -- Python 3.15.2, pytest-9.1.1, pluggy-1.7.0 -- C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Scripts\python.exe
+rootdir: C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas
+configfile: pytest.ini
+collecting ... collected 1 item
+
+e2e/test_aprobacion_xml_local_qa.py::test_admin_aprueba_v2_xml_local_y_descarga_autenticada FAILED                                                                   [100%]
+
+================================================================================ FAILURES =================================================================================
+_________________________________________________________ test_admin_aprueba_v2_xml_local_y_descarga_autenticada __________________________________________________________
+e2e\test_aprobacion_xml_local_qa.py:134: in test_admin_aprueba_v2_xml_local_y_descarga_autenticada
+    assert respuesta.status==200 and respuesta.geturl()==url
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError
+---------------------------------------------------------------------------- Captured log call ----------------------------------------------------------------------------
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:53] "GET /auth/login HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:53] "GET /static/css/app.css HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:53] "GET /static/css/login.css HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:53] "GET /static/img/logo-facturaciones@2x.png HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:53] "GET /static/img/login-ilustracion.png HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:53] "GET /static/js/app.js HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:53] "GET /static/js/login.js HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:54] "GET /static/img/favicon-32.png HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:54] "[32mPOST /auth/login HTTP/1.1[0m" 302 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:55] "GET /dashboard HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:55] "[36mGET /static/css/app.css HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:55] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:55] "[36mGET /static/img/logo-facturaciones@2x.png HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:55] "GET /solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:55] "[36mGET /static/css/app.css HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:55] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:55] "[36mGET /static/img/logo-facturaciones@2x.png HTTP/1.1[0m" 304 -
+WARNING  app:notificaciones.py:309 Aviso FACTURA_APROBADA no enviado: El envío de correos no está configurado (SMTP_HOST y SMTP_FROM).
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:56] "[32mPOST /solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura/aprobar HTTP/1.1[0m" 302 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:56] "GET /solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:56] "[36mGET /static/css/app.css HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:56] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:56] "[36mGET /static/img/logo-facturaciones@2x.png HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:56] "[32mGET /solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura/sii HTTP/1.1[0m" 302 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:32:56] "GET /auth/login?next=/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura/sii HTTP/1.1" 200 -
+--- generated xml file: C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-E2E-FAC-005-20261121-153226-871\selenium-junit.xml ---
+========================================================================= short test summary info =========================================================================
+FAILED e2e/test_aprobacion_xml_local_qa.py::test_admin_aprueba_v2_xml_local_y_descarga_autenticada - AssertionError
+============================================================================ 1 failed in 8.20s ============================================================================

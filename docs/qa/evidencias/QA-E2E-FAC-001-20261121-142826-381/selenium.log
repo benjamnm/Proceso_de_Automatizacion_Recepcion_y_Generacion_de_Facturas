@@ -1,0 +1,77 @@
+==================================================== test session starts =====================================================
+platform win32 -- Python 3.15.2, pytest-9.1.1, pluggy-1.7.0 -- C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Scripts\python.exe
+rootdir: C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas
+configfile: pytest.ini
+collecting ... collected 1 item
+
+e2e/test_factura_revision_qa.py::test_generar_factura_exenta_y_enviar_revision FAILED                                   [100%]
+
+========================================================== FAILURES ==========================================================
+_______________________________________ test_generar_factura_exenta_y_enviar_revision ________________________________________
+e2e\test_factura_revision_qa.py:91: in test_generar_factura_exenta_y_enviar_revision
+    wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,"form[action='/auth/logout'] button[type='submit']"))).click()
+..\..\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Lib\site-packages\selenium\webdriver\remote\webelement.py:117: in click
+    self._execute(Command.CLICK_ELEMENT)
+..\..\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Lib\site-packages\selenium\webdriver\remote\webelement.py:532: in _execute
+    return self._parent.execute(command, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Lib\site-packages\selenium\webdriver\remote\webdriver.py:569: in execute
+    self.error_handler.check_response(response)
+..\..\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Lib\site-packages\selenium\webdriver\remote\errorhandler.py:234: in check_response
+    raise exception_class(message, screen, stacktrace)
+E   selenium.common.exceptions.ElementClickInterceptedException: Message: element click intercepted: Element <button type="submit" class="btn btn-outline-secondary btn-sm">...</button> is not clickable at point (1314, 32). Other element would receive the click: <div class="alert alert-success alert-dismissible fade show" role="alert">...</div>
+E     (Session info: chrome=157.0.8103.80); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#elementclickinterceptedexception
+E   Stacktrace:
+E   Symbols not available. Dumping unresolved backtrace:
+E   	(No symbol) [0x7ff74b89d655]
+E   	(No symbol) [0x7ff74b794790]
+E   	(No symbol) [0x7ff74b602fb3]
+E   	(No symbol) [0x7ff74be4c0d2]
+E   	(No symbol) [0x7ff74be4a6f3]
+E   	(No symbol) [0x7ff74be48647]
+E   	(No symbol) [0x7ff74be47dce]
+E   	(No symbol) [0x7ff74be3c9fa]
+E   	(No symbol) [0x7ff74be590da]
+E   	(No symbol) [0x7ff74be3c439]
+E   	(No symbol) [0x7ff74be3c3d0]
+E   	(No symbol) [0x7ff74b636bf1]
+E   	(No symbol) [0x7ff74b61c109]
+E   	(No symbol) [0x7ff74b61d433]
+E   	(No symbol) [0x7ff74bd37041]
+E   	(No symbol) [0x7ff74bd55c76]
+E   	(No symbol) [0x7ff74bd4c340]
+E   	(No symbol) [0x7ff74b9cc9be]
+E   	(No symbol) [0x7ff74b7a2fa5]
+E   	(No symbol) [0x7ff74b79e2d4]
+E   	(No symbol) [0x7ff74b79e464]
+E   	(No symbol) [0x7ff74b78731c]
+E   	(No symbol) [0x7ffb44cddda7]
+E   	(No symbol) [0x7ffb45bf9c5c]
+----------------------------------------------------- Captured log call ------------------------------------------------------
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:04] "GET /auth/login HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:04] "GET /static/css/app.css HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:04] "GET /static/css/login.css HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:04] "GET /static/img/logo-facturaciones@2x.png HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:04] "GET /static/img/login-ilustracion.png HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:04] "GET /static/js/app.js HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:04] "GET /static/js/login.js HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:04] "GET /static/img/favicon-32.png HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:04] "[32mPOST /auth/login HTTP/1.1[0m" 302 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:05] "GET /dashboard HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:05] "[36mGET /static/css/app.css HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:05] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:05] "[36mGET /static/img/logo-facturaciones@2x.png HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:05] "GET /solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:05] "[36mGET /static/css/app.css HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:05] "[36mGET /static/img/logo-facturaciones@2x.png HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:05] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+WARNING  app:notificaciones.py:309 Aviso FACTURA_GENERADA no enviado: El envío de correos no está configurado (SMTP_HOST y SMTP_FROM).
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:05] "[32mPOST /solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura/revision HTTP/1.1[0m" 302 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:05] "GET /solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:05] "[36mGET /static/css/app.css HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:05] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 14:29:05] "[36mGET /static/img/logo-facturaciones@2x.png HTTP/1.1[0m" 304 -
+- generated xml file: C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-E2E-FAC-001-20261121-142826-381\selenium-junit.xml -
+================================================== short test summary info ===================================================
+FAILED e2e/test_factura_revision_qa.py::test_generar_factura_exenta_y_enviar_revision - selenium.common.exceptions.ElementCl...
+===================================================== 1 failed in 7.32s ======================================================

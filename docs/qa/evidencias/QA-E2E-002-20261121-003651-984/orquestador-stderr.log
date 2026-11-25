@@ -1,0 +1,9 @@
+127.0.0.1 - - [21/Nov/2026 00:36:57] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [21/Nov/2026 00:37:11] "GET /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [21/Nov/2026 00:37:11] "GET /static/css/app.css HTTP/1.1" 200 -
+127.0.0.1 - - [21/Nov/2026 00:37:11] "GET /static/css/login.css HTTP/1.1" 200 -
+127.0.0.1 - - [21/Nov/2026 00:37:11] "GET /static/img/logo-facturaciones@2x.png HTTP/1.1" 200 -
+127.0.0.1 - - [21/Nov/2026 00:37:11] "GET /static/img/login-ilustracion.png HTTP/1.1" 200 -
+127.0.0.1 - - [21/Nov/2026 00:37:11] "GET /static/js/app.js HTTP/1.1" 200 -
+127.0.0.1 - - [21/Nov/2026 00:37:11] "GET /static/js/login.js HTTP/1.1" 200 -
+127.0.0.1 - - [21/Nov/2026 00:37:11] "GET /static/img/favicon-32.png HTTP/1.1" 200 -

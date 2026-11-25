@@ -1,0 +1,17 @@
+============================= test session starts =============================
+platform win32 -- Python 3.15.2, pytest-9.1.1, pluggy-1.7.0 -- C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas
+configfile: pytest.ini
+collecting ... collected 7 items
+
+test/test_qa_complementos.py::test_qa_csrf_invalido_no_consulta_usuario PASSED [ 14%]
+test/test_qa_complementos.py::test_qa_csrf_valido_llega_a_validar_credenciales PASSED [ 28%]
+test/test_qa_complementos.py::test_qa_logout_elimina_sesion_y_protege_panel[Administrador] PASSED [ 42%]
+test/test_qa_complementos.py::test_qa_logout_elimina_sesion_y_protege_panel[Emisor] PASSED [ 57%]
+test/test_qa_complementos.py::test_qa_logout_elimina_sesion_y_protege_panel[Lector] PASSED [ 71%]
+test/test_qa_complementos.py::test_qa_busqueda_acepta_limite_inferior PASSED [ 85%]
+test/test_qa_complementos.py::test_qa_query_no_suplanta_al_emisor PASSED [100%]
+
+- generated xml file: C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-COMP-002-20261121-001721-002\pytest-junit.xml -
+============================== 7 passed in 1.01s ==============================

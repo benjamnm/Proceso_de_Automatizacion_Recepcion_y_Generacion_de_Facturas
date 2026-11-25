@@ -1,0 +1,10 @@
+============================================= test session starts =============================================
+platform win32 -- Python 3.15.2, pytest-9.1.1, pluggy-1.7.0 -- C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Scripts\python.exe
+rootdir: C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas
+configfile: pytest.ini
+collecting ... collected 1 item
+
+e2e/test_guardado_sin_cambios_qa.py::test_guardar_solicitud_sin_cambios PASSED                           [100%]
+
+- generated xml file: C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-E2E-SOL-004-20261121-134341-832\selenium-junit.xml -
+============================================== 1 passed in 6.81s ==============================================

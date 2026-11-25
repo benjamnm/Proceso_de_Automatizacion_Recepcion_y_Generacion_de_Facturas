@@ -1,0 +1,26 @@
+2026-11-21 15:32:51,252 INFO 127.0.0.1 - - [21/Nov/2026 15:32:51] "GET /auth/login HTTP/1.1" 200 -
+2026-11-21 15:32:53,515 INFO 127.0.0.1 - - [21/Nov/2026 15:32:53] "GET /auth/login HTTP/1.1" 200 -
+2026-11-21 15:32:53,762 INFO 127.0.0.1 - - [21/Nov/2026 15:32:53] "GET /static/css/app.css HTTP/1.1" 200 -
+2026-11-21 15:32:53,772 INFO 127.0.0.1 - - [21/Nov/2026 15:32:53] "GET /static/css/login.css HTTP/1.1" 200 -
+2026-11-21 15:32:53,783 INFO 127.0.0.1 - - [21/Nov/2026 15:32:53] "GET /static/img/logo-facturaciones@2x.png HTTP/1.1" 200 -
+2026-11-21 15:32:53,797 INFO 127.0.0.1 - - [21/Nov/2026 15:32:53] "GET /static/img/login-ilustracion.png HTTP/1.1" 200 -
+2026-11-21 15:32:53,811 INFO 127.0.0.1 - - [21/Nov/2026 15:32:53] "GET /static/js/app.js HTTP/1.1" 200 -
+2026-11-21 15:32:53,823 INFO 127.0.0.1 - - [21/Nov/2026 15:32:53] "GET /static/js/login.js HTTP/1.1" 200 -
+2026-11-21 15:32:54,022 INFO 127.0.0.1 - - [21/Nov/2026 15:32:54] "GET /static/img/favicon-32.png HTTP/1.1" 200 -
+2026-11-21 15:32:54,875 INFO 127.0.0.1 - - [21/Nov/2026 15:32:54] "[32mPOST /auth/login HTTP/1.1[0m" 302 -
+2026-11-21 15:32:55,019 INFO 127.0.0.1 - - [21/Nov/2026 15:32:55] "GET /dashboard HTTP/1.1" 200 -
+2026-11-21 15:32:55,045 INFO 127.0.0.1 - - [21/Nov/2026 15:32:55] "[36mGET /static/css/app.css HTTP/1.1[0m" 304 -
+2026-11-21 15:32:55,060 INFO 127.0.0.1 - - [21/Nov/2026 15:32:55] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+2026-11-21 15:32:55,125 INFO 127.0.0.1 - - [21/Nov/2026 15:32:55] "[36mGET /static/img/logo-facturaciones@2x.png HTTP/1.1[0m" 304 -
+2026-11-21 15:32:55,540 INFO 127.0.0.1 - - [21/Nov/2026 15:32:55] "GET /solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura HTTP/1.1" 200 -
+2026-11-21 15:32:55,556 INFO 127.0.0.1 - - [21/Nov/2026 15:32:55] "[36mGET /static/css/app.css HTTP/1.1[0m" 304 -
+2026-11-21 15:32:55,562 INFO 127.0.0.1 - - [21/Nov/2026 15:32:55] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+2026-11-21 15:32:55,567 INFO 127.0.0.1 - - [21/Nov/2026 15:32:55] "[36mGET /static/img/logo-facturaciones@2x.png HTTP/1.1[0m" 304 -
+2026-11-21 15:32:56,033 WARNING Aviso FACTURA_APROBADA no enviado: El envío de correos no está configurado (SMTP_HOST y SMTP_FROM).
+2026-11-21 15:32:56,034 INFO 127.0.0.1 - - [21/Nov/2026 15:32:56] "[32mPOST /solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura/aprobar HTTP/1.1[0m" 302 -
+2026-11-21 15:32:56,122 INFO 127.0.0.1 - - [21/Nov/2026 15:32:56] "GET /solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura HTTP/1.1" 200 -
+2026-11-21 15:32:56,147 INFO 127.0.0.1 - - [21/Nov/2026 15:32:56] "[36mGET /static/css/app.css HTTP/1.1[0m" 304 -
+2026-11-21 15:32:56,156 INFO 127.0.0.1 - - [21/Nov/2026 15:32:56] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+2026-11-21 15:32:56,165 INFO 127.0.0.1 - - [21/Nov/2026 15:32:56] "[36mGET /static/img/logo-facturaciones@2x.png HTTP/1.1[0m" 304 -
+2026-11-21 15:32:56,818 INFO 127.0.0.1 - - [21/Nov/2026 15:32:56] "[32mGET /solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura/sii HTTP/1.1[0m" 302 -
+2026-11-21 15:32:56,833 INFO 127.0.0.1 - - [21/Nov/2026 15:32:56] "GET /auth/login?next=/solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura/sii HTTP/1.1" 200 -

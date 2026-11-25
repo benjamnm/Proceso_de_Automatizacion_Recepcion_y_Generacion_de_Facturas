@@ -1,0 +1,10 @@
+==================================================== test session starts =====================================================
+platform win32 -- Python 3.15.2, pytest-9.1.1, pluggy-1.7.0 -- C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Scripts\python.exe
+rootdir: C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas
+configfile: pytest.ini
+collecting ... collected 1 item
+
+e2e/test_factura_existente_logout_qa.py::test_factura_existente_y_logout_sin_regenerar PASSED                           [100%]
+
+- generated xml file: C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-E2E-FAC-001-CIERRE-20261121-143235-284\selenium-junit.xml -
+===================================================== 1 passed in 6.47s ======================================================

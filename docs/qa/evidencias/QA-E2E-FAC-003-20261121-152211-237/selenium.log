@@ -1,0 +1,46 @@
+=========================================================================== test session starts ===========================================================================
+platform win32 -- Python 3.15.2, pytest-9.1.1, pluggy-1.7.0 -- C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Scripts\python.exe
+rootdir: C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas
+configfile: pytest.ini
+collecting ... collected 1 item
+
+e2e/test_correccion_emisor_qa.py::test_emisor_corrige_solicitud_sin_alterar_factura_observada FAILED                                                                 [100%]
+
+================================================================================ FAILURES =================================================================================
+_______________________________________________________ test_emisor_corrige_solicitud_sin_alterar_factura_observada _______________________________________________________
+e2e\test_correccion_emisor_qa.py:104: in test_emisor_corrige_solicitud_sin_alterar_factura_observada
+    assert urlsplit(e["location"]).path in {raiz,raiz+"/editar"}
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError
+---------------------------------------------------------------------------- Captured log call ----------------------------------------------------------------------------
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:42] "GET /auth/login HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:43] "GET /static/css/app.css HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:43] "GET /static/css/login.css HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:43] "GET /static/img/logo-facturaciones@2x.png HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:43] "GET /static/img/login-ilustracion.png HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:43] "GET /static/js/app.js HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:43] "GET /static/js/login.js HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:43] "GET /static/img/favicon-32.png HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:44] "[32mPOST /auth/login HTTP/1.1[0m" 302 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:44] "GET /dashboard HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:44] "[36mGET /static/css/app.css HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:44] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:44] "[36mGET /static/img/logo-facturaciones@2x.png HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:44] "GET /solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:44] "[36mGET /static/css/app.css HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:44] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:44] "[36mGET /static/img/logo-facturaciones@2x.png HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:45] "GET /solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/editar HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:45] "[36mGET /static/css/app.css HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:45] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:45] "GET /static/js/ui.js HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:45] "[36mGET /static/img/logo-facturaciones@2x.png HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:46] "[32mPOST /solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/editar HTTP/1.1[0m" 302 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:46] "GET /solicitudes/ee2e8fdb51290c59ae0ab6457a3ba001/factura HTTP/1.1" 200 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:46] "[36mGET /static/css/app.css HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:46] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+INFO     werkzeug:_internal.py:97 127.0.0.1 - - [21/Nov/2026 15:22:46] "[36mGET /static/img/logo-facturaciones@2x.png HTTP/1.1[0m" 304 -
+--- generated xml file: C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-E2E-FAC-003-20261121-152211-237\selenium-junit.xml ---
+========================================================================= short test summary info =========================================================================
+FAILED e2e/test_correccion_emisor_qa.py::test_emisor_corrige_solicitud_sin_alterar_factura_observada - AssertionError
+============================================================================ 1 failed in 8.84s ============================================================================

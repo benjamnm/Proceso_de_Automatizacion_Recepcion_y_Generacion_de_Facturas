@@ -1,0 +1,11 @@
+==================================================== test session starts =====================================================
+platform win32 -- Python 3.15.2, pytest-9.1.1, pluggy-1.7.0 -- C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas-qa-venv-20261121-000043-729\Scripts\python.exe
+rootdir: C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas
+configfile: pytest.ini
+collecting ... collected 2 items
+
+e2e/test_aislamiento_emisores_qa.py::test_aislamiento_entre_emisores[A] PASSED                                          [ 50%]
+e2e/test_aislamiento_emisores_qa.py::test_aislamiento_entre_emisores[B] PASSED                                          [100%]
+
+- generated xml file: C:\GitHub\Proceso_de_Automatizacion_Recepcion_y_Generacion_de_Facturas\docs\qa\evidencias\QA-E2E-HORIZ-001-20261121-030243-074\selenium-junit.xml -
+===================================================== 2 passed in 13.24s =====================================================
